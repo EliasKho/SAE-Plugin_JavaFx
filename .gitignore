@@ -36,10 +36,12 @@ build/
 
 ### Mac OS ###
 .DS_Store
-
+.mvn/
+.idea/
 *.xml
 .idea/*
 .mvn/*
 *.cmd
 mvnw
+.gitattributes
 
