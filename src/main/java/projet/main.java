@@ -11,6 +11,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import projet.arborescence.VueArborescence;
 
 public class main extends Application {
 
@@ -91,8 +92,12 @@ public class main extends Application {
         stage.setScene(scene);
         stage.show();
     }*/
+        // création du modèle
+        Modele modele = new Modele("C:\\Users\\leofo\\Desktop");
+
         HBox hbox = new HBox();
-        VBox vbox = new VBox();
+        VueArborescence vbox = new VueArborescence(modele);
+        modele.enregistrerObservateur((vbox));
         Pane pane = new Pane();
 
         vbox.setStyle("-fx-border-color: black; -fx-border-width: 2;");

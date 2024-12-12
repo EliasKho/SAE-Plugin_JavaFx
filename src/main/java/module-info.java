@@ -3,4 +3,5 @@ module com.example.saeplugin_javafx {
     requires javafx.graphics;
 
     exports projet;
+    exports projet.arborescence;
 }

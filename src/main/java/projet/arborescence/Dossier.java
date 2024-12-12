@@ -1,7 +1,8 @@
-package projet;
+package projet.arborescence;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Dossier extends FileComposite {
     protected ArrayList<FileComposite> ss_dossier = new ArrayList<FileComposite>();
@@ -26,6 +27,10 @@ public class Dossier extends FileComposite {
         for (FileComposite file : ss_dossier) {
             file.display(prefix+"| ");
         }
+    }
+
+    public List<FileComposite> getChildren() {
+        return ss_dossier;
     }
 
 }

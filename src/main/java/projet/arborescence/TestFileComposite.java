@@ -1,4 +1,4 @@
-package projet;
+package projet.arborescence;
 
 import java.io.File;
 
