@@ -48,4 +48,5 @@ mvnw
 out/*
 /out/*
 .out/*
+.out/
 
