@@ -5,36 +5,36 @@ import java.lang.reflect.*;
 public class Analyseur {
 
     public static void analyseClasse(String nomClasse) throws ClassNotFoundException {
+
+        // nom de la classe
         Class<?> classe = Class.forName(nomClasse);
 
-        Constructor<?>[] constructeurs = classe.getConstructors();
+        // constructeurs
         Constructor<?>[] constructeursDeclares = classe.getDeclaredConstructors();
 
-        Field[] fields = classe.getFields();
+        // attributs
         Field[] fieldsDeclares = classe.getDeclaredFields();
 
-        Method[] methods = classe.getMethods();
+        // méthodes
         Method[] methodsDeclares = classe.getDeclaredMethods();
+
+        // interfaces
+        Class<?>[] interfaces = classe.getInterfaces();
+
+        // classe héritée
+        Class<?> superClass = classe.getSuperclass();
+
 
         System.out.println("Intitulé :");
         System.out.println(getAffichageClasse(classe));
-
         System.out.println();
-        System.out.println("Constructeurs hérités: ");
-        for (Constructor<?> constructeur : constructeurs) {
-            System.out.println(getAffichageConstructeur(constructeur));
-        }
+        System.out.println("Package: ");
+        System.out.println(classe.getPackage().getName());
 
         System.out.println();
         System.out.println("Constructeurs déclarés: ");
         for (Constructor<?> constructeur : constructeursDeclares) {
             System.out.println(getAffichageConstructeur(constructeur));
-        }
-
-        System.out.println();
-        System.out.println("Attributs hérités: ");
-        for (Field field : fields) {
-            System.out.println(getAffichageAttribut(field));
         }
 
         System.out.println();
@@ -44,18 +44,27 @@ public class Analyseur {
         }
 
         System.out.println();
-        System.out.println("Méthodes héritées:");
-        for (Method method : methods) {
-            System.out.println(getAffichageMethode(method));
-        }
-
-        System.out.println();
         System.out.println("Méthodes déclarées: ");
         for (Method method : methodsDeclares) {
             System.out.println(getAffichageMethode(method));
         }
+
+        System.out.println();
+        System.out.println("Interfaces implémentées: ");
+        for (Class<?> interfaceClasse : interfaces) {
+            System.out.println(getNom(interfaceClasse));
+        }
+
+        System.out.println();
+        System.out.println("Classe mère: ");
+        System.out.println(getNom(superClass));
     }
 
+    /**
+     * Retourne l'affichage de la classe
+     * @param classe
+     * @return
+     */
     public static String getAffichageClasse(Class<?> classe) {
         String affichage = "";
         affichage += getAffichageModifier(classe.getModifiers());
@@ -67,6 +76,11 @@ public class Analyseur {
         return affichage;
     }
 
+    /**
+     * Retourne les modificateurs
+     * @param mod
+     * @return
+     */
     public static String getAffichageModifier(int mod) {
         String modifier = "";
         if (Modifier.isPublic(mod)) {
@@ -90,12 +104,22 @@ public class Analyseur {
         return modifier;
     }
 
+    /**
+     * Retourne le type de retour d'une méthode
+     * @param methode
+     * @return
+     */
     public static String getAffichageTypeRetour(Method methode) {
         String affichage = "";
         affichage += getNom(methode.getReturnType())+" ";
         return affichage;
     }
 
+    /**
+     * Retourne les paramètres d'une méthode ou d'un constructeur
+     * @param methode
+     * @return
+     */
     public static String getAffichageParametres(Executable methode) {
         String affichage = "";
         Class<?>[] params = methode.getParameterTypes();
@@ -110,6 +134,11 @@ public class Analyseur {
         return affichage;
     }
 
+    /**
+     * Retourne les exceptions d'une méthode ou d'un constructeur
+     * @param methode
+     * @return
+     */
     public static String getAffichageExceptions(Executable methode) {
         String affichage = "";
         Class<?>[] exceptions = methode.getExceptionTypes();
@@ -125,6 +154,11 @@ public class Analyseur {
         return affichage;
     }
 
+    /**
+     * Retourne l'affichage d'une méthode
+     * @param methode
+     * @return
+     */
     public static String getAffichageMethode(Method methode) {
         String affichage = "";
         affichage += getAffichageModifier(methode.getModifiers());
@@ -135,6 +169,11 @@ public class Analyseur {
         return affichage;
     }
 
+    /**
+     * Retourne l'affichage d'un constructeur
+     * @param constructeur
+     * @return
+     */
     public static String getAffichageConstructeur(Executable constructeur) {
         String affichage = "";
         affichage += getAffichageModifier(constructeur.getModifiers());
@@ -144,6 +183,11 @@ public class Analyseur {
         return affichage;
     }
 
+    /**
+     * Retourne l'affichage d'un attribut
+     * @param attribut
+     * @return
+     */
     public static String getAffichageAttribut(Field attribut) {
         String affichage = "";
         affichage += getAffichageModifier(attribut.getModifiers());
@@ -152,6 +196,11 @@ public class Analyseur {
         return affichage;
     }
 
+    /**
+     * Retourne le nom d'une classe (sans le package)
+     * @param classe
+     * @return
+     */
     public static String getNom(Class<?> classe) {
         if (classe.isArray()) {
             return getNom(classe.getComponentType()) + "[]";
