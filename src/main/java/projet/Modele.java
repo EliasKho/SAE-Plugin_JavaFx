@@ -1,21 +1,23 @@
 package projet;
 
+import projet.arborescence.FileComposite;
+
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Modele implements Sujet{
 
-    private String path;
+    private FileComposite file;
     private List<Observateur> observateurs;
 
-    public Modele(String path) {
-        this.path = path;
+    public Modele(FileComposite f) {
+        this.file = f;
         this.observateurs = new ArrayList<Observateur>();
     }
 
-    public String getPath() {
-        return path;
+    public FileComposite getPath() {
+        return file;
     }
 
     public void notifierObservateur(){
