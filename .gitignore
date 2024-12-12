@@ -45,4 +45,7 @@ build/
 mvnw
 .gitattributes
 
+out/*
+/out/*
+.out/*
 
