@@ -101,11 +101,18 @@ public class main extends Application {
         hbox.getChildren().add(vbox);
         hbox.getChildren().add(pane);
 
-        hbox.setAlignment(Pos.CENTER);
-        vbox.setPrefWidth(100);
+
         //hbox.setSpacing(10); // Ajouter un espacement entre les éléments
 
-        Scene scene = new Scene(hbox, 600, 600);
+        Scene scene = new Scene(hbox, 1000, 600);
+        vbox.setMinWidth(scene.getWidth()*25/100);
+        vbox.setMaxWidth(scene.getWidth()*25/100);
+
+        pane.setMinWidth(scene.getWidth()*75/100);
+        pane.setMaxWidth(scene.getWidth()*75/100);
+
+
+
         stage.setTitle("Diagramme Class Makker");
         stage.setScene(scene);
         stage.show();
