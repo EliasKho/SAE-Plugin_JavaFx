@@ -106,7 +106,8 @@ public class main extends Application {
         HBox hbox = new HBox();
         VueArborescence arborescence = new VueArborescence(modele, controlerClic);
         modele.enregistrerObservateur((arborescence));
-        Pane pane = new Pane();
+        VueIntrospection pane = new VueIntrospection(modele);
+        modele.enregistrerObservateur(pane);
 
         arborescence.setStyle("-fx-border-color: black; -fx-border-width: 2;");
         pane.setStyle("-fx-border-color: black; -fx-border-width: 2;");

@@ -1,5 +1,6 @@
 package projet;
 
+import projet.arborescence.Analyseur;
 import projet.arborescence.FileComposite;
 
 import java.lang.reflect.*;
@@ -10,6 +11,7 @@ public class Modele implements Sujet{
 
     private FileComposite file;
     private List<Observateur> observateurs;
+    private String introspection;
 
     public Modele(FileComposite f) {
         this.file = f;
@@ -33,7 +35,22 @@ public class Modele implements Sujet{
     public void supprimerObservateur(Observateur observateur){
         observateurs.remove(observateur);
     }
-    
+
+    public void saveIntrospection(String filename){
+        try {
+            System.out.println(filename);
+            Analyseur analyseur = new Analyseur();
+            introspection = analyseur.introspection(filename);
+            System.out.println(introspection);
+            notifierObservateur();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getIntrospection(){
+        return introspection;
+    }
     
     
     //Introspection

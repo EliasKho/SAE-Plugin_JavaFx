@@ -9,6 +9,8 @@ import projet.arborescence.Dossier;
 import projet.arborescence.Fichier;
 import projet.arborescence.FileComposite;
 
+import java.io.File;
+
 public class ControlerClic implements EventHandler<MouseEvent> {
     private Modele modele;
 
@@ -23,8 +25,14 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
         if (selectedItem != null) {
             FileComposite file = selectedItem.getValue();
+            // récupérer le package de la classe du fichier
+            String packageName = file.getPath().replace(File.separator, ".");
+            // on retire le .java et src/main/java/
+            packageName = packageName.substring(14, packageName.length() - 5);
+
             if (file instanceof Fichier) {
                 System.out.println("clic sur le fichier " + file.getName());
+                modele.saveIntrospection(packageName);
             }
         }
     }
