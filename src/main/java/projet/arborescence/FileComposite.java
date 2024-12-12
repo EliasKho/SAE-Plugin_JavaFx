@@ -9,4 +9,8 @@ public abstract class FileComposite extends File {
     }
     public abstract void display(String prefix);
     public abstract List<FileComposite> getChildren();
+
+    public String toString() {
+        return getName();
+    }
 }

@@ -11,7 +11,11 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import projet.arborescence.Dossier;
 import projet.arborescence.VueArborescence;
+import projet.controleur.ControlerClic;
+
+import java.io.File;
 
 public class main extends Application {
 
@@ -93,10 +97,14 @@ public class main extends Application {
         stage.show();
     }*/
         // création du modèle
-        Modele modele = new Modele("C:\\Users\\leofo\\Desktop");
+        Dossier dossier = new Dossier(new File("src"));
+        Modele modele = new Modele(dossier);
+
+        // controleurs
+        ControlerClic controlerClic = new ControlerClic(modele);
 
         HBox hbox = new HBox();
-        VueArborescence arborescence = new VueArborescence(modele);
+        VueArborescence arborescence = new VueArborescence(modele, controlerClic);
         modele.enregistrerObservateur((arborescence));
         Pane pane = new Pane();
 

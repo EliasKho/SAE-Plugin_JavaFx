@@ -16,6 +16,6 @@ public class Fichier extends FileComposite {
     }
 
     public List<FileComposite> getChildren() {
-        return new ArrayList<FileComposite>();
+        return new ArrayList<>();
     }
 }
