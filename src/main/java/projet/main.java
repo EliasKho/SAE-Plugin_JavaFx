@@ -7,10 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -23,7 +20,7 @@ public class main extends Application {
 
     @Override
     public void start(Stage stage) {
-
+/*
         String[] ingredients = {"Fromage", "Champignons", "Chorizo", "Oeuf", "Oignons", "Olives noires", "Olives vertes", "Roquette"};
         // String[] fidelite = {"Nouveau client", "Cliente avec carte", "Client adhérent"};
         Button[] bIngr;
@@ -91,6 +88,25 @@ public class main extends Application {
 
         Scene scene = new Scene(bp, 935, 670);
         stage.setTitle("Commande de pizzas");
+        stage.setScene(scene);
+        stage.show();
+    }*/
+        HBox hbox = new HBox();
+        VBox vbox = new VBox();
+        Pane pane = new Pane();
+
+        vbox.setStyle("-fx-border-color: black; -fx-border-width: 2;");
+        pane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
+
+        hbox.getChildren().add(vbox);
+        hbox.getChildren().add(pane);
+
+        hbox.setAlignment(Pos.CENTER);
+        vbox.setPrefWidth(100);
+        //hbox.setSpacing(10); // Ajouter un espacement entre les éléments
+
+        Scene scene = new Scene(hbox, 600, 600);
+        stage.setTitle("Diagramme Class Makker");
         stage.setScene(scene);
         stage.show();
     }
