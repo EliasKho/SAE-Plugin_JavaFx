@@ -19,7 +19,7 @@ public class Modele implements Sujet{
 
     public void notifierObservateur(){
         for(Observateur observateur : observateurs){
-            observateur.actualiser();
+            observateur.actualiser(this);
         }
     }
 

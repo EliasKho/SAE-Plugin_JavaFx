@@ -96,22 +96,22 @@ public class main extends Application {
         Modele modele = new Modele("C:\\Users\\leofo\\Desktop");
 
         HBox hbox = new HBox();
-        VueArborescence vbox = new VueArborescence(modele);
-        modele.enregistrerObservateur((vbox));
+        VueArborescence arborescence = new VueArborescence(modele);
+        modele.enregistrerObservateur((arborescence));
         Pane pane = new Pane();
 
-        vbox.setStyle("-fx-border-color: black; -fx-border-width: 2;");
+        arborescence.setStyle("-fx-border-color: black; -fx-border-width: 2;");
         pane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
 
-        hbox.getChildren().add(vbox);
+        hbox.getChildren().add(arborescence);
         hbox.getChildren().add(pane);
 
 
         //hbox.setSpacing(10); // Ajouter un espacement entre les éléments
 
         Scene scene = new Scene(hbox, 1000, 600);
-        vbox.setMinWidth(scene.getWidth()*25/100);
-        vbox.setMaxWidth(scene.getWidth()*25/100);
+        arborescence.setMinWidth(scene.getWidth()*25/100);
+        arborescence.setMaxWidth(scene.getWidth()*25/100);
 
         pane.setMinWidth(scene.getWidth()*75/100);
         pane.setMaxWidth(scene.getWidth()*75/100);
