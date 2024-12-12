@@ -3,7 +3,7 @@ package projet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Modele {
+public class Modele implements Sujet{
 
     private String path;
     private List<Observateur> observateurs;
@@ -17,7 +17,7 @@ public class Modele {
         return path;
     }
 
-    public void notifierObservateurs(){
+    public void notifierObservateur(){
         for(Observateur observateur : observateurs){
             observateur.actualiser();
         }
