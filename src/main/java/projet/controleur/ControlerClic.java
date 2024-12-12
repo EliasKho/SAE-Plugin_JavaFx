@@ -17,7 +17,6 @@ public class ControlerClic implements EventHandler<MouseEvent> {
     }
 
     public void handle(MouseEvent event) {
-        System.out.println("Clic");
         TreeView<FileComposite> item = (TreeView<FileComposite>) event.getSource();
 
         TreeItem<FileComposite> selectedItem = item.getSelectionModel().getSelectedItem();
