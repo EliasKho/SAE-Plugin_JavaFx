@@ -46,7 +46,7 @@ public class Analyseur {
     }
 
     public String getNom(Class<?> classe) {
-        return classe.getName();
+        return classe.getName().substring(classe.getName().lastIndexOf('.')+1);
     }
 
     public String getPackage(Class<?> classe) {
@@ -86,11 +86,11 @@ public class Analyseur {
         List<String> list = new ArrayList<>();
         for (Constructor<?> constructeur : constructeurs) {
             String s="";
-            s+=constructeur.getName()+"(";
+            s+=constructeur.getName().substring(classe.getName().lastIndexOf('.')+1) +"(";
             int n = constructeur.getParameterTypes().length;
             int i=1;
             for(Class<?> type:constructeur.getParameterTypes()){
-                s+=type.getName();
+                s+=getNom(type);
                 if(i<n){
                     s+=",";
                 }
@@ -107,7 +107,7 @@ public class Analyseur {
     }
 
     public String attributToString(Field field) {
-        return getVisiAttribut(field)+" "+getEtatAtribut(field)+" "+field.getType().getName()+" "+field.getName();
+        return getVisiAttribut(field)+" "+getEtatAtribut(field)+" "+getNom(field.getType())+" "+field.getName();
     }
 
     public String getVisiAttribut(Field field) {
@@ -139,7 +139,7 @@ public class Analyseur {
     }
 
     public Method[] getMethodes(Class<?> classe){
-        return classe.getMethods();
+        return classe.getDeclaredMethods();
     }
 
     public String getMethode(Method method) {
@@ -148,13 +148,13 @@ public class Analyseur {
         int n=method.getParameterTypes().length;
         int i=1;
         for(Class<?> param :method.getParameterTypes()){
-            s+=param.getTypeName();
+            s+=getNom(param);
             if(i<n){
                 s+=",";
             }
             i++;
         }
-        s+="): "+method.getReturnType().getName();
+        s+="): "+getNom(method.getReturnType());
         return s;
     }
 
