@@ -54,161 +54,185 @@ public class Modele implements Sujet{
     
     
     //Introspection
-    
-    public String analyseClasse(String nomClasse) throws ClassNotFoundException {
+
+    public String introspection(String nomClasse) throws ClassNotFoundException {
+
+        // nom de la classe
         Class<?> classe = Class.forName(nomClasse);
 
-        Constructor<?>[] constructeurs = classe.getConstructors();
+        // constructeurs
         Constructor<?>[] constructeursDeclares = classe.getDeclaredConstructors();
 
-        Field[] fields = classe.getFields();
+        // attributs
         Field[] fieldsDeclares = classe.getDeclaredFields();
 
-        Method[] methods = classe.getMethods();
+        // méthodes
         Method[] methodsDeclares = classe.getDeclaredMethods();
 
-        String s = ("Intitulé :");
-        s+=(getAffichageClasse(classe))+"\n";
-        
-        s+="Constructeurs hérités: ";
-        for (Constructor<?> constructeur : constructeurs) {
-            s+=getAffichageConstructeur(constructeur);
+        // interfaces
+        Class<?>[] interfaces = classe.getInterfaces();
+
+        // classe héritée
+        Class<?> superClass = classe.getSuperclass();
+
+        String s="";
+
+        s+=getVisiClass(classe)+" "+getEtatClass(classe)+" "+getNom(classe)+"\n"
+                +getPackage(classe)+"\n";
+        s+="----------------\n";
+        for(Field field:getAttributs(classe)){
+            s+=attributToString(field)+"\n";
+        }
+        s+="----------------\n";
+        for(String constructeur:getConstucteurs(classe)){
+            s+=constructeur+"\n";
+        }
+        for(Method method:getMethodes(classe)){
+            s+=getMethode(method)+"\n";
         }
 
-        s+="\n";
-        s+="Constructeurs déclarés: ";
-        for (Constructor<?> constructeur : constructeursDeclares) {
-            s+=getAffichageConstructeur(constructeur);
-        }
+        return s;
+    }
 
-        s+="\n";
-        s+="Attributs hérités: ";
-        for (Field field : fields) {
-            s+=getAffichageAttribut(field);
-        }
+    public String getNom(Class<?> classe) {
+        return classe.getName().substring(classe.getName().lastIndexOf('.')+1);
+    }
 
-        s+="\n";
-        s+="Attributs déclarés: ";
-        for (Field field : fieldsDeclares) {
-            s+=getAffichageAttribut(field);
-        }
+    public String getPackage(Class<?> classe) {
+        return classe.getPackage().getName();
+    }
 
-        s+="\n";
-        s+="Méthodes héritées:";
-        for (Method method : methods) {
-            s+=getAffichageMethode(method);
-        }
+    public String getVisiClass(Class<?> classe) {
+        int modifiers = classe.getModifiers();
+        String s="";
 
-        s+="\n";
-        s+="Méthodes déclarées: ";
-        for (Method method : methodsDeclares) {
-            s+=getAffichageMethode(method);
+        if (Modifier.isPublic(modifiers)) {
+            s= "public";
+        } else if (Modifier.isProtected(modifiers)) {
+            s= "protected";
+        } else if (Modifier.isPrivate(modifiers)) {
+            s= "private";
         }
         return s;
     }
 
-    public static String getAffichageClasse(Class<?> classe) {
-        String affichage = "";
-        affichage += getAffichageModifier(classe.getModifiers());
-        if (classe.isInterface()) {
-            affichage += "interface " + getNom(classe);
-        } else {
-            affichage += "class " + getNom(classe);
+    public String getEtatClass(Class<?> classe) {
+        int modifiers = classe.getModifiers();
+        String s="";
+
+        if (Modifier.isAbstract(modifiers)) {
+            s= "abstract";
+        } else if (Modifier.isStatic(modifiers)) {
+            s= "static";
+        } else if (Modifier.isFinal(modifiers)) {
+            s= "final";
         }
-        return affichage;
+        return s;
     }
 
-    public static String getAffichageModifier(int mod) {
-        String modifier = "";
-        if (Modifier.isPublic(mod)) {
-            modifier += "public ";
-        }
-        if (Modifier.isProtected(mod)) {
-            modifier += "protected ";
-        }
-        if (Modifier.isPrivate(mod)) {
-            modifier += "private ";
-        }
-        if (Modifier.isStatic(mod)) {
-            modifier += "static ";
-        }
-        if (Modifier.isFinal(mod)) {
-            modifier += "final ";
-        }
-        if (Modifier.isAbstract(mod)) {
-            modifier += "abstract ";
-        }
-        return modifier;
-    }
-
-    public static String getAffichageTypeRetour(Method methode) {
-        String affichage = "";
-        affichage += getNom(methode.getReturnType())+" ";
-        return affichage;
-    }
-
-    public static String getAffichageParametres(Executable methode) {
-        String affichage = "";
-        Class<?>[] params = methode.getParameterTypes();
-        affichage += "(";
-        for (int i = 0; i < params.length; i++) {
-            affichage += getNom(params[i]);
-            if (i < params.length - 1) {
-                affichage += ", ";
-            }
-        }
-        affichage += ")";
-        return affichage;
-    }
-
-    public static String getAffichageExceptions(Executable methode) {
-        String affichage = "";
-        Class<?>[] exceptions = methode.getExceptionTypes();
-        if (exceptions.length > 0) {
-            affichage += " throws ";
-            for (int i = 0; i < exceptions.length; i++) {
-                affichage += getNom(exceptions[i]);
-                if (i < exceptions.length - 1) {
-                    affichage += ", ";
+    public List<String> getConstucteurs(Class<?> classe) {
+        Constructor<?>[] constructeurs = classe.getDeclaredConstructors();
+        List<String> list = new ArrayList<>();
+        for (Constructor<?> constructeur : constructeurs) {
+            String s="";
+            s+=constructeur.getName().substring(classe.getName().lastIndexOf('.')+1) +"(";
+            int n = constructeur.getParameterTypes().length;
+            int i=1;
+            for(Class<?> type:constructeur.getParameterTypes()){
+                s+=getNom(type);
+                if(i<n){
+                    s+=",";
                 }
+                i++;
             }
+            s+=")";
+            list.add(s);
         }
-        return affichage;
+        return list;
     }
 
-    public static String getAffichageMethode(Method methode) {
-        String affichage = "";
-        affichage += getAffichageModifier(methode.getModifiers());
-        affichage += getAffichageTypeRetour(methode);
-        affichage += methode.getName();
-        affichage += getAffichageParametres(methode);
-        affichage += getAffichageExceptions(methode);
-        return affichage;
+    public Field[] getAttributs(Class<?> classe) {
+        return classe.getFields();
     }
 
-    public static String getAffichageConstructeur(Executable constructeur) {
-        String affichage = "";
-        affichage += getAffichageModifier(constructeur.getModifiers());
-        affichage += getNom(constructeur.getDeclaringClass());
-        affichage += getAffichageParametres(constructeur);
-        affichage += getAffichageExceptions(constructeur);
-        return affichage;
+    public String attributToString(Field field) {
+        return getVisiAttribut(field)+" "+getEtatAtribut(field)+" "+getNom(field.getType())+" "+field.getName();
     }
 
-    public static String getAffichageAttribut(Field attribut) {
-        String affichage = "";
-        affichage += getAffichageModifier(attribut.getModifiers());
-        affichage += getNom(attribut.getType());
-        affichage += " " + attribut.getName();
-        return affichage;
-    }
+    public String getVisiAttribut(Field field) {
+        int modifiers = field.getModifiers();
+        String s="";
 
-    public static String getNom(Class<?> classe) {
-        if (classe.isArray()) {
-            return getNom(classe.getComponentType()) + "[]";
+        if (Modifier.isPublic(modifiers)) {
+            s= "public";
+        } else if (Modifier.isProtected(modifiers)) {
+            s= "protected";
+        } else if (Modifier.isPrivate(modifiers)) {
+            s= "private";
         }
-        String nom = classe.getName();
-        return nom.substring(nom.lastIndexOf('.') + 1);
+        return s;
+    }
+
+    public String getEtatAtribut(Field field) {
+        int modifiers = field.getModifiers();
+        String s="";
+
+        if (Modifier.isAbstract(modifiers)) {
+            s= "abstract";
+        } else if (Modifier.isStatic(modifiers)) {
+            s= "static";
+        } else if (Modifier.isFinal(modifiers)) {
+            s= "final";
+        }
+        return s;
+    }
+
+    public Method[] getMethodes(Class<?> classe){
+        return classe.getDeclaredMethods();
+    }
+
+    public String getMethode(Method method) {
+        String s= getVisiMethode(method)+" "+getEtatMethode(method)+" "+
+                method.getName()+"(";
+        int n=method.getParameterTypes().length;
+        int i=1;
+        for(Class<?> param :method.getParameterTypes()){
+            s+=getNom(param);
+            if(i<n){
+                s+=",";
+            }
+            i++;
+        }
+        s+="): "+getNom(method.getReturnType());
+        return s;
+    }
+
+    public String getVisiMethode(Method method) {
+        int modifiers = method.getModifiers();
+        String s="";
+
+        if (Modifier.isPublic(modifiers)) {
+            s= "public";
+        } else if (Modifier.isProtected(modifiers)) {
+            s= "protected";
+        } else if (Modifier.isPrivate(modifiers)) {
+            s= "private";
+        }
+        return s;
+    }
+
+    public String getEtatMethode(Method method) {
+        int modifiers = method.getModifiers();
+        String s="";
+
+        if (Modifier.isAbstract(modifiers)) {
+            s= "abstract";
+        } else if (Modifier.isStatic(modifiers)) {
+            s= "static";
+        } else if (Modifier.isFinal(modifiers)) {
+            s= "final";
+        }
+        return s;
     }
 
 }
