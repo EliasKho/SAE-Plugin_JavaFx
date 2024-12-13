@@ -249,5 +249,99 @@ public class Modele implements Sujet{
         return s.trim();
     }
 
+    public String getUML(Class<?> classe)throws ClassNotFoundException{
+        String res = "@startuml\n";
+        String visiClass = null;
+        switch (this.getVisiClass(classe)){
+            case "public ":
+                visiClass = "+";
+                break;
+            case "private ":
+                visiClass = "-";
+                break;
+            case "protected ":
+                visiClass = "#";
+                break;
+            default:
+                visiClass = "+";
+        }
+        res += visiClass + getEtatClass(classe) + " class " + getNom(classe) + " {\n";
+
+        String visiAttribut = null;
+        String etatAttribut = null;
+        Field[] attributs = getAttributs(classe);
+
+        for(int i = 0; i<attributs.length; i++) {
+            switch (this.getVisiAttribut(attributs[i])) {
+                case "public ":
+                    visiAttribut = "+";
+                    break;
+                case "private ":
+                    visiAttribut = "-";
+                    break;
+                case "protected ":
+                    visiAttribut = "#";
+                    break;
+                case "package private ":
+                    visiAttribut = "~";
+                    break;
+                default:
+                    visiAttribut = "+";
+            }
+            switch (this.getEtatAtribut(attributs[i])) {
+                case "abstract ":
+                    etatAttribut = "{abstract}";
+                    break;
+                case "static ":
+                    etatAttribut = "{static}";
+                    break;
+                case "final ":
+                    etatAttribut = "";
+                    break;
+                default:
+                    etatAttribut = "";
+            }
+            res += visiAttribut + etatAttribut + attributs[i].getName() + " : \n";
+        }
+
+        String visiMethod = null;
+        String etatMethod = null;
+        Method[] methode = getMethodes(classe);
+
+        for(int j=0; j< methode.length; j++) {
+            switch (this.getVisiMethode(methode[j])) {
+                case "public ":
+                    visiMethod = "+";
+                    break;
+                case "private ":
+                    visiMethod = "-";
+                    break;
+                case "protected ":
+                    visiMethod = "#";
+                    break;
+                default:
+                    visiMethod = "+";
+            }
+            switch(this.getEtatMethode(methode[j])) {
+                case "abstract ":
+                    etatMethod = "{abstract}";
+                    break;
+                case "static ":
+                    etatMethod = "{static}";
+                    break;
+                case "final ":
+                    etatMethod = "";
+                    break;
+                default:
+                    etatMethod = "";
+            }
+
+            String parameterMethode = getMethode(methode[j]);
+            res += visiMethod + etatMethod + methode[j].getName() + "(" + parameterMethode + ") :" + "\n";
+        }
+
+        res += "}\n@enduml";
+        return res;
+    }
 
 }
