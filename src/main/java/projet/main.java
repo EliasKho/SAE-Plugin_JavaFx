@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -106,14 +107,16 @@ public class main extends Application {
         HBox hbox = new HBox();
         VueArborescence arborescence = new VueArborescence(modele, controlerClic);
 //        modele.enregistrerObservateur((arborescence));
-        VueIntrospection pane = new VueIntrospection(modele);
-        modele.enregistrerObservateur(pane);
+        VueIntrospection scrollpane = new VueIntrospection(modele);
+        modele.enregistrerObservateur(scrollpane);
+
+        scrollpane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
         arborescence.setStyle("-fx-border-color: black; -fx-border-width: 2;");
-        pane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
+        scrollpane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
 
         hbox.getChildren().add(arborescence);
-        hbox.getChildren().add(pane);
+        hbox.getChildren().add(scrollpane);
 
 
         //hbox.setSpacing(10); // Ajouter un espacement entre les éléments
@@ -122,8 +125,8 @@ public class main extends Application {
         arborescence.setMinWidth(scene.getWidth()*25/100);
         arborescence.setMaxWidth(scene.getWidth()*25/100);
 
-        pane.setMinWidth(scene.getWidth()*75/100);
-        pane.setMaxWidth(scene.getWidth()*75/100);
+        scrollpane.setMinWidth(scene.getWidth()*75/100);
+        scrollpane.setMaxWidth(scene.getWidth()*75/100);
 
 
 

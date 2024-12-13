@@ -1,0 +1,19 @@
+Fonctionnalités effectuées :
+
+Affichage des classes dans un menu :
+    les classes sont affichées à gauche dans une arborescence de fichiers
+
+Cliquer sur une classe pour afficher son introspection :
+    lors du clic sur une classe, l'introspection de la classe est affichée à droite
+
+Modifier l'introspection pour en faire un plantUML :
+    après le clic sur la classe, des méthodes sont appellées pour générer du code source plantUML grâce à l'introspection
+
+Créer un fichier diagramme de classe plantUML :
+    utilisation du code source plantUML pour générer un fichier .puml de diagramme de classe
+
+
+Cas d'utilisation :
+
+Afficher un fichier java :
+    l'utilisateur peut cliquer sur un fichier java pour afficher les informations nécessaires
