@@ -59,33 +59,19 @@ public class Modele implements Sujet{
         // nom de la classe
         Class<?> classe = Class.forName(nomClasse);
 
-        // constructeurs
-        Constructor<?>[] constructeursDeclares = classe.getDeclaredConstructors();
+        String s="Classe: ";
 
-        // attributs
-        Field[] fieldsDeclares = classe.getDeclaredFields();
-
-        // méthodes
-        Method[] methodsDeclares = classe.getDeclaredMethods();
-
-        // interfaces
-        Class<?>[] interfaces = classe.getInterfaces();
-
-        // classe héritée
-        Class<?> superClass = classe.getSuperclass();
-
-        String s="";
-
-        s+=getVisiClass(classe)+" "+getEtatClass(classe)+" "+getNom(classe)+"\n"
+        s+=getVisiClass(classe)+" "+getEtatClass(classe)+" class "+getNom(classe)+"\n"
                 +getPackage(classe)+"\n";
-        s+="----------------\n";
+        s+="----------------\nAttributs:\n";
         for(Field field:getAttributs(classe)){
             s+=attributToString(field)+"\n";
         }
-        s+="----------------\n";
+        s+="----------------\nConstructeurs:\n";
         for(String constructeur:getConstucteurs(classe)){
             s+=constructeur+"\n";
         }
+        s+="----------------\nMéthodes:\n";
         for(Method method:getMethodes(classe)){
             s+=getMethode(method)+"\n";
         }
@@ -125,6 +111,8 @@ public class Modele implements Sujet{
             s= "static";
         } else if (Modifier.isFinal(modifiers)) {
             s= "final";
+        } else if (Modifier.isInterface(modifiers)){
+            s= "interface";
         }
         return s;
     }
