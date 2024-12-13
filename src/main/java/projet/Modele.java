@@ -42,6 +42,7 @@ public class Modele implements Sujet{
             introspection = introspection(filename);
             System.out.println(introspection);
             notifierObservateur();
+            System.out.println(getUML(introspection));
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -59,10 +60,10 @@ public class Modele implements Sujet{
         // nom de la classe
         Class<?> classe = Class.forName(nomClasse);
 
-        String s="Classe: ";
+        String s="----------------\nClasse: \n";
 
         s+=verifClasse(getAffichage(classe,classe.getModifiers()))+getNom(classe)+"\n"
-                +"Package: "+getPackage(classe)+"\n";
+                +"----------------\nPackage: "+getPackage(classe)+"\n";
         s+="----------------\nAttributs:\n";
         for(Field field:classe.getDeclaredFields()){
             s+=attributToString(classe,field)+"\n";
@@ -75,7 +76,7 @@ public class Modele implements Sujet{
         for(Method method:classe.getDeclaredMethods()){
             s+=getMethode(classe,method)+"\n";
         }
-        s+="----------------\nHéritage:\n"+getHeritage(classe);
+        s+=getHeritage(classe);
 
         return s;
     }
@@ -170,13 +171,13 @@ public class Modele implements Sujet{
         // Héritage direct (extends)
         Class<?> superClass = classe.getSuperclass();
         if (superClass != null && superClass != Object.class) {
-            s+="Classe Mère:\n   "+getNom(superClass)+"\n";
+            s+="----------------\nClasse Mère:\n   "+getNom(superClass)+"\n";
         }
 
         // Interfaces implémentées (implements)
         Class<?>[] interfaces = classe.getInterfaces();
         if (interfaces.length > 0) {
-            s+="Interfaces:\n";
+            s+="----------------\nInterfaces:\n";
             for (int i = 0; i < interfaces.length; i++) {
                 s+="   "+getNom(interfaces[i]);
                 if (i < interfaces.length - 1) {
@@ -187,98 +188,43 @@ public class Modele implements Sujet{
         return s.trim();
     }
 
-    public String getUML(Class<?> classe)throws ClassNotFoundException{
-        String res = "@startuml\n";
-        String visiClass = null;
-        switch (this.getVisiClass(classe)){
-            case "public ":
-                visiClass = "+";
-                break;
-            case "private ":
-                visiClass = "-";
-                break;
-            case "protected ":
-                visiClass = "#";
-                break;
-            default:
-                visiClass = "+";
-        }
-        res += visiClass + getEtatClass(classe) + " class " + getNom(classe) + " {\n";
+    public String getUML(String introspection)throws ClassNotFoundException{
+        StringBuilder mid = new StringBuilder();
+        String[] pull = introspection.split("\n");
+        String resStart = "@startuml\n";
 
-        String visiAttribut = null;
-        String etatAttribut = null;
-        Field[] attributs = getAttributs(classe);
+        int i = 0;
+        for (i=0;i<pull.length;i++){
+            String ligne=pull[i];
+            if(ligne.contains("-----")){
+                i+=1;
+            }
+            else {
+                if (ligne.contains("public")) {
+                    ligne=ligne.replace("public ", "+");
+                } else if (ligne.contains("private")) {
+                    ligne=ligne.replace("private ", "-");
+                } else if (ligne.contains("protected")) {
+                    ligne=ligne.replace("protected ", "#");
+                }
 
-        for(int i = 0; i<attributs.length; i++) {
-            switch (this.getVisiAttribut(attributs[i])) {
-                case "public ":
-                    visiAttribut = "+";
-                    break;
-                case "private ":
-                    visiAttribut = "-";
-                    break;
-                case "protected ":
-                    visiAttribut = "#";
-                    break;
-                case "package private ":
-                    visiAttribut = "~";
-                    break;
-                default:
-                    visiAttribut = "+";
+                if (ligne.contains("abstract")) {
+                    ligne=ligne.replace("abstract ", "{abstract}");
+                } else if (ligne.contains("static")) {
+                    ligne=ligne.replace("static ", "{static}");
+                }
+
+                mid.append(ligne).append("\n");
+                if(i==2){
+                    mid.append("{\n");
+                }
             }
-            switch (this.getEtatAtribut(attributs[i])) {
-                case "abstract ":
-                    etatAttribut = "{abstract}";
-                    break;
-                case "static ":
-                    etatAttribut = "{static}";
-                    break;
-                case "final ":
-                    etatAttribut = "";
-                    break;
-                default:
-                    etatAttribut = "";
-            }
-            res += visiAttribut + etatAttribut + attributs[i].getName() + " : \n";
         }
 
-        String visiMethod = null;
-        String etatMethod = null;
-        Method[] methode = getMethodes(classe);
 
-        for(int j=0; j< methode.length; j++) {
-            switch (this.getVisiMethode(methode[j])) {
-                case "public ":
-                    visiMethod = "+";
-                    break;
-                case "private ":
-                    visiMethod = "-";
-                    break;
-                case "protected ":
-                    visiMethod = "#";
-                    break;
-                default:
-                    visiMethod = "+";
-            }
-            switch(this.getEtatMethode(methode[j])) {
-                case "abstract ":
-                    etatMethod = "{abstract}";
-                    break;
-                case "static ":
-                    etatMethod = "{static}";
-                    break;
-                case "final ":
-                    etatMethod = "";
-                    break;
-                default:
-                    etatMethod = "";
-            }
 
-            String parameterMethode = getMethode(methode[j]);
-            res += visiMethod + etatMethod + methode[j].getName() + "(" + parameterMethode + ") :" + "\n";
-        }
+        String res = resStart + mid + "}\n@enduml";
 
-        res += "}\n@enduml";
         return res;
     }
 
