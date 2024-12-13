@@ -151,7 +151,7 @@ public class Modele implements Sujet{
     }
 
     public Field[] getAttributs(Class<?> classe) {
-        return classe.getFields();
+        return classe.getDeclaredFields();
     }
 
     public String attributToString(Field field) {
