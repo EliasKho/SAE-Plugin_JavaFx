@@ -62,7 +62,7 @@ public class Modele implements Sujet{
         String s="Classe: ";
 
         s+=getVisiClass(classe)+getEtatClass(classe)+getNom(classe)+"\n"
-                +getPackage(classe)+"\n";
+                +"Package: "+getPackage(classe)+"\n";
         s+="----------------\nAttributs:\n";
         for(Field field:getAttributs(classe)){
             s+=attributToString(field)+"\n";
