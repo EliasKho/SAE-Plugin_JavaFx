@@ -8,7 +8,7 @@ public class TestFileComposite {
     public static void main(String[] args) throws ClassNotFoundException {
         Fichier fichier = new Fichier(new File("src/main/java/projet/arborescence/Fichier.java"));
         Modele modele = new Modele(fichier);
-        String s = modele.analyseClasse("projet.arborescence.Fichier");
+        String s = modele.introspection("projet.arborescence.Fichier");
         //Dossier dossier = new Dossier(new File("src"));
         //dossier.display("");
         System.out.println(s);

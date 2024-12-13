@@ -105,7 +105,7 @@ public class main extends Application {
 
         HBox hbox = new HBox();
         VueArborescence arborescence = new VueArborescence(modele, controlerClic);
-        modele.enregistrerObservateur((arborescence));
+//        modele.enregistrerObservateur((arborescence));
         VueIntrospection pane = new VueIntrospection(modele);
         modele.enregistrerObservateur(pane);
 

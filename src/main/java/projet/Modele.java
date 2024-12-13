@@ -39,8 +39,7 @@ public class Modele implements Sujet{
     public void saveIntrospection(String filename){
         try {
             System.out.println(filename);
-            Analyseur analyseur = new Analyseur();
-            introspection = analyseur.introspection(filename);
+            introspection = introspection(filename);
             System.out.println(introspection);
             notifierObservateur();
         } catch (ClassNotFoundException e) {
