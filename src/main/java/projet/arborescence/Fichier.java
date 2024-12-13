@@ -11,10 +11,6 @@ public class Fichier extends FileComposite {
         super(file);
     }
 
-    public void display(String prefix) {
-        System.out.println(prefix+"|>" + getName()+ " (" + length() + " bytes)");
-    }
-
     public List<FileComposite> getChildren() {
         return new ArrayList<>();
     }
