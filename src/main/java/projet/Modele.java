@@ -61,19 +61,19 @@ public class Modele implements Sujet{
 
         String s="Classe: ";
 
-        s+=getVisiClass(classe)+getEtatClass(classe)+getNom(classe)+"\n"
+        s+=verifClasse(getAffichage(classe,classe.getModifiers()))+getNom(classe)+"\n"
                 +"Package: "+getPackage(classe)+"\n";
         s+="----------------\nAttributs:\n";
-        for(Field field:getAttributs(classe)){
-            s+=attributToString(field)+"\n";
+        for(Field field:classe.getDeclaredFields()){
+            s+=attributToString(classe,field)+"\n";
         }
         s+="----------------\nConstructeurs:\n";
         for(String constructeur:getConstucteurs(classe)){
             s+=constructeur+"\n";
         }
         s+="----------------\nMéthodes:\n";
-        for(Method method:getMethodes(classe)){
-            s+=getMethode(method)+"\n";
+        for(Method method:classe.getDeclaredMethods()){
+            s+=getMethode(classe,method)+"\n";
         }
         s+="----------------\nHéritage:\n"+getHeritage(classe);
 
@@ -88,36 +88,38 @@ public class Modele implements Sujet{
         return classe.getPackage().getName();
     }
 
-    public String getVisiClass(Class<?> classe) {
-        int modifiers = classe.getModifiers();
-        String s="";
+    public String getAffichage(Class<?> classe, int mod){
+        String modifier="";
 
-        if (Modifier.isPublic(modifiers)) {
-            s= "public";
-        } else if (Modifier.isProtected(modifiers)) {
-            s= "protected";
-        } else if (Modifier.isPrivate(modifiers)) {
-            s= "private";
+        if(Modifier.isPublic(mod)){
+            modifier+="public ";
         }
-        return s;
+        if(Modifier.isProtected(mod)){
+            modifier+="protected ";
+        }
+        if(Modifier.isPrivate(mod)){
+            modifier+="private ";
+        }
+        if(Modifier.isFinal(mod)){
+            modifier+="final ";
+        }
+        if(Modifier.isStatic(mod)){
+            modifier+="static ";
+        }
+        if(Modifier.isAbstract(mod)){
+            modifier+="abstract ";
+        }
+        if(classe.isInterface()){
+            modifier = modifier.replace("abstract ","interface ");
+        }
+        return modifier;
     }
 
-    public String getEtatClass(Class<?> classe) {
-        int modifiers = classe.getModifiers();
-        String s=" ";
-
-        if (Modifier.isStatic(modifiers))
-            s+= "static ";
-        if (Modifier.isFinal(modifiers))
-            s+= "final ";
-        if (classe.isInterface())
-            s+="interface ";
-        else {
-            if (Modifier.isAbstract(modifiers))
-                s += "abstract ";
-            s+="class ";
+    public String verifClasse(String input){
+        if(!input.contains("interface")){
+            input += "class ";
         }
-        return s;
+        return input;
     }
 
     public List<String> getConstucteurs(Class<?> classe) {
@@ -141,48 +143,13 @@ public class Modele implements Sujet{
         return list;
     }
 
-    public Field[] getAttributs(Class<?> classe) {
-        return classe.getDeclaredFields();
+    public String attributToString(Class<?> classe,Field field) {
+        return getAffichage(classe,field.getModifiers())+getNom(field.getType())+" "+field.getName();
     }
 
-    public String attributToString(Field field) {
-        return getVisiAttribut(field)+getEtatAtribut(field)+getNom(field.getType())+" "+field.getName();
-    }
 
-    public String getVisiAttribut(Field field) {
-        int modifiers = field.getModifiers();
-        String s=" ";
-
-        if (Modifier.isPublic(modifiers)) {
-            s= "public ";
-        } else if (Modifier.isProtected(modifiers)) {
-            s= "protected ";
-        } else if (Modifier.isPrivate(modifiers)) {
-            s= "private ";
-        }
-        return s;
-    }
-
-    public String getEtatAtribut(Field field) {
-        int modifiers = field.getModifiers();
-        String s="";
-
-        if (Modifier.isAbstract(modifiers)) {
-            s= "abstract ";
-        } else if (Modifier.isStatic(modifiers)) {
-            s= "static ";
-        } else if (Modifier.isFinal(modifiers)) {
-            s= "final ";
-        }
-        return s;
-    }
-
-    public Method[] getMethodes(Class<?> classe){
-        return classe.getDeclaredMethods();
-    }
-
-    public String getMethode(Method method) {
-        String s= getVisiMethode(method)+getEtatMethode(method)+
+    public String getMethode(Class<?> classe,Method method) {
+        String s= getAffichage(classe,method.getModifiers())+
                 method.getName()+"(";
         int n=method.getParameterTypes().length;
         int i=1;
@@ -193,35 +160,7 @@ public class Modele implements Sujet{
             }
             i++;
         }
-        s+="):"+getNom(method.getReturnType());
-        return s;
-    }
-
-    public String getVisiMethode(Method method) {
-        int modifiers = method.getModifiers();
-        String s=" ";
-
-        if (Modifier.isPublic(modifiers)) {
-            s= "public ";
-        } else if (Modifier.isProtected(modifiers)) {
-            s= "protected ";
-        } else if (Modifier.isPrivate(modifiers)) {
-            s= "private ";
-        }
-        return s;
-    }
-
-    public String getEtatMethode(Method method) {
-        int modifiers = method.getModifiers();
-        String s="";
-
-        if (Modifier.isAbstract(modifiers)) {
-            s= "abstract ";
-        } else if (Modifier.isStatic(modifiers)) {
-            s= "static ";
-        } else if (Modifier.isFinal(modifiers)) {
-            s= "final ";
-        }
+        s+="): "+getNom(method.getReturnType());
         return s;
     }
 
@@ -245,7 +184,6 @@ public class Modele implements Sujet{
                 }
             }
         }
-
         return s.trim();
     }
 
