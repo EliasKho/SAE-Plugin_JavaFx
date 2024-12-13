@@ -61,7 +61,7 @@ public class Modele implements Sujet{
 
         String s="Classe: ";
 
-        s+=getVisiClass(classe)+" "+getEtatClass(classe)+"class "+getNom(classe)+"\n"
+        s+=getVisiClass(classe)+" "+getEtatClass(classe)+" "+getNom(classe)+"\n"
                 +getPackage(classe)+"\n";
         s+="----------------\nAttributs:\n";
         for(Field field:getAttributs(classe)){
@@ -92,7 +92,7 @@ public class Modele implements Sujet{
         String s="";
 
         if (Modifier.isPublic(modifiers)) {
-            s= "public";
+            s= "public ";
         } else if (Modifier.isProtected(modifiers)) {
             s= "protected";
         } else if (Modifier.isPrivate(modifiers)) {
@@ -114,6 +114,7 @@ public class Modele implements Sujet{
         else {
             if (Modifier.isAbstract(modifiers))
                 s += "abstract ";
+            s+="class ";
         }
         return s;
     }
