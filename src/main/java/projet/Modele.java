@@ -3,6 +3,9 @@ package projet;
 import projet.arborescence.Analyseur;
 import projet.arborescence.FileComposite;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +44,13 @@ public class Modele implements Sujet{
             System.out.println(filename);
             introspection = introspection(filename);
             System.out.println(introspection);
+//            String puml = fonctionPuml(filename);
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("Diag.puml"))) {
+                writer.write(introspection);
+//                writer.write(puml);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             notifierObservateur();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
