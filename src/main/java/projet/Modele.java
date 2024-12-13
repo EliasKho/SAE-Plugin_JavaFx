@@ -75,6 +75,7 @@ public class Modele implements Sujet{
         for(Method method:getMethodes(classe)){
             s+=getMethode(method)+"\n";
         }
+        s+="----------------\nHéritage:\n"+getHeritage(classe);
 
         return s;
     }
@@ -223,5 +224,30 @@ public class Modele implements Sujet{
         }
         return s;
     }
+
+    public String getHeritage(Class<?> classe) {
+        String s = "";
+
+        // Héritage direct (extends)
+        Class<?> superClass = classe.getSuperclass();
+        if (superClass != null && superClass != Object.class) {
+            s+="Classe Mère:\n   "+getNom(superClass)+"\n";
+        }
+
+        // Interfaces implémentées (implements)
+        Class<?>[] interfaces = classe.getInterfaces();
+        if (interfaces.length > 0) {
+            s+="Interfaces:\n";
+            for (int i = 0; i < interfaces.length; i++) {
+                s+="   "+getNom(interfaces[i]);
+                if (i < interfaces.length - 1) {
+                    s+="\n";
+                }
+            }
+        }
+
+        return s.trim();
+    }
+
 
 }
