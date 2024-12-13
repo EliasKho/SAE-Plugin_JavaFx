@@ -1,0 +1,81 @@
+@startuml
+
+interface Observateur {
+  + actualiser(Sujet): void
+}
+
+interface Sujet {
+  + ajouterObservateur(Observateur): void
+  + supprimerObservateur(Observateur): void
+  + notifierObservateur(): void
+}
+
+abstract class FileComposite {
+  + FileComposite(File)
+  + getChildren(): List<FileComposite>
+  + toString(): String
+}
+
+class Fichier extends FileComposite {
+  + Fichier(File)
+  + getChildren(): List<FileComposite>
+}
+
+class Dossier extends FileComposite {
+  + Dossier(File)
+  + getChildren(): List<FileComposite>
+}
+
+Dossier "1" *-- "*" FileComposite: -ss_dossiers
+
+class VueArborescence extends Pane implements Observateur {
+  - TreeView<FileComposite> arbre
+
+  + VueArborescence(Modele, ControlerClic)
+  + actualiser(Sujet): void
+  + getArbre(FileComposite): TreeItem<FileComposite>
+}
+
+VueArborescence "1" --> "1" Modele: -modele
+VueArborescence "1" --> "1" ControlerClic: -controlerClic
+
+class ControlerClic implements EventHandler<MouseEvent> {
+  + ControlerClic(Modele)
+  + handle(MouseEvent): void
+}
+
+ControlerClic "1" --> "1" Modele: -modele
+
+class Modele implements Sujet {
+  - introspection: String
+
+  + Modele(FileComposite)
+  + ajouterObservateur(Observateur): void
+  + supprimerObservateur(Observateur): void
+  + notifierObservateur(): void
+  + getRacine(): FileComposite
+  + saveIntrospection(fileName: String): void
+  + getIntrospection(): String
+  + introspection(nomClasse: String): String
+  + getNom(Class<?>): String
+  + getPackage(Class<?>): String
+  + getAffichage(Class<?>, modifier: int): String
+  + getConstructeurs(Class<?>): List<String>
+  + attributToString(Class<?>, Field): String
+  + getMethode(Class<?>, Method): String
+  + getHeritage(Class<?>): String
+}
+
+Modele "1" --> "1" FileComposite: -racine
+Modele "1" --> "*" Observateur: -observateurs
+
+class VueIntrospection extends ScrollPane implements Observateur {
+  - introspection:Label
+
+  + VueIntrospection(Modele)
+  + actualiser(Sujet): void
+}
+
+VueIntrospection "1" --> "1" Modele: -modele
+
+@enduml

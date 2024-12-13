@@ -7,7 +7,6 @@ public abstract class FileComposite extends File {
     public FileComposite(File file) {
         super(file.getPath());
     }
-    public abstract void display(String prefix);
     public abstract List<FileComposite> getChildren();
 
     public String toString() {

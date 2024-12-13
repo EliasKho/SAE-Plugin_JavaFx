@@ -20,15 +20,6 @@ public class Dossier extends FileComposite {
         }
     }
 
-    public void display(String prefix) {
-        System.out.print(prefix + "|-");
-        System.out.println(getName());
-
-        for (FileComposite file : ss_dossier) {
-            file.display(prefix+"| ");
-        }
-    }
-
     public List<FileComposite> getChildren() {
         return ss_dossier;
     }

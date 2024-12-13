@@ -2,10 +2,10 @@ package projet;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Pane;
 
 public class VueIntrospection extends ScrollPane implements Observateur{
     private Modele modele;
+    private Label introspection;
 
     public VueIntrospection(Modele m) {
         this.modele = m;
@@ -14,9 +14,9 @@ public class VueIntrospection extends ScrollPane implements Observateur{
 
     public void actualiser(Sujet s){
         Modele m = (Modele) s;
-        Label label = new Label(m.getIntrospection());
-        label.setLayoutX(10);
-        label.setLayoutY(0);
-        this.setContent(label);
+        introspection = new Label(m.getIntrospection());
+        introspection.setLayoutX(10);
+        introspection.setLayoutY(0);
+        this.setContent(introspection);
     }
 }
