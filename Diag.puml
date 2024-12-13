@@ -1,32 +1,34 @@
-Classe: public  class Modele
-projet
+----------------
+Classe: 
+public class Modele
+----------------
+Package: projet
 ----------------
 Attributs:
-private  FileComposite file
-private  List observateurs
-private  String introspection
+private FileComposite file
+private List observateurs
+private String introspection
 ----------------
 Constructeurs:
 Modele(FileComposite)
 ----------------
 Méthodes:
-public  getPackage(Class): String
-public  getPath(): FileComposite
-public  enregistrerObservateur(Observateur): void
-public  getMethode(Method): String
-public  getNom(Class): String
-public  supprimerObservateur(Observateur): void
-public  notifierObservateur(): void
-public  getVisiClass(Class): String
-public  getConstucteurs(Class): List
-public  getVisiAttribut(Field): String
-public  getEtatAtribut(Field): String
-public  getMethodes(Class): Method;
-public  getVisiMethode(Method): String
-public  getEtatMethode(Method): String
-public  introspection(String): String
-public  saveIntrospection(String): void
-public  getIntrospection(): String
-public  attributToString(Field): String
-public  getEtatClass(Class): String
-public  getAttributs(Class): Field;
+public getConstucteurs(Class): List
+public introspection(String): String
+public getAffichage(Class,int): String
+public attributToString(Class,Field): String
+public saveIntrospection(String): void
+public verifClasse(String): String
+public getIntrospection(): String
+public getHeritage(Class): String
+public supprimerObservateur(Observateur): void
+public notifierObservateur(): void
+public getMethode(Class,Method): String
+public getUML(String): String
+public getNom(Class): String
+public enregistrerObservateur(Observateur): void
+public getPackage(Class): String
+public getPath(): FileComposite
+----------------
+Interfaces:
+   Sujet

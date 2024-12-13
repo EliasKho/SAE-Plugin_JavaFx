@@ -1,6 +1,5 @@
 package projet;
 
-import projet.arborescence.Analyseur;
 import projet.arborescence.FileComposite;
 
 import java.io.BufferedWriter;
