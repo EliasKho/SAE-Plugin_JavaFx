@@ -61,7 +61,7 @@ public class Modele implements Sujet{
 
         String s="Classe: ";
 
-        s+=getVisiClass(classe)+" "+getEtatClass(classe)+" class "+getNom(classe)+"\n"
+        s+=getVisiClass(classe)+" "+getEtatClass(classe)+"class "+getNom(classe)+"\n"
                 +getPackage(classe)+"\n";
         s+="----------------\nAttributs:\n";
         for(Field field:getAttributs(classe)){
@@ -103,17 +103,16 @@ public class Modele implements Sujet{
 
     public String getEtatClass(Class<?> classe) {
         int modifiers = classe.getModifiers();
-        String s="";
+        String s=" ";
 
-        if (Modifier.isAbstract(modifiers)) {
-            s= "abstract";
-        } else if (Modifier.isStatic(modifiers)) {
-            s= "static";
-        } else if (Modifier.isFinal(modifiers)) {
-            s= "final";
-        } else if (Modifier.isInterface(modifiers)){
-            s= "interface";
-        }
+        if (Modifier.isStatic(modifiers))
+            s+= "static ";
+        if (Modifier.isFinal(modifiers))
+            s+= "final ";
+        if (Modifier.isAbstract(modifiers))
+            s+= "abstract ";
+        if (classe.isInterface())
+            s+="interface ";
         return s;
     }
 
@@ -143,19 +142,19 @@ public class Modele implements Sujet{
     }
 
     public String attributToString(Field field) {
-        return getVisiAttribut(field)+" "+getEtatAtribut(field)+" "+getNom(field.getType())+" "+field.getName();
+        return getVisiAttribut(field)+getEtatAtribut(field)+getNom(field.getType())+" "+field.getName();
     }
 
     public String getVisiAttribut(Field field) {
         int modifiers = field.getModifiers();
-        String s="";
+        String s=" ";
 
         if (Modifier.isPublic(modifiers)) {
-            s= "public";
+            s= "public ";
         } else if (Modifier.isProtected(modifiers)) {
-            s= "protected";
+            s= "protected ";
         } else if (Modifier.isPrivate(modifiers)) {
-            s= "private";
+            s= "private ";
         }
         return s;
     }
@@ -165,11 +164,11 @@ public class Modele implements Sujet{
         String s="";
 
         if (Modifier.isAbstract(modifiers)) {
-            s= "abstract";
+            s= "abstract ";
         } else if (Modifier.isStatic(modifiers)) {
-            s= "static";
+            s= "static ";
         } else if (Modifier.isFinal(modifiers)) {
-            s= "final";
+            s= "final ";
         }
         return s;
     }
@@ -179,7 +178,7 @@ public class Modele implements Sujet{
     }
 
     public String getMethode(Method method) {
-        String s= getVisiMethode(method)+" "+getEtatMethode(method)+" "+
+        String s= getVisiMethode(method)+getEtatMethode(method)+
                 method.getName()+"(";
         int n=method.getParameterTypes().length;
         int i=1;
@@ -190,20 +189,20 @@ public class Modele implements Sujet{
             }
             i++;
         }
-        s+="): "+getNom(method.getReturnType());
+        s+="):"+getNom(method.getReturnType());
         return s;
     }
 
     public String getVisiMethode(Method method) {
         int modifiers = method.getModifiers();
-        String s="";
+        String s=" ";
 
         if (Modifier.isPublic(modifiers)) {
-            s= "public";
+            s= "public ";
         } else if (Modifier.isProtected(modifiers)) {
-            s= "protected";
+            s= "protected ";
         } else if (Modifier.isPrivate(modifiers)) {
-            s= "private";
+            s= "private ";
         }
         return s;
     }
@@ -213,11 +212,11 @@ public class Modele implements Sujet{
         String s="";
 
         if (Modifier.isAbstract(modifiers)) {
-            s= "abstract";
+            s= "abstract ";
         } else if (Modifier.isStatic(modifiers)) {
-            s= "static";
+            s= "static ";
         } else if (Modifier.isFinal(modifiers)) {
-            s= "final";
+            s= "final ";
         }
         return s;
     }
