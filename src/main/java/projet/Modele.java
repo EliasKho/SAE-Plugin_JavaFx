@@ -109,10 +109,12 @@ public class Modele implements Sujet{
             s+= "static ";
         if (Modifier.isFinal(modifiers))
             s+= "final ";
-        if (Modifier.isAbstract(modifiers))
-            s+= "abstract ";
         if (classe.isInterface())
             s+="interface ";
+        else {
+            if (Modifier.isAbstract(modifiers))
+                s += "abstract ";
+        }
         return s;
     }
 
