@@ -194,10 +194,12 @@ public class Modele implements Sujet{
             }
             else {
                 if (ligne.contains("extends")) {
-                    lignes[0] = lignes[0].replace("{",ligne)+"{";
+                    int l = lignes[0].lastIndexOf("{");
+                    lignes[0] = lignes[0].substring(0, l) + ligne + "{";
                 }
                 else if (ligne.contains("implements")) {
-                    lignes[0] = lignes[0].replace("{",ligne)+"{";
+                    int l = lignes[0].lastIndexOf("{");
+                    lignes[0] = lignes[0].substring(0, l) + ligne + "{";
                 }
                 else {
                     if (ligne.contains("public")) {
@@ -208,18 +210,19 @@ public class Modele implements Sujet{
                         ligne = ligne.replace("protected ", "#");
                     }
 
-                    if (ligne.contains("abstract")) {
-                        ligne = ligne.replace("abstract ", "{abstract}");
-                    } else if (ligne.contains("static")) {
-                        ligne = ligne.replace("static ", "{static}");
+                    if (i == 2) {
+                        ligne = ligne + "{";
+                        ligne = ligne.replace("+", "");
+                    }
+                    else {
+                        if (ligne.contains("abstract")) {
+                            ligne = ligne.replace("abstract ", "{abstract}");
+                        } else if (ligne.contains("static")) {
+                            ligne = ligne.replace("static ", "{static}");
+                        }
                     }
 
-//                mid.append(ligne).append("\n");
                     lignes[j] = ligne;
-                    if (i == 2) {
-                        lignes[j] = lignes[j] + "{";
-                        lignes[j] = lignes[j].replace("+", "");
-                    }
                 }
                 j++;
             }
