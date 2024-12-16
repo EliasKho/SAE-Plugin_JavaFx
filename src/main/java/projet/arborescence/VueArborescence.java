@@ -2,16 +2,11 @@ package projet.arborescence;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import projet.Modele;
 import projet.Observateur;
 import projet.Sujet;
 import projet.controleur.ControlerClic;
-
-import java.io.File;
 
 public class VueArborescence extends Pane implements Observateur {
 
@@ -37,7 +32,7 @@ public class VueArborescence extends Pane implements Observateur {
 
     public void actualiser(Sujet s){
         Modele m = (Modele) s;
-        FileComposite file = m.getPath();
+        FileComposite file = m.getRacine();
 
         this.arbre= new TreeView<>(getArbre(file));
         this.arbre.setMaxSize(250,600);

@@ -1,34 +1,23 @@
-----------------
-Classe: 
-public class Modele
-----------------
-Package: projet
-----------------
-Attributs:
-private FileComposite file
-private List observateurs
-private String introspection
-----------------
-Constructeurs:
-Modele(FileComposite)
-----------------
-Méthodes:
-public getConstucteurs(Class): List
-public introspection(String): String
-public getAffichage(Class,int): String
-public attributToString(Class,Field): String
-public saveIntrospection(String): void
-public verifClasse(String): String
-public getIntrospection(): String
-public getHeritage(Class): String
-public supprimerObservateur(Observateur): void
-public notifierObservateur(): void
-public getMethode(Class,Method): String
-public getUML(String): String
-public getNom(Class): String
-public enregistrerObservateur(Observateur): void
-public getPackage(Class): String
-public getPath(): FileComposite
-----------------
-Interfaces:
-   Sujet
+@startuml
+class Modele implements Sujet{
+-FileComposite file
+-List observateurs
+-String introspection
++Modele(FileComposite): 
++getPackage(Class): String
++enregistrerObservateur(Observateur): void
++getHeritage(Class): String
++getAffichage(int): String
++getIntrospection(): String
++getInterface(Class,String): String
++introspection(String): String
++getAttribut(Field): String
++saveIntrospection(String): void
++notifierObservateur(): void
++getMethodeConstruct(Executable): String
++supprimerObservateur(Observateur): void
++getUML(String): String
++getNom(Class): String
++getRacine(): FileComposite
+}
+@enduml

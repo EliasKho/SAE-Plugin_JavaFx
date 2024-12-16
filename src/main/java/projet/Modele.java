@@ -20,7 +20,7 @@ public class Modele implements Sujet{
         this.observateurs = new ArrayList<Observateur>();
     }
 
-    public FileComposite getPath() {
+    public FileComposite getRacine() {
         return file;
     }
 
@@ -43,15 +43,14 @@ public class Modele implements Sujet{
             System.out.println(filename);
             introspection = introspection(filename);
             System.out.println(introspection);
-//            String puml = fonctionPuml(filename);
+            System.out.println(getUML(introspection));
+            String puml = getUML(introspection);
             try (BufferedWriter writer = new BufferedWriter(new FileWriter("Diag.puml"))) {
-                writer.write(introspection);
-//                writer.write(puml);
+                writer.write(puml);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             notifierObservateur();
-            System.out.println(getUML(introspection));
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -65,25 +64,24 @@ public class Modele implements Sujet{
     //Introspection
 
     public String introspection(String nomClasse) throws ClassNotFoundException {
-
         // nom de la classe
         Class<?> classe = Class.forName(nomClasse);
 
         String s="----------------\nClasse: \n";
 
-        s+=verifClasse(getAffichage(classe,classe.getModifiers()))+getNom(classe)+"\n"
+        s+=getInterface(classe,getAffichage(classe.getModifiers()))+getNom(classe)+"\n"
                 +"----------------\nPackage: "+getPackage(classe)+"\n";
         s+="----------------\nAttributs:\n";
         for(Field field:classe.getDeclaredFields()){
-            s+=attributToString(classe,field)+"\n";
+            s+= getAttribut(field)+"\n";
         }
         s+="----------------\nConstructeurs:\n";
-        for(String constructeur:getConstucteurs(classe)){
-            s+=constructeur+"\n";
+        for(Constructor<?> constructeur: classe.getDeclaredConstructors()){
+            s+=getMethodeConstruct(constructeur)+"\n";
         }
         s+="----------------\nMéthodes:\n";
         for(Method method:classe.getDeclaredMethods()){
-            s+=getMethode(classe,method)+"\n";
+            s+=getMethodeConstruct(method)+"\n";
         }
         s+=getHeritage(classe);
 
@@ -98,7 +96,7 @@ public class Modele implements Sujet{
         return classe.getPackage().getName();
     }
 
-    public String getAffichage(Class<?> classe, int mod){
+    public String getAffichage(int mod){
         String modifier="";
 
         if(Modifier.isPublic(mod)){
@@ -119,59 +117,45 @@ public class Modele implements Sujet{
         if(Modifier.isAbstract(mod)){
             modifier+="abstract ";
         }
+        return modifier;
+    }
+
+    public String getInterface(Class<?> classe, String modifier){
         if(classe.isInterface()){
             modifier = modifier.replace("abstract ","interface ");
+        }
+        else{
+            modifier+="class ";
         }
         return modifier;
     }
 
-    public String verifClasse(String input){
-        if(!input.contains("interface")){
-            input += "class ";
+    public String getMethodeConstruct(Executable executable) {
+        String s= getAffichage(executable.getModifiers());
+        if (executable instanceof Constructor) {
+            s+=getNom(((Constructor<?>) executable).getDeclaringClass())+"(";
         }
-        return input;
-    }
-
-    public List<String> getConstucteurs(Class<?> classe) {
-        Constructor<?>[] constructeurs = classe.getDeclaredConstructors();
-        List<String> list = new ArrayList<>();
-        for (Constructor<?> constructeur : constructeurs) {
-            String s="";
-            s+=constructeur.getName().substring(classe.getName().lastIndexOf('.')+1) +"(";
-            int n = constructeur.getParameterTypes().length;
-            int i=1;
-            for(Class<?> type:constructeur.getParameterTypes()){
-                s+=getNom(type);
-                if(i<n){
-                    s+=",";
-                }
-                i++;
-            }
-            s+=")";
-            list.add(s);
+        else if (executable instanceof Method) {
+            s+=((Method) executable).getName()+"(";
         }
-        return list;
-    }
-
-    public String attributToString(Class<?> classe,Field field) {
-        return getAffichage(classe,field.getModifiers())+getNom(field.getType())+" "+field.getName();
-    }
-
-
-    public String getMethode(Class<?> classe,Method method) {
-        String s= getAffichage(classe,method.getModifiers())+
-                method.getName()+"(";
-        int n=method.getParameterTypes().length;
+        int n=executable.getParameterTypes().length;
         int i=1;
-        for(Class<?> param :method.getParameterTypes()){
+        for(Class<?> param :executable.getParameterTypes()){
             s+=getNom(param);
             if(i<n){
                 s+=",";
             }
             i++;
         }
-        s+="): "+getNom(method.getReturnType());
+        s+="): ";
+        if (executable instanceof Method) {
+            s+=getNom(((Method) executable).getReturnType());
+        }
         return s;
+    }
+
+    public String getAttribut(Field field) {
+        return getAffichage(field.getModifiers())+getNom(field.getType())+" "+field.getName();
     }
 
     public String getHeritage(Class<?> classe) {
@@ -180,17 +164,17 @@ public class Modele implements Sujet{
         // Héritage direct (extends)
         Class<?> superClass = classe.getSuperclass();
         if (superClass != null && superClass != Object.class) {
-            s+="----------------\nClasse Mère:\n   "+getNom(superClass)+"\n";
+            s+="----------------\nClasse Mère:\n extends "+getNom(superClass)+"\n";
         }
 
         // Interfaces implémentées (implements)
         Class<?>[] interfaces = classe.getInterfaces();
         if (interfaces.length > 0) {
-            s+="----------------\nInterfaces:\n";
+            s+="----------------\nInterfaces:\n implements ";
             for (int i = 0; i < interfaces.length; i++) {
-                s+="   "+getNom(interfaces[i]);
+                s+=getNom(interfaces[i]);
                 if (i < interfaces.length - 1) {
-                    s+="\n";
+                    s+=", ";
                 }
             }
         }
@@ -198,41 +182,55 @@ public class Modele implements Sujet{
     }
 
     public String getUML(String introspection)throws ClassNotFoundException{
-        StringBuilder mid = new StringBuilder();
+        StringBuilder mid = new StringBuilder("@startuml\n");
         String[] pull = introspection.split("\n");
-        String resStart = "@startuml\n";
+        String lignes[] = new String[pull.length];
 
-        int i = 0;
-        for (i=0;i<pull.length;i++){
+        int j = 0;
+        for (int i=0;i<pull.length;i++){
             String ligne=pull[i];
             if(ligne.contains("-----")){
                 i+=1;
             }
             else {
-                if (ligne.contains("public")) {
-                    ligne=ligne.replace("public ", "+");
-                } else if (ligne.contains("private")) {
-                    ligne=ligne.replace("private ", "-");
-                } else if (ligne.contains("protected")) {
-                    ligne=ligne.replace("protected ", "#");
+                if (ligne.contains("extends")) {
+                    lignes[0] = lignes[0].replace("{",ligne)+"{";
                 }
+                else if (ligne.contains("implements")) {
+                    lignes[0] = lignes[0].replace("{",ligne)+"{";
+                }
+                else {
+                    if (ligne.contains("public")) {
+                        ligne = ligne.replace("public ", "+");
+                    } else if (ligne.contains("private")) {
+                        ligne = ligne.replace("private ", "-");
+                    } else if (ligne.contains("protected")) {
+                        ligne = ligne.replace("protected ", "#");
+                    }
 
-                if (ligne.contains("abstract")) {
-                    ligne=ligne.replace("abstract ", "{abstract}");
-                } else if (ligne.contains("static")) {
-                    ligne=ligne.replace("static ", "{static}");
-                }
+                    if (ligne.contains("abstract")) {
+                        ligne = ligne.replace("abstract ", "{abstract}");
+                    } else if (ligne.contains("static")) {
+                        ligne = ligne.replace("static ", "{static}");
+                    }
 
-                mid.append(ligne).append("\n");
-                if(i==2){
-                    mid.append("{\n");
+//                mid.append(ligne).append("\n");
+                    lignes[j] = ligne;
+                    if (i == 2) {
+                        lignes[j] = lignes[j] + "{";
+                        lignes[j] = lignes[j].replace("+", "");
+                    }
                 }
+                j++;
+            }
+        }
+        for (String l : lignes){
+            if(l!=null){
+                mid.append(l).append("\n");
             }
         }
 
-
-
-        String res = resStart + mid + "}\n@enduml";
+        String res =  mid + "}\n@enduml";
 
         return res;
     }
