@@ -85,7 +85,7 @@ public class Modele implements Sujet{
         }
         s+=getHeritage(classe);
 
-        return s;
+        return s.trim();
     }
 
     public String getNom(Class<?> classe) {
@@ -178,7 +178,7 @@ public class Modele implements Sujet{
                 }
             }
         }
-        return s.trim();
+        return s;
     }
 
     public String getUML(String introspection)throws ClassNotFoundException{
