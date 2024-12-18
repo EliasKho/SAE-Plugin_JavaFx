@@ -107,8 +107,9 @@ public class main extends Application {
         HBox hbox = new HBox();
         VueArborescence arborescence = new VueArborescence(modele, controlerClic);
 //        modele.enregistrerObservateur((arborescence));
-        VueIntrospection scrollpane = new VueIntrospection(modele);
-        modele.enregistrerObservateur(scrollpane);
+        VueIntrospection vueIntrospection = new VueIntrospection(modele);
+        modele.enregistrerObservateur(vueIntrospection);
+        ScrollPane scrollpane = new ScrollPane();
 
         scrollpane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 

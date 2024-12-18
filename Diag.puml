@@ -1,7 +1,173 @@
 @startuml
-abstract class FileComposite extends File{
-+FileComposite(File): 
-+toString(): String
-+{abstract}getChildren(): List
+class Modele {
+-UML:String
++Modele(FileComposite)
++getPackage(Class):String
++enregistrerObservateur(Observateur):void
++getRacine():FileComposite
++getUML():String
++getMethode(Class):ArrayList
++createUML():String
++typePrimitif(Class):boolean
+-ajouterRelation(String,String,String,String,String,String):void
++getAttributs(Class):ArrayList
++classeExiste(String):boolean
++ajouterHeritage(Class):void
++saveIntrospection(String):void
++notifierObservateur():void
++supprimerObservateur(Observateur):void
 }
+
+interface Sujet {
++{abstract} enregistrerObservateur(Observateur):void
++{abstract} notifierObservateur():void
++{abstract} supprimerObservateur(Observateur):void
+}
+
+abstract class FileComposite {
++FileComposite(File)
++toString():String
++{abstract} getChildren():List
+}
+
+interface Observateur {
++{abstract} actualiser(Sujet):void
+}
+
+class Classe {
+-nom:String
+-isInterface:boolean
+-isAbstract:boolean
+-nomPackage:String
+-Classe()
++Classe(String)
++equals(Object):boolean
++hashCode():int
++isInterface():boolean
++isAbstract():boolean
++getNomPackage():String
++setNom(String):void
++getNom():String
++setMethodes(List):void
++setInterface(boolean):void
++setAbstract(boolean):void
++getAttributs():List
++setAttributs(List):void
++setNomPackage(String):void
++getMethodes():List
+}
+
+class Methode {
+-nom:String
+-typeRetour:Type
+-modifier:int
+-constructeur:boolean
++Methode(String,Type,List,int)
++Methode(String,List,int)
++equals(Object):boolean
++hashCode():int
++getModifier():int
++setParametres(List):void
++getParametres():List
++setConstructeur(boolean):void
++getTypeRetour():Type
++setTypeRetour(Type):void
++isConstructeur():boolean
++setModifier(int):void
++setNom(String):void
++getNom():String
++getUMLString():String
+}
+
+class Attribut {
+-nom:String
+-type:Type
+-modifier:int
++Attribut(String,Type,int)
++setType(Type):void
++equals(Object):boolean
++hashCode():int
++getType():Type
++getModifier():int
++setModifier(int):void
++setNom(String):void
++getNom():String
++getUMLString():String
+}
+
+class Relation {
++{static} IMPLEMENTS:String
++{static} EXTENDS:String
++{static} DEPENDANCE:String
+-type:String
+-nom:String
+-parentCardinalite:String
+-enfantCardinalite:String
++Relation(Classe,Classe,String)
++setType(String):void
++equals(Object):boolean
++hashCode():int
++getParent():Classe
++getType():String
++setParent(Classe):void
++getParentCardinalite():String
++getEnfantCardinalite():String
++setNom(String):void
++getNom():String
++getUMLString():String
++setParentCardinalite(String):void
++setEnfantCardinalite(String):void
++setEnfant(Classe):void
++getEnfant():Classe
+}
+
+class Dossier {
++Dossier(File)
++getChildren():List
+}
+
+class Fichier {
++Fichier(File)
++getChildren():List
+}
+
+class VueArborescence {
++VueArborescence(Modele,ControlerClic)
++actualiser(Sujet):void
++getArbre(FileComposite):TreeItem
+}
+
+class ControlerClic {
++ControlerClic(Modele)
++handle(MouseEvent):void
+handle(Event):void
+}
+
+class VueIntrospection {
++VueIntrospection(Modele)
++actualiser(Sujet):void
+}
+
+Modele "1" ..> "1" FileComposite : file
+Modele "1" ..> "*" Observateur : observateurs
+Modele "1" ..> "*" Classe : classes
+Modele "1" ..> "*" Relation : relations
+Modele .u.|> Sujet : ""
+FileComposite -u-|> File : ""
+Classe "1" ..> "*" Methode : methodes
+Classe "1" ..> "*" Attribut : attributs
+Methode "1" ..> "*" Parameter : parametres
+Relation "1" ..> "1" Classe : parent
+Dossier "1" ..> "*" FileComposite : ss_dossier
+Dossier -u-|> FileComposite : ""
+Fichier -u-|> FileComposite : ""
+VueArborescence "1" ..> "1" TreeView : arbre
+VueArborescence "1" ..> "1" Modele : modele
+VueArborescence "1" ..> "1" ControlerClic : controlerClic
+VueArborescence -u-|> Pane : ""
+VueArborescence .u.|> Observateur : ""
+ControlerClic "1" ..> "1" Modele : modele
+ControlerClic .u.|> EventHandler : ""
+VueIntrospection "1" ..> "1" Modele : modele
+VueIntrospection .u.|> Observateur : ""
 @enduml

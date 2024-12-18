@@ -1,6 +1,7 @@
 package projet;
 
 import projet.arborescence.FileComposite;
+import projet.classes.*;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -11,13 +12,17 @@ import java.util.List;
 
 public class Modele implements Sujet{
 
-    private FileComposite file;
+    private final FileComposite file;
     private List<Observateur> observateurs;
-    private String introspection;
+    private ArrayList<Classe> classes;
+    private ArrayList<Relation> relations;
+    private String UML = "";
 
     public Modele(FileComposite f) {
         this.file = f;
-        this.observateurs = new ArrayList<Observateur>();
+        this.observateurs = new ArrayList<>();
+        this.classes = new ArrayList<>();
+        this.relations = new ArrayList<>();
     }
 
     public FileComposite getRacine() {
@@ -38,204 +43,188 @@ public class Modele implements Sujet{
         observateurs.remove(observateur);
     }
 
-    public void saveIntrospection(String filename){
-        try {
-            System.out.println(filename);
-            introspection = introspection(filename);
-            System.out.println(introspection);
-            System.out.println(getUML(introspection));
-            String puml = getUML(introspection);
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("Diag.puml"))) {
-                writer.write(puml);
-            } catch (IOException e) {
-                e.printStackTrace();
+    public void saveIntrospection(String className){
+        Classe classe = new Classe(className);
+
+        try{
+            Class<?> classeJava = Class.forName(className);
+
+            classe.setNomPackage(getPackage(classeJava));
+
+            if (classeJava.isInterface()){
+                classe.setInterface(true);
             }
-            notifierObservateur();
-        } catch (ClassNotFoundException e) {
+            else {
+                if (Modifier.isAbstract(classeJava.getModifiers())){
+                    classe.setAbstract(true);
+                }
+            }
+
+            ArrayList<Methode> methodes = getMethode(classeJava);
+            ArrayList<Attribut> attributs = getAttributs(classeJava);
+
+            classe.setAttributs(attributs);
+            classe.setMethodes(methodes);
+
+            if (!classes.contains(classe)){
+                classes.add(classe);
+            }
+
+            ajouterHeritage(classeJava);
+
+            // génération du diagramme UML
+            UML = createUML();
+        } catch (ClassNotFoundException e){
             e.printStackTrace();
         }
+        notifierObservateur();
     }
 
-    public String getIntrospection(){
-        return introspection;
-    }
-    
-    
-    //Introspection
-
-    public String introspection(String nomClasse) throws ClassNotFoundException {
-        // nom de la classe
-        Class<?> classe = Class.forName(nomClasse);
-
-        String s="----------------\nClasse: \n";
-
-        s+=getInterface(classe,getAffichage(classe.getModifiers()))+getNom(classe)+"\n"
-                +"----------------\nPackage: "+getPackage(classe)+"\n";
-        s+="----------------\nAttributs:\n";
-        for(Field field:classe.getDeclaredFields()){
-            s+= getAttribut(field)+"\n";
+    /**
+     * retourne true si le type est un type primitif ou un type de la classe java.lang
+     * false sinon
+     * @param type
+     * @return
+     */
+    public boolean typePrimitif(Class<?> type){
+        if (type.isPrimitive()){
+            return true;
         }
-        s+="----------------\nConstructeurs:\n";
-        for(Constructor<?> constructeur: classe.getDeclaredConstructors()){
-            s+=getMethodeConstruct(constructeur)+"\n";
+        else if (type.getName().startsWith("java.lang")){
+            return true;
         }
-        s+="----------------\nMéthodes:\n";
-        for(Method method:classe.getDeclaredMethods()){
-            s+=getMethodeConstruct(method)+"\n";
-        }
-        s+=getHeritage(classe);
-
-        return s.trim();
+        else
+            System.out.println(type);
+        return false;
     }
 
-    public String getNom(Class<?> classe) {
-        return classe.getName().substring(classe.getName().lastIndexOf('.')+1);
+    /**
+     * retourne false si la classe est une collection (List, Set, Map, etc)
+     * true sinon
+     * @param nom
+     * @return
+     */
+    public boolean classeExiste(String nom){
+        if (nom.startsWith("java.util")){
+            System.out.println(nom);
+            return false;
+        }
+        return true;
     }
 
     public String getPackage(Class<?> classe) {
         return classe.getPackage().getName();
     }
 
-    public String getAffichage(int mod){
-        String modifier="";
+    public ArrayList<Attribut> getAttributs(Class<?> classe){
+        ArrayList<Attribut> attributs = new ArrayList<>();
+        String className = classe.getName();
 
-        if(Modifier.isPublic(mod)){
-            modifier+="public ";
-        }
-        if(Modifier.isProtected(mod)){
-            modifier+="protected ";
-        }
-        if(Modifier.isPrivate(mod)){
-            modifier+="private ";
-        }
-        if(Modifier.isFinal(mod)){
-            modifier+="final ";
-        }
-        if(Modifier.isStatic(mod)){
-            modifier+="static ";
-        }
-        if(Modifier.isAbstract(mod)){
-            modifier+="abstract ";
-        }
-        return modifier;
-    }
-
-    public String getInterface(Class<?> classe, String modifier){
-        if(classe.isInterface()){
-            modifier = modifier.replace("abstract ","interface ");
-        }
-        else{
-            modifier+="class ";
-        }
-        return modifier;
-    }
-
-    public String getMethodeConstruct(Executable executable) {
-        String s= getAffichage(executable.getModifiers());
-        if (executable instanceof Constructor) {
-            s+=getNom(((Constructor<?>) executable).getDeclaringClass())+"(";
-        }
-        else if (executable instanceof Method) {
-            s+=((Method) executable).getName()+"(";
-        }
-        int n=executable.getParameterTypes().length;
-        int i=1;
-        for(Class<?> param :executable.getParameterTypes()){
-            s+=getNom(param);
-            if(i<n){
-                s+=",";
-            }
-            i++;
-        }
-        s+="): ";
-        if (executable instanceof Method) {
-            s+=getNom(((Method) executable).getReturnType());
-        }
-        return s;
-    }
-
-    public String getAttribut(Field field) {
-        return getAffichage(field.getModifiers())+getNom(field.getType())+" "+field.getName();
-    }
-
-    public String getHeritage(Class<?> classe) {
-        String s = "";
-
-        // Héritage direct (extends)
-        Class<?> superClass = classe.getSuperclass();
-        if (superClass != null && superClass != Object.class) {
-            s+="----------------\nClasse Mère:\n extends "+getNom(superClass)+"\n";
-        }
-
-        // Interfaces implémentées (implements)
-        Class<?>[] interfaces = classe.getInterfaces();
-        if (interfaces.length > 0) {
-            s+="----------------\nInterfaces:\n implements ";
-            for (int i = 0; i < interfaces.length; i++) {
-                s+=getNom(interfaces[i]);
-                if (i < interfaces.length - 1) {
-                    s+=", ";
-                }
-            }
-        }
-        return s;
-    }
-
-    public String getUML(String introspection)throws ClassNotFoundException{
-        StringBuilder mid = new StringBuilder("@startuml\n");
-        String[] pull = introspection.split("\n");
-        String lignes[] = new String[pull.length];
-
-        int j = 0;
-        for (int i=0;i<pull.length;i++){
-            String ligne=pull[i];
-            if(ligne.contains("-----")){
-                i+=1;
-            }
-            else {
-                if (ligne.contains("extends")) {
-                    int l = lignes[0].lastIndexOf("{");
-                    lignes[0] = lignes[0].substring(0, l) + ligne + "{";
-                }
-                else if (ligne.contains("implements")) {
-                    int l = lignes[0].lastIndexOf("{");
-                    lignes[0] = lignes[0].substring(0, l) + ligne + "{";
-                }
-                else {
-                    if (ligne.contains("public")) {
-                        ligne = ligne.replace("public ", "+");
-                    } else if (ligne.contains("private")) {
-                        ligne = ligne.replace("private ", "-");
-                    } else if (ligne.contains("protected")) {
-                        ligne = ligne.replace("protected ", "#");
-                    }
-
-                    if (i == 2) {
-                        ligne = ligne + "{";
-                        ligne = ligne.replace("+", "");
-                    }
-                    else {
-                        if (ligne.contains("abstract")) {
-                            ligne = ligne.replace("abstract ", "{abstract}");
-                        } else if (ligne.contains("static")) {
-                            ligne = ligne.replace("static ", "{static}");
+        for (Field field : classe.getDeclaredFields()) {
+            Class<?> type = field.getType();
+            if (typePrimitif(type)) {
+                Attribut attribut = new Attribut(field.getName(), field.getType(), field.getModifiers());
+                attributs.add(attribut);
+            } else {
+                if (classeExiste(type.getName())) {
+                    ajouterRelation(type.getName(), className, Relation.DEPENDANCE, "1", "1", field.getName());
+                } else {
+                    Type genericType = field.getGenericType();
+                    if (genericType instanceof ParameterizedType) {
+                        ParameterizedType paramT = (ParameterizedType) genericType;
+                        Type[] typeArguments = paramT.getActualTypeArguments();
+                        for (Type arg : typeArguments) {
+                            if (arg instanceof Class) {
+                                if (classeExiste(arg.getTypeName())) {
+                                    ajouterRelation(arg.getTypeName(), className, Relation.DEPENDANCE, "*", "1", field.getName());
+                                }
+                            }
                         }
                     }
 
-                    lignes[j] = ligne;
                 }
-                j++;
             }
         }
-        for (String l : lignes){
-            if(l!=null){
-                mid.append(l).append("\n");
-            }
-        }
+        return attributs;
 
-        String res =  mid + "}\n@enduml";
-
-        return res;
     }
 
+    private void ajouterRelation(String parent, String enfant, String type, String parentCardinalite, String enfantCardinalite, String nom){
+        Classe parentClasse = new Classe(parent);
+        Classe enfantClasse = new Classe(enfant);
+        Relation relation = new Relation(parentClasse, enfantClasse, type);
+        relation.setParentCardinalite(parentCardinalite);
+        relation.setEnfantCardinalite(enfantCardinalite);
+        relation.setNom(nom);
+        if (!relations.contains(relation)){
+            relations.add(relation);
+        }
+    }
+
+    public ArrayList<Methode> getMethode(Class<?> classe){
+        ArrayList<Methode> methodes = new ArrayList<>();
+        for (Constructor<?> constructor : classe.getDeclaredConstructors()){
+            Methode methode = new Methode(constructor.getName(), List.of(constructor.getParameters()), constructor.getModifiers());
+            methodes.add(methode);
+        }
+        for (Method method : classe.getDeclaredMethods()){
+            Methode methode = new Methode(method.getName(), method.getReturnType(), List.of(method.getParameters()), method.getModifiers());
+            methodes.add(methode);
+        }
+        return methodes;
+    }
+
+    public void ajouterHeritage(Class<?> className) {
+        Class<?> superClass = className.getSuperclass();
+        if (superClass != null && superClass != Object.class) {
+            Classe parent = new Classe(superClass.getName());
+            Classe enfant = new Classe(className.getName());
+            Relation relation = new Relation(parent, enfant, Relation.EXTENDS);
+            if (!relations.contains(relation)) {
+                relations.add(relation);
+            }
+        }
+
+        Class<?>[] interfaces = className.getInterfaces();
+        for (Class<?> interfaceClass : interfaces) {
+            Classe enfant = new Classe(className.getName());
+            Classe parent = new Classe(interfaceClass.getName());
+            Relation relation = new Relation(parent, enfant, Relation.IMPLEMENTS);
+            if (!relations.contains(relation)) {
+                relations.add(relation);
+            }
+        }
+    }
+
+    public String createUML(){
+        StringBuilder res = new StringBuilder("@startuml\n");
+        for (Classe c : classes){
+            if (c.isInterface()){
+                res.append("interface ").append(c.getNom()).append(" {\n");
+            } else if (c.isAbstract()) {
+                res.append("abstract class ").append(c.getNom()).append(" {\n");
+            }
+            else{
+                res.append("class ").append(c.getNom()).append(" {\n");
+            }
+
+            for (Attribut a : c.getAttributs()){
+                res.append(a.getUMLString()).append("\n");
+            }
+
+            for (Methode m : c.getMethodes()){
+                res.append(m.getUMLString()).append("\n");
+            }
+            res.append("}\n\n");
+        }
+        for (Relation r : relations){
+            res.append(r.getUMLString()).append("\n");
+        }
+        res.append("@enduml");
+        return res.toString();
+    }
+
+    public String getUML(){
+        return UML;
+    }
 }

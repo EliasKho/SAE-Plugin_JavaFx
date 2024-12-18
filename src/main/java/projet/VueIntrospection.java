@@ -3,9 +3,12 @@ package projet;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 
-public class VueIntrospection extends ScrollPane implements Observateur{
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class VueIntrospection implements Observateur{
     private Modele modele;
-    private Label introspection;
 
     public VueIntrospection(Modele m) {
         this.modele = m;
@@ -14,9 +17,13 @@ public class VueIntrospection extends ScrollPane implements Observateur{
 
     public void actualiser(Sujet s){
         Modele m = (Modele) s;
-        introspection = new Label(m.getIntrospection());
-        introspection.setLayoutX(10);
-        introspection.setLayoutY(0);
-        this.setContent(introspection);
+        String UML = m.getUML();
+        System.out.println(UML);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("Diag.puml"))) {
+            writer.write(UML);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
