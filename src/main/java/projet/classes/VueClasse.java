@@ -5,6 +5,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextBoundsType;
 import projet.Modele;
 import projet.Observateur;
 import projet.Sujet;
@@ -21,13 +22,13 @@ public class VueClasse extends ScrollPane implements Observateur {
 
     @Override
     public void actualiser(Sujet s) {
-        if (this.modele.getClasses().isEmpty()){
+        if (((Modele)s).getClasses().isEmpty()){
             // affichage d'un écran vide
             this.getChildren().clear();
             return;
         }
         // Récupérer la classe et ses attributs et méthodes
-        Classe classe = this.modele.getClasses().getLast();
+        Classe classe = ((Modele)s).getClasses().getLast();
         List<Attribut> attributs = classe.getAttributs();
         List<Methode> methodes = classe.getMethodes();
 
@@ -35,8 +36,8 @@ public class VueClasse extends ScrollPane implements Observateur {
         this.getChildren().clear();
 
         // Position de départ pour le premier rectangle (nom de la classe)
-        double yPosition = 20;
-        double xPosition = 10;
+        double yPosition = 20+ classe.getY();
+        double xPosition = 10+ classe.getX();
 
         // 1. Création du rectangle pour le nom de la classe
         Rectangle classBox = new Rectangle(200, 30);
