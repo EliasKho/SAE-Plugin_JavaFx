@@ -227,4 +227,8 @@ public class Modele implements Sujet{
     public String getUML(){
         return UML;
     }
+
+    public List<Classe> getClasses(){
+        return classes;
+    }
 }
