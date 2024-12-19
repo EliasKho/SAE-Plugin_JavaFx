@@ -6,7 +6,7 @@ public class Relation {
 
     public static final String IMPLEMENTS = ".u.|>";
     public static final String EXTENDS = "-u-|>";
-    public static final String DEPENDANCE = "..>";
+    public static final String DEPENDANCE = "-->";
 
     private Classe parent;
     private Classe enfant;
