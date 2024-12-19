@@ -1,0 +1,21 @@
+Fonctionnalités effectuées :
+
+Affichage d'une classe sur la vue
+    affichage d'une classe lors d'un clique sur la vue
+    classe affichée à l'endroit du clique
+
+Generer le code source plantUML
+    génération du code source plantUML du modele complet (toutes les classes ajoutées)
+    gestion des dépendances entre les classes pour le plantUML
+
+Ajouter les classes de gestion de classe
+    ajout des classes Attribut, Methode, Relation et Classe pour gerer les classes
+
+Créer un fichier diagramme de classe plantUML :
+    utilisation du code source plantUML pour générer un fichier .puml de diagramme de classe (VueUML)
+
+
+Cas d'utilisation :
+
+Exporter le diagramme sous forme de source plantUML
+    le code source plantUML est déjà généré et mis dans un fichier, il faudra juste le relier à un bouton
