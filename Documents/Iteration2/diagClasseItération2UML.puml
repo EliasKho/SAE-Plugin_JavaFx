@@ -1,120 +1,131 @@
 @startuml
-class Attribut {
--nom: String
--type: Type
--modifier: int
-+Attribut(String,Type,int)
-+equals(Object):boolean
-+hashCode():int
-+ getter/setter(): void
+skinparam class {
+    BackgroundColor<<Classe>> LightYellow
+    BackgroundColor<<Attribut>> LightYellow
+    BackgroundColor<<Methode>> LightYellow
+    BackgroundColor<<Relation>> LightYellow
+    BackgroundColor<<VueClasse>> LightYellow
+    BackgroundColor<<Modele>> LightBlue
+    BorderColor Black
+    ArrowColor Black
 }
 
-class Classe {
--nom: String
--isInterface: boolean
--isAbstract: boolean
--nomPackage: String
--x: double
--y: double
--Classe()
-+Classe(String)
-+equals(Object):boolean
-+hashCode():int
-+isInterface():boolean
-+isAbstract():boolean
-+ getter/setter(): void
+class Attribut <<Attribut>> {
+    -nom: String
+    -type: Type
+    -modifier: int
+    +Attribut(String,Type,int)
+    +equals(Object):boolean
+    +hashCode():int
+    + getter/setter(): void
 }
 
-class Methode {
--nom: String
--typeRetour: Type
--modifier: int
--constructeur: boolean
-+Methode(String,Type,List,int)
-+Methode(String,List,int)
-+equals(Object):boolean
-+hashCode():int
-+isConstructeur():boolean
-+ getter/setter(): void
+class Classe <<Classe>> {
+    -nom: String
+    -isInterface: boolean
+    -isAbstract: boolean
+    -nomPackage: String
+    -x: double
+    -y: double
+    -Classe()
+    +Classe(String)
+    +equals(Object):boolean
+    +hashCode():int
+    +isInterface():boolean
+    +isAbstract():boolean
+    + getter/setter(): void
 }
 
-class Relation {
-+{static} IMPLEMENTS: String
-+{static} EXTENDS: String
-+{static} DEPENDANCE: String
--type: String
--nom: String
--parentCardinalite: String
--enfantCardinalite: String
-+Relation(Classe,Classe,String)
-+equals(Object):boolean
-+hashCode():int
-+ getter/setter(): void
+class Methode <<Methode>> {
+    -nom: String
+    -typeRetour: Type
+    -modifier: int
+    -constructeur: boolean
+    +Methode(String,Type,List,int)
+    +Methode(String,List,int)
+    +equals(Object):boolean
+    +hashCode():int
+    +isConstructeur():boolean
+    + getter/setter(): void
 }
 
-class VueClasse {
-+VueClasse(Modele)
-+actualiser(Sujet):void
+class Relation <<Relation>> {
+    +{static} IMPLEMENTS: String
+    +{static} EXTENDS: String
+    +{static} DEPENDANCE: String
+    -type: String
+    -nom: String
+    -parentCardinalite: String
+    -enfantCardinalite: String
+    +Relation(Classe,Classe,String)
+    +equals(Object):boolean
+    +hashCode():int
+    + getter/setter(): void
+}
+
+class VueClasse <<VueClasse>> {
+    +VueClasse(Modele)
+    +actualiser(Sujet):void
 }
 
 class main {
-+main()
-+{static} main(String;):void
-+start(Stage):void
+    +main()
+    +{static} main(String;):void
+    +start(Stage):void
 }
 
-class Modele {
--UML: String
-+Modele(FileComposite)
-+notifierObservateur():void
-+supprimerObservateur(Observateur):void
-+createUML():String
-+typePrimitif(Class):boolean
-+ajouterHeritage(Class):void
-+classeExiste(String):boolean
-+saveIntrospection(String,double,double):void
--ajouterRelation(String,String,String,String,String,String):void
-+enregistrerObservateur(Observateur):void
-+ getter/setter(): void
+class Modele <<Modele>> {
+    -UML: String
+    +Modele(FileComposite)
+    +notifierObservateur():void
+    +supprimerObservateur(Observateur):void
+    +createUML():String
+    +typePrimitif(Class):boolean
+    +ajouterHeritage(Class):void
+    +classeExiste(String):boolean
+    +saveIntrospection(String,double,double):void
+    -ajouterRelation(String,String,String,String,String,String):void
+    +enregistrerObservateur(Observateur):void
+    + getter/setter(): void
 }
 
 interface Observateur {
-+{abstract} actualiser(Sujet):void
+    +{abstract} actualiser(Sujet):void
 }
 
 interface Sujet {
-+{abstract} notifierObservateur():void
-+{abstract} supprimerObservateur(Observateur):void
-+{abstract} enregistrerObservateur(Observateur):void
+    +{abstract} notifierObservateur():void
+    +{abstract} supprimerObservateur(Observateur):void
+    +{abstract} enregistrerObservateur(Observateur):void
 }
 
 class VueIntrospection {
-+VueIntrospection(Modele)
-+actualiser(Sujet):void
+    +VueIntrospection(Modele)
+    +actualiser(Sujet):void
 }
 
 class ControlerClic {
--nomClasse: String
-+ControlerClic(Modele)
-+handle(MouseEvent):void
-handle(Event):void
+    -nomClasse: String
+    +ControlerClic(Modele)
+    +handle(MouseEvent):void
+    handle(Event):void
 }
 
-ControlerClic "1" ..> "1" Modele : modele
+ControlerClic "1" --> "1" Modele : modele
 ControlerClic .u.|> EventHandler : ""
-Classe "1" .left.> "*" Methode : methodes
-Classe "1" ..> "*" Attribut : attributs
-Methode "1" ..> "*" Parameter : parametres
-Relation "1" ..> "1" Classe : parent
-VueClasse "1" ..> "1" Modele : modele
+Classe "1" -left-> "*" Methode : methodes
+Classe "1" --> "*" Attribut : attributs
+Methode "1" --> "*" Parameter : parametres
+Relation "1" --> "1" Classe : parent
+VueClasse "1" --> "1" Modele : modele
 VueClasse -u-|> ScrollPane : ""
 VueClasse .u.|> Observateur : ""
 main -u-|> Application : ""
-Modele "1" ..> "1" FileComposite : file
-Modele "1" ..> "*" Observateur : observateurs
-Modele "1" ..> "*" Classe : classes
-Modele "1" .right.> "*" Relation : relations
+Modele "1" --> "1" FileComposite : file
+Modele "1" --> "*" Observateur : observateurs
+Modele "1" --> "*" Classe : classes
+Modele "1" -right-> "*" Relation : relations
 Modele .u.|> Sujet : ""
-VueIntrospection "1" ..> "1" Modele : modele
+VueIntrospection "1" --> "1" Modele : modele
 VueIntrospection .u.|> Observateur : ""
 @enduml
