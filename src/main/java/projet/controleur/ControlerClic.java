@@ -51,8 +51,7 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                 double y = event.getY();
 
                 // on récupère le fichier sélectionné
-                FileComposite file = modele.getRacine();
-                modele.saveIntrospection(nomClasse);
+                modele.saveIntrospection(nomClasse, x, y);
             }
         }
     }

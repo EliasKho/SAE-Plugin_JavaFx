@@ -43,7 +43,7 @@ public class Modele implements Sujet{
         observateurs.remove(observateur);
     }
 
-    public void saveIntrospection(String className){
+    public void saveIntrospection(String className, double x, double y){
         Classe classe = new Classe(className);
 
         try{
@@ -71,6 +71,9 @@ public class Modele implements Sujet{
             }
 
             ajouterHeritage(classeJava);
+
+            classe.setX(x);
+            classe.setY(y);
 
             // génération du diagramme UML
             UML = createUML();
