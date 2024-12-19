@@ -14,6 +14,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import projet.arborescence.Dossier;
 import projet.arborescence.VueArborescence;
+import projet.classes.VueClasse;
 import projet.controleur.ControlerClic;
 
 import java.io.File;
@@ -98,18 +99,22 @@ public class main extends Application {
         stage.show();
     }*/
         // création du modèle
-        Dossier dossier = new Dossier(new File("src/main/java"));
+        Dossier dossier = new Dossier(new File("src/main/java/projet"));
         Modele modele = new Modele(dossier);
 
         // controleurs
         ControlerClic controlerClic = new ControlerClic(modele);
 
         HBox hbox = new HBox();
+        VueClasse vueClasse = new VueClasse(modele);
+        modele.enregistrerObservateur(vueClasse);
         VueArborescence arborescence = new VueArborescence(modele, controlerClic);
+
 //        modele.enregistrerObservateur((arborescence));
         VueIntrospection vueIntrospection = new VueIntrospection(modele);
         modele.enregistrerObservateur(vueIntrospection);
         ScrollPane scrollpane = new ScrollPane();
+        scrollpane.setOnMouseClicked(controlerClic);
 
         scrollpane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
@@ -117,7 +122,7 @@ public class main extends Application {
         scrollpane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
 
         hbox.getChildren().add(arborescence);
-        hbox.getChildren().add(scrollpane);
+        hbox.getChildren().add(vueClasse);
 
 
         //hbox.setSpacing(10); // Ajouter un espacement entre les éléments

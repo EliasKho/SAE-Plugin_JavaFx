@@ -11,6 +11,8 @@ public class Classe {
     private boolean isInterface;
     private boolean isAbstract;
     private String nomPackage;
+    private double x;
+    private double y;
 //    private List<String> parents;
 
     private Classe(){
@@ -66,6 +68,20 @@ public class Classe {
     }
     public void setNomPackage(String nomPackage) {
         this.nomPackage = nomPackage;
+    }
+
+    public double getX() {
+        return x;
+    }
+    public double getY() {
+        return y;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+    public void setY(double y) {
+        this.y = y;
     }
 
     @Override

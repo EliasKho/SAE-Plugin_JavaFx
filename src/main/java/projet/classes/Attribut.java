@@ -53,8 +53,30 @@ public class Attribut {
         if(Modifier.isAbstract(modifier)){
             affichage+="{abstract} ";
         }
+        return affichage+nom+": "+ type.getTypeName().substring(type.getTypeName().lastIndexOf(".")+1);
+    }
+
+    public String getString() {
+        String affichage="";
+        if(Modifier.isPublic(modifier)){
+            affichage+="public ";
+        }
+        if(Modifier.isProtected(modifier)){
+            affichage+="protected ";
+        }
+        if(Modifier.isPrivate(modifier)){
+            affichage+="private ";
+        }
+        if(Modifier.isStatic(modifier)){
+            affichage+="static ";
+        }
+        if(Modifier.isAbstract(modifier)){
+            affichage+="abstract ";
+        }
         return affichage+nom+":"+ type.getTypeName().substring(type.getTypeName().lastIndexOf(".")+1);
     }
+
+
 
     @Override
     public boolean equals(Object o) {

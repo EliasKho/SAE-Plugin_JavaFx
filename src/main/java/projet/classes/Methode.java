@@ -97,6 +97,41 @@ public class Methode {
         return affichage;
     }
 
+    public String getString(){
+        String affichage="";
+        if(modifier == 1){
+            affichage+="public ";
+        }
+        if(modifier == 4){
+            affichage+="protected ";
+        }
+        if(modifier == 2){
+            affichage+="private ";
+        }
+        if(modifier == 9){
+            affichage+="public static ";
+        }
+        if(modifier == 1025){
+            affichage+="public abstract ";
+        }
+        affichage+=nom+"(";
+        if (parametres != null) {
+            for (Parameter parametre : parametres) {
+                affichage+= parametre.getType().getName().substring(parametre.getType().getName().lastIndexOf(".")+1)+",";
+            }
+            if(parametres.size()>0){
+                affichage=affichage.substring(0, affichage.length()-1);
+            }
+        }
+        if (constructeur){
+            affichage+=")";
+        }
+        else {
+            affichage += "): " + typeRetour.getTypeName().substring(typeRetour.getTypeName().lastIndexOf(".") + 1);
+        }
+        return affichage;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
