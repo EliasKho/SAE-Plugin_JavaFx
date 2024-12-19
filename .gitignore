@@ -50,3 +50,7 @@ out/*
 .out/*
 .out/
 
+src/main/java/logo/
+src/main/java/logo/*
+img/
+img/*
