@@ -106,14 +106,14 @@ public class main extends Application {
         ControlerClic controlerClic = new ControlerClic(modele);
 
         HBox hbox = new HBox();
-        VueClasse vueClasse = new VueClasse(modele);
-        modele.enregistrerObservateur(vueClasse);
         VueArborescence arborescence = new VueArborescence(modele, controlerClic);
 
 //        modele.enregistrerObservateur((arborescence));
         VueIntrospection vueIntrospection = new VueIntrospection(modele);
         modele.enregistrerObservateur(vueIntrospection);
-        ScrollPane scrollpane = new ScrollPane();
+        VueClasse scrollpane = new VueClasse(modele);
+        modele.enregistrerObservateur(scrollpane);
+
         scrollpane.setOnMouseClicked(controlerClic);
 
         scrollpane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -122,7 +122,7 @@ public class main extends Application {
         scrollpane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
 
         hbox.getChildren().add(arborescence);
-        hbox.getChildren().add(vueClasse);
+        hbox.getChildren().add(scrollpane);
 
 
         //hbox.setSpacing(10); // Ajouter un espacement entre les éléments

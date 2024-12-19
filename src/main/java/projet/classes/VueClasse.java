@@ -1,5 +1,6 @@
 package projet.classes;
 
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -10,7 +11,7 @@ import projet.Sujet;
 
 import java.util.List;
 
-public class VueClasse extends Pane implements Observateur {
+public class VueClasse extends ScrollPane implements Observateur {
 
     private Modele modele;
 
@@ -20,6 +21,11 @@ public class VueClasse extends Pane implements Observateur {
 
     @Override
     public void actualiser(Sujet s) {
+        if (this.modele.getClasses().isEmpty()){
+            // affichage d'un écran vide
+            this.getChildren().clear();
+            return;
+        }
         // Récupérer la classe et ses attributs et méthodes
         Classe classe = this.modele.getClasses().getLast();
         List<Attribut> attributs = classe.getAttributs();
