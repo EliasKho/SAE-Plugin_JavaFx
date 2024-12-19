@@ -1,44 +1,35 @@
 @startuml
-class Modele {
--UML: String
-+Modele(FileComposite)
-+getPackage(Class):String
-+getClasses():List
-+enregistrerObservateur(Observateur):void
-+getRacine():FileComposite
-+getUML():String
-+createUML():String
-+getMethode(Class):ArrayList
-+saveIntrospection(String):void
-+ajouterHeritage(Class):void
-+typePrimitif(Class):boolean
-+classeExiste(String):boolean
-+getAttributs(Class):ArrayList
--ajouterRelation(String,String,String,String,String,String):void
-+supprimerObservateur(Observateur):void
-+notifierObservateur():void
+class CrazyFrog {
++CrazyFrog()
++CombienCaCoute():double
++getLogo():MyImage
 }
 
-class Attribut {
--nom: String
--type: Type
--modifier: int
-+Attribut(String,Type,int)
-+setType(Type):void
-+equals(Object):boolean
-+hashCode():int
-+getType():Type
-+getString():String
-+getModifier():int
-+getNom():String
-+setNom(String):void
-+getUMLString():String
-+setModifier(int):void
+class Lunettes {
++Lunettes(Logo)
++CombienCaCoute():double
++getLogo():MyImage
 }
 
-Modele "1" ..> "1" FileComposite : file
-Modele "1" ..> "*" Observateur : observateurs
-Modele "1" ..> "*" Classe : classes
-Modele "1" ..> "*" Relation : relations
-Modele .u.|> Sujet : ""
+class ReneLaTaupe {
++ReneLaTaupe()
++CombienCaCoute():double
++getLogo():MyImage
+}
+
+class MyImage {
++MyImage(MyImage)
++MyImage(String)
++display():void
+#paintComponent(Graphics):void
++textOver(String,int,int):void
++paintOver(String,int,int):void
+}
+
+CrazyFrog -u-|> Logo : ""
+Lunettes -u-|> DecorateurImage : ""
+ReneLaTaupe -u-|> Logo : ""
+MyImage "1" ..> "1" BufferedImage : image
+MyImage "1" ..> "1" Dimension : size
+MyImage -u-|> JPanel : ""
 @enduml

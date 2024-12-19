@@ -1,16 +1,13 @@
 package projet;
 
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class VueIntrospection implements Observateur{
+public class VueUML implements Observateur{
     private Modele modele;
 
-    public VueIntrospection(Modele m) {
+    public VueUML(Modele m) {
         this.modele = m;
         actualiser(m);
     }

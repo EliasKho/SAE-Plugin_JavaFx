@@ -1,16 +1,9 @@
 package projet;
 
 import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import projet.arborescence.Dossier;
 import projet.arborescence.VueArborescence;
@@ -99,7 +92,7 @@ public class main extends Application {
         stage.show();
     }*/
         // création du modèle
-        Dossier dossier = new Dossier(new File("src/main/java/projet"));
+        Dossier dossier = new Dossier(new File("src/main/java"));
         Modele modele = new Modele(dossier);
 
         // controleurs
@@ -109,8 +102,8 @@ public class main extends Application {
         VueArborescence arborescence = new VueArborescence(modele, controlerClic);
 
 //        modele.enregistrerObservateur((arborescence));
-        VueIntrospection vueIntrospection = new VueIntrospection(modele);
-        modele.enregistrerObservateur(vueIntrospection);
+        VueUML vueUML = new VueUML(modele);
+        modele.enregistrerObservateur(vueUML);
         VueClasse scrollpane = new VueClasse(modele);
         modele.enregistrerObservateur(scrollpane);
 
