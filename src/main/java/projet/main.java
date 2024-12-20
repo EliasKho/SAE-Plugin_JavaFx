@@ -93,7 +93,7 @@ public class main extends Application {
         stage.show();
     }*/
         // création du modèle
-        Dossier dossier = new Dossier(new File("src/main/java"));
+        Dossier dossier = new Dossier(new File("src/main/java/projet/classes"));
         Modele modele = new Modele(dossier);
 
         // controleurs
@@ -112,8 +112,10 @@ public class main extends Application {
         scrollpane.setOnMouseClicked(controlerClic);
         scrollpane.setOnMousePressed(controlerDrag);
         scrollpane.setOnMouseDragged(controlerDrag);
+        scrollpane.setOnMouseReleased(controlerDrag);
+        scrollpane.setOnMouseDragReleased(controlerDrag);
 
-        scrollpane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        //scrollpane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
         arborescence.setStyle("-fx-border-color: black; -fx-border-width: 2;");
         scrollpane.setStyle("-fx-border-color: black; -fx-border-width: 2;");

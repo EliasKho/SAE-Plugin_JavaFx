@@ -21,12 +21,20 @@ public class ControlerDrag implements EventHandler<MouseEvent> {
     @Override
     public void handle(MouseEvent mouseEvent) {
         if (mouseEvent.getEventType()==MouseEvent.MOUSE_PRESSED) {
-            x = mouseEvent.getSceneX()-((Node)mouseEvent.getSource()).getTranslateX();
-            y = mouseEvent.getSceneY()-((Node)mouseEvent.getSource()).getTranslateY();
+            x=mouseEvent.getX();
+            y=mouseEvent.getY();
         }
-        if (mouseEvent.getEventType()==MouseEvent.MOUSE_DRAGGED) {
-            ((Node)mouseEvent.getSource()).setTranslateX(mouseEvent.getSceneX()-x);
-            ((Node)mouseEvent.getSource()).setTranslateY(mouseEvent.getSceneY()-y);
+
+        if (mouseEvent.getEventType()==MouseEvent.MOUSE_RELEASED) {
+            if(!modele.getClasses().isEmpty()){
+                for(Classe c : modele.getClasses()){
+                    if(c.getX()<=x && c.getY()<=y && c.getX()+c.getLargeur()>=x && c.getY()+c.getLongueur()>=y){
+                        c.setX(mouseEvent.getX());
+                        c.setY(mouseEvent.getY());
+                        modele.notifierObservateur();
+                    }
+                }
+            }
         }
     }
 }

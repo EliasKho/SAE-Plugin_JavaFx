@@ -97,7 +97,7 @@ public class Modele implements Sujet{
             return true;
         }
         else
-            System.out.println(type);
+            //System.out.println(type);
         return false;
     }
 
@@ -109,7 +109,7 @@ public class Modele implements Sujet{
      */
     public boolean classeExiste(String nom){
         if (nom.startsWith("java.util")){
-            System.out.println(nom);
+            //System.out.println(nom);
             return false;
         }
         return true;

@@ -13,6 +13,8 @@ public class Classe {
     private String nomPackage;
     private double x;
     private double y;
+    private double longueur;
+    private double largeur;
 //    private List<String> parents;
 
     private Classe(){
@@ -21,6 +23,8 @@ public class Classe {
         attributs = new ArrayList<>();
         isInterface = false;
         isAbstract = false;
+        largeur = 200;
+        longueur = 30;
     }
 
     public Classe(String nom){
@@ -75,6 +79,20 @@ public class Classe {
     }
     public double getY() {
         return y;
+    }
+    public double getLongueur() {
+        return longueur;
+    }
+    public double getLargeur() {
+        return largeur;
+    }
+
+    public void setLongueur(double longueur) {
+        this.longueur = longueur;
+    }
+
+    public void setLargeur(double largeur) {
+        this.largeur = largeur;
     }
 
     public void setX(double x) {

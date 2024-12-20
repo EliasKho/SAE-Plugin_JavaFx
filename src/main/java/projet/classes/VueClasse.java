@@ -2,110 +2,97 @@ package projet.classes;
 
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextBoundsType;
 import projet.Modele;
 import projet.Observateur;
 import projet.Sujet;
 
+import java.awt.*;
 import java.util.List;
 
-public class VueClasse extends ScrollPane implements Observateur {
+public class VueClasse extends Pane implements Observateur {
 
     private Modele modele;
 
     public VueClasse(Modele modele) {
         this.modele = modele;
+        this.getChildren().clear();
     }
 
     @Override
     public void actualiser(Sujet s) {
-        if (((Modele)s).getClasses().isEmpty()){
-            // affichage d'un écran vide
-            this.getChildren().clear();
-            return;
-        }
-        // Récupérer la classe et ses attributs et méthodes
-        Classe classe = ((Modele)s).getClasses().getLast();
-        List<Attribut> attributs = classe.getAttributs();
-        List<Methode> methodes = classe.getMethodes();
-
-        // Effacer le pane avant de redessiner
         this.getChildren().clear();
+        if(!modele.getClasses().isEmpty()) {
+            for (Classe classe : modele.getClasses()) {
+                VBox container = new VBox();
+                // Récupérer la classe et ses attributs et méthodes
+                List<Attribut> attributs = classe.getAttributs();
+                List<Methode> methodes = classe.getMethodes();
 
-        // Position de départ pour le premier rectangle (nom de la classe)
-        double yPosition = 20+ classe.getY();
-        double xPosition = 10+ classe.getX();
+                // Effacer la VBox avant de redessiner
+                container.getChildren().clear();
 
-        // 1. Création du rectangle pour le nom de la classe
-        Rectangle classBox = new Rectangle(200, 30);
-        classBox.setX(xPosition);
-        classBox.setY(yPosition);
-        classBox.setFill(Color.LIGHTGRAY);
-        classBox.setStroke(Color.BLACK);
-        this.getChildren().add(classBox);
+                // 1. Nom de la classe
+                Text classNameText = new Text();
+                String nom = (classe.isInterface() ? "interface " : (classe.isAbstract() ? "abstract " : "class ")) + classe.getNom();
+                classNameText.setText(nom);
 
-        // Affichage du nom de la classe dans le rectangle
-        String nom ="";
-        if(classe.isInterface()){
-            nom+="interface ";
-        }
-        else {
-            if(classe.isAbstract()){
-                nom+="abstract ";
+                // 2. Créer un StackPane pour la classe
+                StackPane classBoxContainer = new StackPane();
+                classBoxContainer.setStyle("-fx-background-color: lightgray; -fx-padding: 5px;");
+                classBoxContainer.getChildren().add(classNameText);
+
+                // 3. Attributs
+                StackPane attributesContainer = new StackPane();
+                attributesContainer.setStyle("-fx-background-color: lightyellow; -fx-padding: 5px;");
+
+                String strAtr = "";
+                for (Attribut attribut : attributs) {
+                    strAtr += attribut.getString() + "\n";
+                }
+                Text attributesText = new Text(strAtr);
+                attributesContainer.getChildren().add(attributesText);
+
+                // 4. Méthodes
+                StackPane methodsContainer = new StackPane();
+                methodsContainer.setStyle("-fx-background-color: lightgreen; -fx-padding: 5px;");
+
+                String strMet = "";
+                for (Methode methode : methodes) {
+                    strMet += methode.getString() + "\n";
+                }
+                Text methodsText = new Text(strMet);
+                methodsContainer.getChildren().add(methodsText);
+
+                // Ajouter les containers au VBox
+                container.getChildren().add(classBoxContainer);
+                container.getChildren().add(attributesContainer);
+                container.getChildren().add(methodsContainer);
+
+                // Ajuster la largeur de la classe en fonction des containers
+                container.layout();  // Forcer la mise en page des éléments
+                double largeurMax = Math.max(
+                        classBoxContainer.getBoundsInParent().getWidth(),
+                        Math.max(attributesContainer.getBoundsInParent().getWidth(),
+                                methodsContainer.getBoundsInParent().getWidth())
+                );
+
+                // Mettre à jour la largeur de la classe
+                classe.setLargeur(largeurMax);
+
+                // Mettre à jour la hauteur totale
+                double totalHeight = classBoxContainer.getHeight() + attributesContainer.getHeight() + methodsContainer.getHeight();
+                classe.setLongueur(totalHeight);
+
+                // Déplacer la classe à la position X et Y spécifiées
+                container.setTranslateX(classe.getX());
+                container.setTranslateY(classe.getY());
+                this.getChildren().add(container);
             }
-            nom+="class ";
-        }
-        nom += classe.getNom();
-        Text classNameText = new Text(nom);
-        classNameText.setX(xPosition + 5); // Décalage légèrement à droite pour ne pas être collé au bord
-        classNameText.setY(yPosition + 20); // Positionner verticalement au centre du rectangle
-        this.getChildren().add(classNameText);
-
-        // 2. Positionnement du rectangle pour les attributs
-        yPosition += 30; // Déplacer un peu plus bas pour les attributs
-
-        // Création du rectangle pour les attributs
-        Rectangle attributesBox = new Rectangle(200, 20 + attributs.size() * 20); // Ajuste la hauteur en fonction du nombre d'attributs
-        attributesBox.setX(xPosition);
-        attributesBox.setY(yPosition);
-        attributesBox.setFill(Color.LIGHTYELLOW);
-        attributesBox.setStroke(Color.BLACK);
-        this.getChildren().add(attributesBox);
-
-        // Affichage des attributs dans le rectangle
-        double attributYPosition = yPosition + 20; // Commence juste après le rectangle
-        for (Attribut attribut : attributs) {
-            String nomAttribut = attribut.getString();
-            Text attributText = new Text(nomAttribut);
-            attributText.setX(xPosition + 5); // Décalage légèrement à droite pour les attributs
-            attributText.setY(attributYPosition);
-            this.getChildren().add(attributText);
-            attributYPosition += 20; // Espacement entre les attributs
         }
 
-        // 3. Positionnement du rectangle pour les méthodes
-        yPosition += attributesBox.getHeight(); // Positionner juste après les attributs
-
-        // Création du rectangle pour les méthodes
-        Rectangle methodsBox = new Rectangle(200, 20 + methodes.size() * 20); // Ajuste la hauteur en fonction du nombre de méthodes
-        methodsBox.setX(xPosition);
-        methodsBox.setY(yPosition);
-        methodsBox.setFill(Color.LIGHTGREEN);
-        methodsBox.setStroke(Color.BLACK);
-        this.getChildren().add(methodsBox);
-
-        // Affichage des méthodes dans le rectangle
-        double methodYPosition = yPosition + 20; // Commence juste après le rectangle
-        for (Methode methode : methodes) {
-            String nomMethode = methode.getString();
-            Text methodeText = new Text(nomMethode);
-            methodeText.setX(xPosition + 5); // Décalage légèrement à droite pour les méthodes
-            methodeText.setY(methodYPosition);
-            this.getChildren().add(methodeText);
-            methodYPosition += 20; // Espacement entre les méthodes
-        }
     }
 }

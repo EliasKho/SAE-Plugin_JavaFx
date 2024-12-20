@@ -5,6 +5,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import projet.Modele;
 import projet.arborescence.Dossier;
 import projet.arborescence.Fichier;
@@ -44,7 +45,7 @@ public class ControlerClic implements EventHandler<MouseEvent> {
             }
         }
 
-        if (event.getSource() instanceof ScrollPane) {
+        if (event.getSource() instanceof Pane) {
             if (nomClasse != null) {
                 // on récupère les coordonnées du clic
                 double x = event.getX();
