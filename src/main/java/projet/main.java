@@ -111,9 +111,7 @@ public class main extends Application {
 
         scrollpane.setOnMouseClicked(controlerClic);
         scrollpane.setOnMousePressed(controlerDrag);
-        scrollpane.setOnMouseDragged(controlerDrag);
         scrollpane.setOnMouseReleased(controlerDrag);
-        scrollpane.setOnMouseDragReleased(controlerDrag);
 
         //scrollpane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
