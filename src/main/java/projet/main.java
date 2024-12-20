@@ -9,6 +9,7 @@ import projet.arborescence.Dossier;
 import projet.arborescence.VueArborescence;
 import projet.classes.VueClasse;
 import projet.controleur.ControlerClic;
+import projet.controleur.ControlerDrag;
 
 import java.io.File;
 
@@ -97,6 +98,7 @@ public class main extends Application {
 
         // controleurs
         ControlerClic controlerClic = new ControlerClic(modele);
+        ControlerDrag controlerDrag = new ControlerDrag(modele);
 
         HBox hbox = new HBox();
         VueArborescence arborescence = new VueArborescence(modele, controlerClic);
@@ -108,6 +110,8 @@ public class main extends Application {
         modele.enregistrerObservateur(scrollpane);
 
         scrollpane.setOnMouseClicked(controlerClic);
+        scrollpane.setOnMousePressed(controlerDrag);
+        scrollpane.setOnMouseDragged(controlerDrag);
 
         scrollpane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
@@ -126,8 +130,6 @@ public class main extends Application {
 
         scrollpane.setMinWidth(scene.getWidth()*75/100);
         scrollpane.setMaxWidth(scene.getWidth()*75/100);
-
-
 
         stage.setTitle("Diagramme Class Makker");
         stage.setScene(scene);

@@ -1,0 +1,51 @@
+@startuml
+class Modele {
+-UML: String
++Modele(FileComposite)
++getPackage(Class):String
++getClasses():List
++getMethode(Class):ArrayList
++enregistrerObservateur(Observateur):void
++createUML():String
+-ajouterRelation(String,String,String,String,String,String):void
++typePrimitif(Class):boolean
++classeExiste(String):boolean
++getAttributs(Class):ArrayList
++saveIntrospection(String,double,double):void
++ajouterHeritage(Class):void
++notifierObservateur():void
++supprimerObservateur(Observateur):void
++getRacine():FileComposite
++getUML():String
+}
+
+class main {
++main()
++{static} main(String;):void
++start(Stage):void
+}
+
+interface Sujet {
++{abstract} enregistrerObservateur(Observateur):void
++{abstract} notifierObservateur():void
++{abstract} supprimerObservateur(Observateur):void
+}
+
+class VueUML {
++VueUML(Modele)
++actualiser(Sujet):void
+}
+
+interface Observateur {
++{abstract} actualiser(Sujet):void
+}
+
+Modele "1" --> "1" FileComposite : file
+Modele "1" --> "*" Observateur : observateurs
+Modele "1" --> "*" Classe : classes
+Modele "1" --> "*" Relation : relations
+Modele .u.|> Sujet : ""
+main -u-|> Application : ""
+VueUML "1" --> "1" Modele : modele
+VueUML .u.|> Observateur : ""
+@enduml
