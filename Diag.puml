@@ -1,51 +1,31 @@
 @startuml
-class Modele {
--UML: String
-+Modele(FileComposite)
-+getPackage(Class):String
-+getClasses():List
-+getMethode(Class):ArrayList
-+enregistrerObservateur(Observateur):void
-+createUML():String
--ajouterRelation(String,String,String,String,String,String):void
-+typePrimitif(Class):boolean
-+classeExiste(String):boolean
-+getAttributs(Class):ArrayList
-+saveIntrospection(String,double,double):void
-+ajouterHeritage(Class):void
-+notifierObservateur():void
-+supprimerObservateur(Observateur):void
-+getRacine():FileComposite
-+getUML():String
+class Fichier {
++Fichier(File)
++getChildren(): List
 }
 
-class main {
-+main()
-+{static} main(String;):void
-+start(Stage):void
+interface Observateur {
++{abstract} actualiser(Sujet): void
 }
 
-interface Sujet {
-+{abstract} enregistrerObservateur(Observateur):void
-+{abstract} notifierObservateur():void
-+{abstract} supprimerObservateur(Observateur):void
+class Dossier {
++Dossier(File)
++getChildren(): List
 }
 
 class VueUML {
 +VueUML(Modele)
-+actualiser(Sujet):void
++actualiser(Sujet): void
 }
 
-interface Observateur {
-+{abstract} actualiser(Sujet):void
+abstract class FileComposite {
++FileComposite(File)
++toString(): String
++{abstract} getChildren(): List
 }
 
-Modele "1" --> "1" FileComposite : file
-Modele "1" --> "*" Observateur : observateurs
-Modele "1" --> "*" Classe : classes
-Modele "1" --> "*" Relation : relations
-Modele .u.|> Sujet : ""
-main -u-|> Application : ""
-VueUML "1" --> "1" Modele : modele
+Fichier -u-|> FileComposite : ""
+Dossier -u-|> FileComposite : ""
+Dossier "1" --> "*" FileComposite : ss_dossier
 VueUML .u.|> Observateur : ""
 @enduml

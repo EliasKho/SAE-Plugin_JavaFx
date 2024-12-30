@@ -9,6 +9,9 @@ import projet.Modele;
 import projet.classes.Classe;
 import projet.classes.VueClasse;
 
+import java.util.Iterator;
+import java.util.ListIterator;
+
 public class ControlerDrag implements EventHandler<MouseEvent> {
     private Modele modele;
     private double x;
@@ -27,11 +30,16 @@ public class ControlerDrag implements EventHandler<MouseEvent> {
 
         if (mouseEvent.getEventType()==MouseEvent.MOUSE_RELEASED) {
             if(!modele.getClasses().isEmpty()){
-                for(Classe c : modele.getClasses()){
-                    if(c.getX()<=x && c.getY()<=y && c.getX()+c.getLargeur()>=x && c.getY()+c.getLongueur()>=y){
+
+                Iterator<Classe> it = modele.getClasses().values().iterator();
+
+                while(it.hasNext()){
+                    Classe c = it.next();
+                    if (c.getX() <= x && c.getY() <= y && c.getX() + c.getLargeur() >= x && c.getY() + c.getLongueur() >= y) {
                         c.setX(mouseEvent.getX());
                         c.setY(mouseEvent.getY());
                         modele.notifierObservateur();
+                        break;
                     }
                 }
             }

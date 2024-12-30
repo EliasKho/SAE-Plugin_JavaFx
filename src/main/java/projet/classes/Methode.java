@@ -79,21 +79,7 @@ public class Methode {
         if(modifier == 1025){
             affichage+="+{abstract} ";
         }
-        affichage+=nom+"(";
-        if (parametres != null) {
-            for (Parameter parametre : parametres) {
-                affichage+= parametre.getType().getName().substring(parametre.getType().getName().lastIndexOf(".")+1)+",";
-            }
-            if(parametres.size()>0){
-                affichage=affichage.substring(0, affichage.length()-1);
-            }
-        }
-        if (constructeur){
-            affichage+=")";
-        }
-        else {
-            affichage += "):" + typeRetour.getTypeName().substring(typeRetour.getTypeName().lastIndexOf(".") + 1);
-        }
+        affichage+=getParametersString();
         return affichage;
     }
 
@@ -114,7 +100,12 @@ public class Methode {
         if(modifier == 1025){
             affichage+="public abstract ";
         }
-        affichage+=nom+"(";
+        affichage+=getParametersString();
+        return affichage;
+    }
+
+    public String getParametersString() {
+        String affichage=nom+"(";
         if (parametres != null) {
             for (Parameter parametre : parametres) {
                 affichage+= parametre.getType().getName().substring(parametre.getType().getName().lastIndexOf(".")+1)+",";

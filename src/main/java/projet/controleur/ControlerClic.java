@@ -1,13 +1,11 @@
 package projet.controleur;
 
 import javafx.event.EventHandler;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import projet.Modele;
-import projet.arborescence.Dossier;
 import projet.arborescence.Fichier;
 import projet.arborescence.FileComposite;
 
@@ -52,7 +50,7 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                 double y = event.getY();
 
                 // on récupère le fichier sélectionné
-                modele.saveIntrospection(nomClasse, x, y);
+                modele.ajouterClasse(nomClasse, x, y);
             }
         }
     }

@@ -1,5 +1,6 @@
 package projet.classes;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 public class Relation {
@@ -7,6 +8,8 @@ public class Relation {
     public static final String IMPLEMENTS = ".u.|>";
     public static final String EXTENDS = "-u-|>";
     public static final String DEPENDANCE = "-->";
+
+    private static HashMap<String,Integer> nbRelations = new HashMap<String,Integer>();
 
     private Classe parent;
     private Classe enfant;
@@ -16,6 +19,11 @@ public class Relation {
     private String parentCardinalite;
     private String enfantCardinalite;
 
+    private int indexParent;
+    private int indexEnfantParent;
+
+    private double[] p1, p2;
+
     public Relation(Classe parent, Classe enfant, String type) {
         this.parent = parent;
         this.enfant = enfant;
@@ -23,6 +31,97 @@ public class Relation {
         this.nom = "\"\"";
         this.parentCardinalite = null;
         this.enfantCardinalite = null;
+
+        String keyParent = parent.getNomPackage()+"."+parent.getNom();
+        if (nbRelations.containsKey(keyParent)) {
+            nbRelations.put(keyParent, nbRelations.get(keyParent)+1);
+        } else {
+            nbRelations.put(keyParent, 0);
+        }
+
+        String keyEnfantParent = parent.getNomPackage()+"."+parent.getNom()+enfant.getNomPackage()+"."+enfant.getNom();
+        if (nbRelations.containsKey(keyEnfantParent)) {
+            nbRelations.put(keyEnfantParent, nbRelations.get(keyEnfantParent)+1);
+        } else {
+            nbRelations.put(keyEnfantParent, 0);
+        }
+
+
+        this.indexParent = nbRelations.get(keyParent);
+        this.indexEnfantParent = nbRelations.get(keyEnfantParent);
+
+        calculerPosition();
+    }
+
+    public void calculerPosition() {
+        // Coins et dimensions des rectangles
+        double x1Min = enfant.getX();
+        double y1Min = enfant.getY();
+        double x1Max = x1Min + enfant.getLargeur();
+        double y1Max = y1Min + enfant.getLongueur();
+
+        double x2Min = parent.getX();
+        double y2Min = parent.getY();
+        double x2Max = x2Min + parent.getLargeur();
+        double y2Max = y2Min + parent.getLongueur();
+
+        // Centre des rectangles
+        double[] centre1 = { (x1Min + x1Max) / 2 + 10* indexEnfantParent, (y1Min + y1Max) / 2 };
+        double[] centre2 = { (x2Min + x2Max) / 2 + 10* indexParent, (y2Min + y2Max) / 2 };
+
+        // Identifier les relations spatiales
+        boolean parentAuDessus = y1Max < y2Min; // Parent au-dessus de l'enfant
+        boolean parentEnDessous = y1Min > y2Max; // Parent en dessous de l'enfant
+        boolean parentAGauche = x1Max < x2Min; // Parent à gauche de l'enfant
+        boolean parentADroite = x1Min > x2Max; // Parent à droite de l'enfant
+
+        if (parentAGauche && !parentAuDessus && !parentEnDessous) {
+            // Cas : Parent à gauche
+            p1 = new double[]{x1Max, centre1[1]};
+            p2 = new double[]{x2Min, centre2[1]};
+        } else if (parentADroite && !parentAuDessus && !parentEnDessous) {
+            // Cas : Parent à droite
+            p1 = new double[]{x1Min, centre1[1]};
+            p2 = new double[]{x2Max, centre2[1]};
+        } else if (parentAuDessus) {
+            // Cas : Parent au-dessus
+            p1 = new double[]{centre1[0], y1Max};
+            p2 = new double[]{centre2[0], y2Min};
+        } else if (parentEnDessous) {
+            // Cas : Parent en dessous
+            p1 = new double[]{centre1[0], y1Min};
+            p2 = new double[]{centre2[0], y2Max};
+        } else {
+            // Chevauchement : Choisir le chemin minimal (priorité verticale)
+            double deltaX = Math.abs(centre1[0] - centre2[0]);
+            double deltaY = Math.abs(centre1[1] - centre2[1]);
+            if (deltaX > deltaY) {
+                // Priorité horizontale
+                if (centre1[0] < centre2[0]) {
+                    p1 = new double[]{x1Max, centre1[1]};
+                    p2 = new double[]{x2Min, centre2[1]};
+                } else {
+                    p1 = new double[]{x1Min, centre1[1]};
+                    p2 = new double[]{x2Max, centre2[1]};
+                }
+            } else {
+                // Priorité verticale
+                if (centre1[1] < centre2[1]) {
+                    p1 = new double[]{centre1[0], y1Max};
+                    p2 = new double[]{centre2[0], y2Min};
+                } else {
+                    p1 = new double[]{centre1[0], y1Min};
+                    p2 = new double[]{centre2[0], y2Max};
+                }
+            }
+        }
+    }
+
+
+
+    public double[] getPosition(){
+        calculerPosition();
+        return new double[]{p1[0], p1[1], p2[0], p2[1]};
     }
 
     public Classe getParent() {
@@ -30,6 +129,7 @@ public class Relation {
     }
     public void setParent(Classe parent) {
         this.parent = parent;
+        calculerPosition();
     }
 
     public Classe getEnfant() {
@@ -37,6 +137,7 @@ public class Relation {
     }
     public void setEnfant(Classe enfant) {
         this.enfant = enfant;
+        calculerPosition();
     }
 
     public String getType() {

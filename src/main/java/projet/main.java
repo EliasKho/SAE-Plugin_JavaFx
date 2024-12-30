@@ -93,7 +93,7 @@ public class main extends Application {
         stage.show();
     }*/
         // création du modèle
-        Dossier dossier = new Dossier(new File("src/main/java/projet/classes"));
+        Dossier dossier = new Dossier(new File("src/main/java/projet"));
         Modele modele = new Modele(dossier);
 
         // controleurs

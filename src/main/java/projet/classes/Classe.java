@@ -17,19 +17,15 @@ public class Classe {
     private double largeur;
 //    private List<String> parents;
 
-    private Classe(){
-        nom = "";
+    public Classe(String nom){
+        this.nom = nom.substring(nom.lastIndexOf(".")+1);
+        this.nomPackage = nom.substring(0, nom.lastIndexOf("."));
         methodes = new ArrayList<>();
         attributs = new ArrayList<>();
         isInterface = false;
         isAbstract = false;
         largeur = 200;
         longueur = 30;
-    }
-
-    public Classe(String nom){
-        this();
-        this.nom = nom.substring(nom.lastIndexOf(".")+1);
     }
 
     public String getNom() {
@@ -106,7 +102,8 @@ public class Classe {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Classe classe)) return false;
-        return isInterface() == classe.isInterface() && Objects.equals(getNom(), classe.getNom()) && Objects.equals(getMethodes(), classe.getMethodes()) && Objects.equals(getAttributs(), classe.getAttributs());
+        // si meme nom et meme package
+        return getNom().equals(classe.getNom()) && getNomPackage().equals(classe.getNomPackage());
     }
 
     @Override
