@@ -36,8 +36,8 @@ public class ControlerDrag implements EventHandler<MouseEvent> {
                 while(it.hasNext()){
                     Classe c = it.next();
                     if (c.getX() <= x && c.getY() <= y && c.getX() + c.getLargeur() >= x && c.getY() + c.getLongueur() >= y) {
-                        c.setX(mouseEvent.getX());
-                        c.setY(mouseEvent.getY());
+                        c.setX(mouseEvent.getX()+c.getX()-x);
+                        c.setY(mouseEvent.getY()+c.getY()-y);
                         modele.notifierObservateur();
                         break;
                     }
