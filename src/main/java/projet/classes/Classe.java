@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Classe {
-    private String nom;
+    private final String nom;
     private List<Methode> methodes;
     private List<Attribut> attributs;
     private boolean isInterface;
@@ -15,7 +15,6 @@ public class Classe {
     private double y;
     private double longueur;
     private double largeur;
-//    private List<String> parents;
 
     public Classe(String nom){
         this.nom = nom.substring(nom.lastIndexOf(".")+1);
@@ -31,10 +30,6 @@ public class Classe {
     public String getNom() {
         return nom;
     }
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
     public List<Methode> getMethodes() {
         return methodes;
     }

@@ -3,41 +3,33 @@ package projet.classes;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class Relation {
+public class Fleche {
 
     public static final String IMPLEMENTS = ".u.|>";
     public static final String EXTENDS = "-u-|>";
     public static final String DEPENDANCE = "-->";
 
-    private static HashMap<String,Integer> nbRelations = new HashMap<String,Integer>();
+    private static final HashMap<String,Integer> nbRelations = new HashMap<>();
 
-    private Classe parent;
-    private Classe enfant;
-    private String type;
+    private final Classe parent;
+    private final Classe enfant;
+    private final String type;
     private String nom;
 
     private String parentCardinalite;
     private String enfantCardinalite;
 
-    private int indexParent;
-    private int indexEnfantParent;
+    private final int indexEnfantParent;
 
     private double[] p1, p2;
 
-    public Relation(Classe parent, Classe enfant, String type) {
+    public Fleche(Classe parent, Classe enfant, String type) {
         this.parent = parent;
         this.enfant = enfant;
         this.type = type;
         this.nom = "\"\"";
         this.parentCardinalite = null;
         this.enfantCardinalite = null;
-
-        String keyParent = parent.getNomPackage()+"."+parent.getNom();
-        if (nbRelations.containsKey(keyParent)) {
-            nbRelations.put(keyParent, nbRelations.get(keyParent)+1);
-        } else {
-            nbRelations.put(keyParent, 0);
-        }
 
         String keyEnfantParent = parent.getNomPackage()+"."+parent.getNom()+enfant.getNomPackage()+"."+enfant.getNom();
         if (nbRelations.containsKey(keyEnfantParent)) {
@@ -46,8 +38,6 @@ public class Relation {
             nbRelations.put(keyEnfantParent, 0);
         }
 
-
-        this.indexParent = nbRelations.get(keyParent);
         this.indexEnfantParent = nbRelations.get(keyEnfantParent);
 
         calculerPosition();
@@ -65,15 +55,34 @@ public class Relation {
         double x2Max = x2Min + parent.getLargeur();
         double y2Max = y2Min + parent.getLongueur();
 
-        // Centre des rectangles
-        double[] centre1 = { (x1Min + x1Max) / 2 + 10* indexEnfantParent, (y1Min + y1Max) / 2 };
-        double[] centre2 = { (x2Min + x2Max) / 2 + 10* indexParent, (y2Min + y2Max) / 2 };
-
         // Identifier les relations spatiales
         boolean parentAuDessus = y1Max < y2Min; // Parent au-dessus de l'enfant
         boolean parentEnDessous = y1Min > y2Max; // Parent en dessous de l'enfant
         boolean parentAGauche = x1Max < x2Min; // Parent à gauche de l'enfant
         boolean parentADroite = x1Min > x2Max; // Parent à droite de l'enfant
+
+        // Centre des rectangles
+        double[] centre1, centre2;
+        if ((parentADroite||parentAGauche) && !parentAuDessus && !parentEnDessous) {
+            if (y1Max < y2Max){
+                centre1 = new double[]{(x1Min + x1Max) / 2, (y1Min + y1Max) / 2 - 10 * indexEnfantParent};
+                centre2 = new double[]{(x2Min + x2Max) / 2, (y2Min + y2Max) / 2 - 10 * indexEnfantParent};
+            }
+            else{
+                centre1 = new double[]{(x1Min + x1Max) / 2, (y1Min + y1Max) / 2 + 10 * indexEnfantParent};
+                centre2 = new double[]{(x2Min + x2Max) / 2, (y2Min + y2Max) / 2 + 10 * indexEnfantParent};
+            }
+        }
+        else {
+            if (parentAGauche || x1Max<x2Max){
+                centre1 = new double[]{(x1Min + x1Max) / 2 - 10 * indexEnfantParent, (y1Min + y1Max) / 2};
+                centre2 = new double[]{(x2Min + x2Max) / 2 - 10 * indexEnfantParent, (y2Min + y2Max) / 2};
+            }
+            else{
+                centre1 = new double[]{(x1Min + x1Max) / 2 + 10 * indexEnfantParent, (y1Min + y1Max) / 2};
+                centre2 = new double[]{(x2Min + x2Max) / 2 + 10 * indexEnfantParent, (y2Min + y2Max) / 2};
+            }
+        }
 
         if (parentAGauche && !parentAuDessus && !parentEnDessous) {
             // Cas : Parent à gauche
@@ -117,8 +126,6 @@ public class Relation {
         }
     }
 
-
-
     public double[] getPosition(){
         calculerPosition();
         return new double[]{p1[0], p1[1], p2[0], p2[1]};
@@ -127,26 +134,14 @@ public class Relation {
     public Classe getParent() {
         return parent;
     }
-    public void setParent(Classe parent) {
-        this.parent = parent;
-        calculerPosition();
-    }
 
     public Classe getEnfant() {
         return enfant;
-    }
-    public void setEnfant(Classe enfant) {
-        this.enfant = enfant;
-        calculerPosition();
     }
 
     public String getType() {
         return type;
     }
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getUMLString() {
         if (enfantCardinalite == null || parentCardinalite == null) {
             return enfant.getNom() + " " + type + " " + parent.getNom() + " : " + nom;
@@ -175,11 +170,15 @@ public class Relation {
         this.enfantCardinalite = enfantCardinalite;
     }
 
+    public static void reinitialiserNbRelations(){
+        nbRelations.clear();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Relation relation)) return false;
-        return Objects.equals(getParent(), relation.getParent()) && Objects.equals(getEnfant(), relation.getEnfant()) && Objects.equals(getType(), relation.getType());
+        if (!(o instanceof Fleche fleche)) return false;
+        return Objects.equals(getParent(), fleche.getParent()) && Objects.equals(getEnfant(), fleche.getEnfant()) && Objects.equals(getType(), fleche.getType()) && Objects.equals(getNom(), fleche.getNom());
     }
 
     @Override

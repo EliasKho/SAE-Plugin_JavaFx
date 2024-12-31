@@ -6,15 +6,14 @@ import projet.classes.*;
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 public class Modele implements Sujet{
 
     private final FileComposite file;
-    private List<Observateur> observateurs;
-    private HashMap<String, Classe> classes;
-    private ArrayList<Relation> relations;
+    private final List<Observateur> observateurs;
+    private final HashMap<String, Classe> classes;
+    private final List<Fleche> relations;
     private String UML = "";
 
     public Modele(FileComposite f) {
@@ -83,37 +82,18 @@ public class Modele implements Sujet{
     /**
      * retourne true si le type est un type primitif ou un type de la classe java.lang
      * false sinon
-     * @param type
-     * @return
      */
     public boolean typePrimitif(Class<?> type){
-        if (type.isPrimitive()){
-            return true;
-        }
-        else if (type.getName().startsWith("java.lang")){
-            return true;
-        }
-        else
-            //System.out.println(type);
-        return false;
+        return (type.isPrimitive() || type.getName().startsWith("java.lang"));
     }
 
     /**
      * retourne false si la classe est une collection (List, Set, Map, etc)
      * true sinon
-     * @param nom
-     * @return
      */
     public boolean classeExiste(String nom){
-        if (nom.startsWith("java.util")){
-            //System.out.println(nom);
-            return false;
-        }
-        // si la classe n'est pas dans le diagramme
-        if (!classes.containsKey(nom)){
-            return false;
-        }
-        return true;
+        // si la classe n'est pas dans le diagramme et n'est pas une classe de java.util
+        return (!nom.startsWith("java.util") && classes.containsKey(nom));
     }
 
     public String getPackage(Class<?> classe) {
@@ -137,12 +117,12 @@ public class Modele implements Sujet{
         // récupération de la classe dans la map
         Classe parentClasse = classes.get(parent);
         Classe enfantClasse = classes.get(enfant);
-        Relation relation = new Relation(parentClasse, enfantClasse, type);
-        relation.setParentCardinalite(parentCardinalite);
-        relation.setEnfantCardinalite(enfantCardinalite);
-        relation.setNom(nom);
-        if (!relations.contains(relation)){
-            relations.add(relation);
+        Fleche fleche = new Fleche(parentClasse, enfantClasse, type);
+        fleche.setParentCardinalite(parentCardinalite);
+        fleche.setEnfantCardinalite(enfantCardinalite);
+        fleche.setNom(nom);
+        if (!relations.contains(fleche)){
+            relations.add(fleche);
         }
     }
 
@@ -159,7 +139,7 @@ public class Modele implements Sujet{
         return methodes;
     }
 
-    public void ajouterHeritage(Classe classe){
+    public void updateRelationHeritage(Classe classe){
         String enfant;
         String parent;
         try {
@@ -170,7 +150,7 @@ public class Modele implements Sujet{
 
             if (superClass != null && superClass != Object.class && classeExiste(superClass.getName())) {
                 parent = superClass.getName();
-                ajouterRelation(parent, enfant, Relation.EXTENDS, null, null, "\"\"");
+                ajouterRelation(parent, enfant, Fleche.EXTENDS, null, null, "\"\"");
             }
 
             Class<?>[] interfaces = className.getInterfaces();
@@ -179,14 +159,14 @@ public class Modele implements Sujet{
                     continue;
                 }
                 parent = interfaceClass.getName();
-                ajouterRelation(parent, enfant, Relation.IMPLEMENTS, null, null, "\"\"");
+                ajouterRelation(parent, enfant, Fleche.IMPLEMENTS, null, null, "\"\"");
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    public void ajouterRelationAttributs(Classe c){
+    public void updateRelationAttributs(Classe c){
         try {
             String className = c.getNomPackage()+"."+c.getNom();
             Class<?> classe = Class.forName(className);
@@ -195,7 +175,7 @@ public class Modele implements Sujet{
                 Class<?> type = field.getType();
                 if (!typePrimitif(type)) {
                     if (classeExiste(type.getName())) {
-                        ajouterRelation(type.getName(), className, Relation.DEPENDANCE, "1", "1", field.getName());
+                        ajouterRelation(type.getName(), className, Fleche.DEPENDANCE, "1", "1", field.getName());
                     } else {
                         Type genericType = field.getGenericType();
                         if (genericType instanceof ParameterizedType) {
@@ -204,7 +184,7 @@ public class Modele implements Sujet{
                             for (Type arg : typeArguments) {
                                 if (arg instanceof Class) {
                                     if (classeExiste(arg.getTypeName())) {
-                                        ajouterRelation(arg.getTypeName(), className, Relation.DEPENDANCE, "*", "1", field.getName());
+                                        ajouterRelation(arg.getTypeName(), className, Fleche.DEPENDANCE, "*", "1", field.getName());
                                     }
                                 }
                             }
@@ -219,10 +199,14 @@ public class Modele implements Sujet{
     }
 
     public void updateRelations(){
+        // on supprime tout et on réajoute les relations pour enlever les relations qui ne sont plus présentes
+        // (possiblement enlevé plus tard pour laisser cela à l'action d'actualisation du diagramme)
+        relations.clear();
+        Fleche.reinitialiserNbRelations();
         for (Classe classe : classes.values()) {
             try {
-                ajouterHeritage(classe);
-                ajouterRelationAttributs(classe);
+                updateRelationHeritage(classe);
+                updateRelationAttributs(classe);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -252,28 +236,11 @@ public class Modele implements Sujet{
             }
             res.append("}\n\n");
         }
-        for (Relation r : relations){
+        for (Fleche r : relations){
             res.append(r.getUMLString()).append("\n");
         }
         res.append("@enduml");
         return res.toString();
-    }
-
-    public boolean isInDiagramme(Relation r){
-        // vérifier que les deux classes de la relation sont présentes dans le diagramme
-        Iterator<Classe> i = classes.values().iterator();
-        boolean parent = false;
-        boolean enfant = false;
-        while (i.hasNext()) {
-            Classe c = i.next();
-            if (c.getNom().equals(r.getParent().getNom())) {
-                parent = true;
-            }
-            if (c.getNom().equals(r.getEnfant().getNom())) {
-                enfant = true;
-            }
-        }
-        return parent && enfant;
     }
 
     public String getUML(){
@@ -284,11 +251,7 @@ public class Modele implements Sujet{
         return classes;
     }
 
-    public List<Relation> getRelations(){
-        ArrayList<Relation> r = new ArrayList<>();
-        for (Relation relation : relations){
-                r.add(relation);
-        }
-        return r;
+    public List<Fleche> getRelations(){
+        return relations;
     }
 }

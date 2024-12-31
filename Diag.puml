@@ -1,4 +1,11 @@
 @startuml
+class VueClasse {
++VueClasse(Modele)
+-createArrow(Fleche): Pane
++actualiser(Sujet): void
++actualiserRelations(Sujet): void
+}
+
 class Fichier {
 +Fichier(File)
 +getChildren(): List
@@ -8,13 +15,19 @@ interface Observateur {
 +{abstract} actualiser(Sujet): void
 }
 
+class VueUML {
++VueUML(Modele)
++actualiser(Sujet): void
+}
+
 class Dossier {
 +Dossier(File)
 +getChildren(): List
 }
 
-class VueUML {
-+VueUML(Modele)
+class VueArborescence {
++VueArborescence(Modele,ControlerClic)
++getArbre(FileComposite): TreeItem
 +actualiser(Sujet): void
 }
 
@@ -24,8 +37,11 @@ abstract class FileComposite {
 +{abstract} getChildren(): List
 }
 
+VueClasse .u.|> Observateur : ""
 Fichier -u-|> FileComposite : ""
+VueUML .u.|> Observateur : ""
 Dossier -u-|> FileComposite : ""
 Dossier "1" --> "*" FileComposite : ss_dossier
-VueUML .u.|> Observateur : ""
+VueArborescence .u.|> Observateur : ""
+VueArborescence "1" --> "*" FileComposite : arbre
 @enduml

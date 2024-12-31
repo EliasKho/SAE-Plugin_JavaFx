@@ -1,23 +1,22 @@
 package projet.classes;
 
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
 import projet.Modele;
 import projet.Observateur;
 import projet.Sujet;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 
 public class VueClasse extends Pane implements Observateur {
 
-    private Modele modele;
+    private final Modele modele;
 
     public VueClasse(Modele modele) {
         this.modele = modele;
@@ -53,22 +52,22 @@ public class VueClasse extends Pane implements Observateur {
                 StackPane attributesContainer = new StackPane();
                 attributesContainer.setStyle("-fx-background-color: lightyellow; -fx-padding: 5px;");
 
-                String strAtr = "";
+                StringBuilder strAtr = new StringBuilder();
                 for (Attribut attribut : attributs) {
-                    strAtr += attribut.getString() + "\n";
+                    strAtr.append(attribut.getString()).append("\n");
                 }
-                Text attributesText = new Text(strAtr);
+                Text attributesText = new Text(strAtr.toString());
                 attributesContainer.getChildren().add(attributesText);
 
                 // 4. Méthodes
                 StackPane methodsContainer = new StackPane();
                 methodsContainer.setStyle("-fx-background-color: lightgreen; -fx-padding: 5px;");
 
-                String strMet = "";
+                StringBuilder strMet = new StringBuilder();
                 for (Methode methode : methodes) {
-                    strMet += methode.getString() + "\n";
+                    strMet.append(methode.getString()).append("\n");
                 }
-                Text methodsText = new Text(strMet);
+                Text methodsText = new Text(strMet.toString());
                 methodsContainer.getChildren().add(methodsText);
 
                 // Ajouter les containers au VBox
@@ -105,24 +104,11 @@ public class VueClasse extends Pane implements Observateur {
     public void actualiserRelations(Sujet s) {
         Modele m = (Modele) s;
 
-        for (Relation r : m.getRelations()) {
+        for (Fleche r : m.getRelations()) {
             System.out.println(r.getUMLString());
 
-            // Coordonnées de la relation
-            double[] coord = r.getPosition();
-            double startX = coord[0];
-            double startY = coord[1];
-            double endX = coord[2];
-            double endY = coord[3];
-
-            // Déterminez le type de relation et ses détails
-            String type = r.getType(); // Exemple : "heritage", "implementation", "attribut"
-            String label = r.getNom().toLowerCase(); // Nom de l'attribut (si applicable)
-            String cardinalityFrom = r.getEnfantCardinalite(); // Cardinalité côté classe source
-            String cardinalityTo = r.getParentCardinalite(); // Cardinalité côté classe cible
-
             // Créez la flèche correspondante
-            Pane arrowHead = createArrowHead(type, startX, startY, endX, endY, label, cardinalityFrom, cardinalityTo);
+            Pane arrowHead = createArrow(r);
 
             // Ajoutez la flèche au canevas
             this.getChildren().add(arrowHead);
@@ -131,15 +117,27 @@ public class VueClasse extends Pane implements Observateur {
 
 
 
-    private Pane createArrowHead(String type, double startX, double startY, double endX, double endY, String label, String cardinalityFrom, String cardinalityTo) {
-        Pane arrowHead = new Pane();
+    private Pane createArrow(Fleche r) {
+        Pane arrow = new Pane();
+
+        // Coordonnées de la relation
+        double[] coord = r.getPosition();
+        double startX = coord[0];
+        double startY = coord[1];
+        double endX = coord[2];
+        double endY = coord[3];
+
+        // Déterminez le type de relation et ses détails
+        String type = r.getType(); // Exemple : "heritage", "implementation", "attribut"
+        String label = r.getNom().toLowerCase(); // Nom de l'attribut (si applicable)
+        String cardinalityFrom = r.getEnfantCardinalite(); // Cardinalité côté classe source
+        String cardinalityTo = r.getParentCardinalite(); // Cardinalité côté classe cible
 
         // Calculer l'angle de la ligne
         double angle = Math.atan2(endY - startY, endX - startX);
 
-        // Longueur et largeur de la flèche
+        // Longueur de la flèche
         double arrowLength = 10;
-        double arrowWidth = 7;
 
         // Points pour les extrémités du triangle
         double x1 = endX - arrowLength * Math.cos(angle - Math.PI / 6);
@@ -152,34 +150,26 @@ public class VueClasse extends Pane implements Observateur {
         mainLine.setStroke(Color.BLACK);
 
         // Ajouter les différents types de flèches
-        if (Relation.EXTENDS.equals(type)) {
+        Polygon triangle = new Polygon();
+        if (Fleche.EXTENDS.equals(type)) {
             // Héritage : triangle vide
-            javafx.scene.shape.Polygon triangle = new javafx.scene.shape.Polygon();
-            triangle.getPoints().addAll(endX, endY, x1, y1, x2, y2);
-            triangle.setFill(Color.TRANSPARENT);
+            triangle.setFill(Color.WHITE);
             triangle.setStroke(Color.BLACK);
-            arrowHead.getChildren().addAll(mainLine, triangle);
-        } else if (Relation.IMPLEMENTS.equals(type)) {
+        } else if (Fleche.IMPLEMENTS.equals(type)) {
             // Implémentation : ligne pointillée + triangle vide
             mainLine.getStrokeDashArray().addAll(10.0, 5.0); // Pointillés
-            javafx.scene.shape.Polygon triangle = new javafx.scene.shape.Polygon();
-            triangle.getPoints().addAll(endX, endY, x1, y1, x2, y2);
-            triangle.setFill(Color.TRANSPARENT);
+            triangle.setFill(Color.WHITE);
             triangle.setStroke(Color.BLACK);
-            arrowHead.getChildren().addAll(mainLine, triangle);
-        } else if (Relation.DEPENDANCE.equals(type)) {
+        } else if (Fleche.DEPENDANCE.equals(type)) {
             // Attribut : triangle plein avec texte et cardinalités
-            javafx.scene.shape.Polygon triangle = new javafx.scene.shape.Polygon();
-            triangle.getPoints().addAll(endX, endY, x1, y1, x2, y2);
             triangle.setFill(Color.BLACK); // Triangle plein
-            arrowHead.getChildren().addAll(mainLine, triangle);
 
             // Ajouter le texte pour le nom de l'attribut
-            if (label != null && !label.isEmpty()) {
+            if (!label.isEmpty()) {
                 Text attributeLabel = new Text(label);
                 attributeLabel.setX((startX + endX) / 2);
                 attributeLabel.setY((startY + endY) / 2 - 10); // Position au-dessus de la ligne
-                arrowHead.getChildren().add(attributeLabel);
+                arrow.getChildren().add(attributeLabel);
             }
 
             // Ajouter les cardinalités
@@ -189,7 +179,7 @@ public class VueClasse extends Pane implements Observateur {
                 // Positionner en dehors de la boîte source
                 cardinalityFromText.setX(startX + 15 * Math.cos(angle)); // Décaler selon l'angle
                 cardinalityFromText.setY(startY + 15 * Math.sin(angle)); // Décaler selon l'angle
-                arrowHead.getChildren().add(cardinalityFromText);
+                arrow.getChildren().add(cardinalityFromText);
             }
             if (cardinalityTo != null && !cardinalityTo.isEmpty()) {
                 Text cardinalityToText = new Text(cardinalityTo);
@@ -197,10 +187,12 @@ public class VueClasse extends Pane implements Observateur {
                 // Positionner en dehors de la boîte cible
                 cardinalityToText.setX(endX - 15 * Math.cos(angle)); // Décaler selon l'angle
                 cardinalityToText.setY(endY - 15 * Math.sin(angle)); // Décaler selon l'angle
-                arrowHead.getChildren().add(cardinalityToText);
+                arrow.getChildren().add(cardinalityToText);
             }
         }
+        triangle.getPoints().addAll(endX, endY, x1, y1, x2, y2);
+        arrow.getChildren().addAll(mainLine, triangle);
 
-        return arrowHead;
+        return arrow;
     }
 }
