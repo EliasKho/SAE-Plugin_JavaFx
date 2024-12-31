@@ -203,6 +203,7 @@ public class Modele implements Sujet{
         // (possiblement enlevé plus tard pour laisser cela à l'action d'actualisation du diagramme)
         relations.clear();
         Fleche.reinitialiserNbRelations();
+        Fleche.reinitialiserNbRelations();
         for (Classe classe : classes.values()) {
             try {
                 updateRelationHeritage(classe);

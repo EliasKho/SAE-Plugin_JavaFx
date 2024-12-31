@@ -94,8 +94,6 @@ public class VueClasse extends Pane implements Observateur {
                 container.setTranslateX(classe.getX());
                 container.setTranslateY(classe.getY());
                 this.getChildren().add(container);
-                System.out.println("Classe: " + classe.getNom() + " " + classe.getX() + " " + classe.getY());
-                System.out.println("Longueur: " + classe.getLongueur() + " Largeur: " + classe.getLargeur());
             }
         }
         actualiserRelations(s);
@@ -105,8 +103,6 @@ public class VueClasse extends Pane implements Observateur {
         Modele m = (Modele) s;
 
         for (Fleche r : m.getRelations()) {
-            System.out.println(r.getUMLString());
-
             // Créez la flèche correspondante
             Pane arrowHead = createArrow(r);
 
