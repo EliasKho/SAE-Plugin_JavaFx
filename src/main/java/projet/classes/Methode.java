@@ -118,7 +118,7 @@ public class Methode {
             affichage+=")";
         }
         else {
-            affichage += "): " + typeRetour.getTypeName().substring(typeRetour.getTypeName().lastIndexOf(".") + 1);
+            affichage += "):" + typeRetour.getTypeName().substring(typeRetour.getTypeName().lastIndexOf(".") + 1);
         }
         return affichage;
     }

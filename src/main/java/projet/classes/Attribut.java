@@ -53,7 +53,7 @@ public class Attribut {
         if(Modifier.isAbstract(modifier)){
             affichage+="{abstract} ";
         }
-        return affichage+nom+": "+ type.getTypeName().substring(type.getTypeName().lastIndexOf(".")+1);
+        return affichage+nom+":"+ type.getTypeName().substring(type.getTypeName().lastIndexOf(".")+1);
     }
 
     public String getString() {
