@@ -104,7 +104,7 @@ public class Methode {
         return affichage;
     }
 
-    public String getParametersString() {
+    private String getParametersString() {
         String affichage=nom+"(";
         if (parametres != null) {
             for (Parameter parametre : parametres) {

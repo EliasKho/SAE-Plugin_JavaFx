@@ -43,7 +43,7 @@ public class Fleche {
         calculerPosition();
     }
 
-    public void calculerPosition() {
+    private void calculerPosition() {
         // Coins et dimensions des rectangles
         double x1Min = enfant.getX();
         double y1Min = enfant.getY();
