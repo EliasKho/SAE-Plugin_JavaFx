@@ -1,0 +1,17 @@
+Fonctionnalités effectuées :
+
+Déplacer les classes dynamiquement :
+    déplacement d'une classe en maintenant le clique sur la classe et en la déplaçant à l'endroit voulu
+
+Flèches pour les relations entre classes :
+    affichage de différentes flèches (héritage, implémentation et attribut) pour les relations entre classes
+
+Ajouter des classes sur la vue :
+    fin de l'affichage graphique d'une classe (visuel)
+    modification de l'itération précédente pour afficher toutes les classes
+
+
+
+Cas d'utilisation :
+
+Déplacer une classe
