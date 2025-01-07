@@ -212,6 +212,7 @@ public class Modele implements Sujet{
                 e.printStackTrace();
             }
         }
+        notifierObservateur();
     }
 
 

@@ -28,6 +28,9 @@ public class ControlerClic implements EventHandler<MouseEvent> {
     }
 
     public void handle(MouseEvent event) {
+        System.out.println("CLIC");
+        System.out.println("Source : " + event.getSource().getClass());
+        System.out.println("Target : " + event.getTarget().getClass()+"\n");
 
         if (event.getSource() instanceof TreeView) {
             TreeView<FileComposite> item = (TreeView<FileComposite>) event.getSource();
@@ -85,7 +88,6 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                 item2.setOnAction(e -> {
                     modele.getClasses().clear();
                     modele.updateRelations();
-                    modele.notifierObservateur();
                 });
                 MenuItem item3 = new MenuItem("Exporter en image");
                 item3.setOnAction(e -> {

@@ -1,25 +1,12 @@
 @startuml
-class Modele {
--UML:String
-+Modele(FileComposite)
-+getPackage(Class):String
-+getClasses():HashMap
-+enregistrerObservateur(Observateur):void
-+createUML():String
-+getMethode(Class):ArrayList
-+getRacine():FileComposite
-+getUML():String
--ajouterRelation(String,String,String,String,String,String):void
-+typePrimitif(Class):boolean
-+classeExiste(String):boolean
-+ajouterClasse(String,double,double):void
-+getRelations():List
-+getAttributs(Class):ArrayList
-+updateRelations():void
-+notifierObservateur():void
-+updateRelationHeritage(Classe):void
-+updateRelationAttributs(Classe):void
-+supprimerObservateur(Observateur):void
+interface Observateur {
++{abstract} actualiser(Sujet):void
 }
 
+class VueUML {
++VueUML(Modele)
++actualiser(Sujet):void
+}
+
+VueUML .u.|> Observateur : ""
 @enduml

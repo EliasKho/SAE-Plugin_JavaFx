@@ -1,48 +1,53 @@
 package projet.controleur;
 
 import javafx.event.EventHandler;
-import javafx.scene.Node;
-import javafx.scene.input.MouseDragEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.TransferMode;
 import projet.Modele;
 import projet.classes.Classe;
-import projet.classes.VueClasse;
 
-import java.util.Iterator;
-import java.util.ListIterator;
-
-public class ControlerDrag implements EventHandler<MouseEvent> {
+public class ControlerDrag implements EventHandler<DragEvent> {
     private Modele modele;
-    private double x;
-    private double y;
 
     public ControlerDrag(Modele modele) {
         this.modele = modele;
     }
 
     @Override
-    public void handle(MouseEvent mouseEvent) {
-        if (mouseEvent.getEventType()==MouseEvent.MOUSE_PRESSED) {
-            x=mouseEvent.getX();
-            y=mouseEvent.getY();
+    public void handle(DragEvent dragEvent) {
+        dragEvent.consume();
+
+        // on fait le nécessaire pour pouvoir déplacer une classe (VBox) sur le diagramme
+        // on récupère les coordonnées du clic
+
+        if (dragEvent.getEventType() == DragEvent.DRAG_OVER) {
+            // on verifie si l'evenement est un setOnDragOver
+            if (dragEvent.getGestureSource() != dragEvent.getTarget() && dragEvent.getDragboard().hasString()) {
+                dragEvent.acceptTransferModes(TransferMode.MOVE);
+            }
         }
 
-        if (mouseEvent.getEventType()==MouseEvent.MOUSE_RELEASED) {
-            if(!modele.getClasses().isEmpty()){
+        if (dragEvent.getEventType() == DragEvent.DRAG_DROPPED) {
+            boolean success = false;
+            // on verifie si l'evenement est un setOnDragDropped
+            if (dragEvent.getGestureSource() != dragEvent.getTarget() && dragEvent.getDragboard().hasString()) {
+                // on récupère la classe
+                String nomClasse = dragEvent.getDragboard().getString();
+                Classe classe = modele.getClasses().get(nomClasse);
 
-                Iterator<Classe> it = modele.getClasses().values().iterator();
+                // on modifie les coordonnées de la classe (on la déplace tel que la position de la souris soit le centre)
+                double x = dragEvent.getX() - classe.getLargeur() / 2;
+                double y = dragEvent.getY() - classe.getLongueur() / 2;
+                if (x < 0) x = 0;
+                if (y < 0) y = 0;
+                classe.setX(x);
+                classe.setY(y);
 
-                while(it.hasNext()){
-                    Classe c = it.next();
-                    if (c.getX() <= x && c.getY() <= y && c.getX() + c.getLargeur() >= x && c.getY() + c.getLongueur() >= y) {
-                        c.setX(mouseEvent.getX()+c.getX()-x);
-                        c.setY(mouseEvent.getY()+c.getY()-y);
-                        modele.notifierObservateur();
-                        break;
-                    }
-                }
+                success = true;
             }
+            dragEvent.setDropCompleted(success);
+            dragEvent.consume();
+            modele.notifierObservateur();
         }
     }
 }

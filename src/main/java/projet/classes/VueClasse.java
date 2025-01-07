@@ -1,5 +1,10 @@
 package projet.classes;
 
+import javafx.event.EventHandler;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -84,15 +89,31 @@ public class VueClasse extends Pane implements Observateur {
                 );
 
                 // Mettre à jour la largeur de la classe
-                classe.setLargeur(largeurMax+10); // +10 cause of padding
+                classe.setLargeur(largeurMax+10); // +10 avec le padding
 
                 // Mettre à jour la hauteur totale
                 double totalHeight = classBoxContainer.getHeight() + attributesContainer.getHeight() + methodsContainer.getHeight();
-                classe.setLongueur(totalHeight+30); // +30 cause of padding
+                classe.setLongueur(totalHeight+30); // +30 avec le padding
 
                 // Déplacer la classe à la position X et Y spécifiées
                 container.setTranslateX(classe.getX());
                 container.setTranslateY(classe.getY());
+
+                container.setOnDragDetected(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        Dragboard db = container.startDragAndDrop(TransferMode.MOVE);
+                        ClipboardContent content = new ClipboardContent();
+                        content.putString(packageName);
+                        content.putImage(container.snapshot(null, null));
+                        db.setContent(content);
+
+                        System.out.println("Deplacement de la classe : " + packageName);
+
+                        mouseEvent.consume();
+                    }
+                });
+
                 this.getChildren().add(container);
             }
         }

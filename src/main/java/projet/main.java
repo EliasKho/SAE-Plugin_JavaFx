@@ -1,14 +1,8 @@
 package projet;
 
 import javafx.application.Application;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.SnapshotResult;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import projet.arborescence.Dossier;
@@ -18,10 +12,7 @@ import projet.controleur.ControlerClic;
 import projet.controleur.ControlerDrag;
 import projet.controleur.ControlerImage;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
 public class main extends Application {
 
@@ -108,7 +99,6 @@ public class main extends Application {
 
         // controleurs
         ControlerClic controlerClic = new ControlerClic(modele);
-        ControlerDrag controlerDrag = new ControlerDrag(modele);
 
         HBox hbox = new HBox();
         VueArborescence arborescence = new VueArborescence(modele, controlerClic);
@@ -120,8 +110,7 @@ public class main extends Application {
         modele.enregistrerObservateur(scrollpane);
 
         scrollpane.setOnMouseClicked(controlerClic);
-        scrollpane.setOnMousePressed(controlerDrag);
-        scrollpane.setOnMouseReleased(controlerDrag);
+
         Button scButton = new Button("Sauvegarder image");
         scButton.setOnAction(e -> {
             ControlerImage.captureImage(scrollpane.getScene(), scrollpane);
@@ -145,6 +134,12 @@ public class main extends Application {
 
         scrollpane.setMinWidth(scene.getWidth()*75/100);
         scrollpane.setMaxWidth(scene.getWidth()*75/100);
+
+        ControlerDrag controlerDrag = new ControlerDrag(modele);
+        scrollpane.setOnDragOver(controlerDrag);
+        scrollpane.setOnDragEntered(controlerDrag);
+        scrollpane.setOnDragExited(controlerDrag);
+        scrollpane.setOnDragDropped(controlerDrag);
 
         stage.setTitle("Diagramme Class Makker");
         stage.setScene(scene);
