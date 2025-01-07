@@ -1,15 +1,20 @@
 package projet.controleur;
 
 import javafx.event.EventHandler;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import projet.Modele;
 import projet.arborescence.Fichier;
 import projet.arborescence.FileComposite;
 
 import java.io.File;
+import java.util.List;
 
 public class ControlerClic implements EventHandler<MouseEvent> {
     private Modele modele;
@@ -25,6 +30,8 @@ public class ControlerClic implements EventHandler<MouseEvent> {
             TreeView<FileComposite> item = (TreeView<FileComposite>) event.getSource();
             TreeItem<FileComposite> selectedItem = item.getSelectionModel().getSelectedItem();
 
+            //item.setOnDragDetected(this);
+
             if (selectedItem != null) {
                 FileComposite file = selectedItem.getValue();
                 // vérifier si le fichier est un fichier java
@@ -38,11 +45,18 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
                     if (file instanceof Fichier) {
                         this.nomClasse = packageName;
+                        //Savoir quoi mettre pour détecter le drag
+                        file.setOnDragDetected(this);
+                        Dragboard db = item.startDragAndDrop(TransferMode.MOVE);
+                        ClipboardContent content = new ClipboardContent();
+                        content.putString(this.nomClasse);
+                        db.setContent(content);
+                        event.consume();
                     }
                 }
             }
         }
-
+        /*
         if (event.getSource() instanceof Pane) {
             if (nomClasse != null) {
                 // on récupère les coordonnées du clic
@@ -53,5 +67,6 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                 modele.ajouterClasse(nomClasse, x, y);
             }
         }
+        */
     }
 }
