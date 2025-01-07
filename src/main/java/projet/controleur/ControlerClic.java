@@ -1,6 +1,9 @@
 package projet.controleur;
 
 import javafx.event.EventHandler;
+import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseButton;
@@ -21,7 +24,8 @@ public class ControlerClic implements EventHandler<MouseEvent> {
     }
 
     public void handle(MouseEvent event) {
-
+        ContextMenu contextMenu=new ContextMenu();
+        contextMenu.hide();
         if (event.getSource() instanceof TreeView) {
             TreeView<FileComposite> item = (TreeView<FileComposite>) event.getSource();
             TreeItem<FileComposite> selectedItem = item.getSelectionModel().getSelectedItem();
@@ -58,6 +62,12 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                 // on récupère les coordonnées du clic
                 double x = event.getX();
                 double y = event.getY();
+
+
+                MenuItem item1 = new MenuItem("Exporter en image");
+                MenuItem item2 = new MenuItem("Supprimer toutes les classes");
+                contextMenu.getItems().addAll(item1, item2);
+                contextMenu.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
 
                 // on récupère le fichier sélectionné
                 System.out.println("Clic droit");
