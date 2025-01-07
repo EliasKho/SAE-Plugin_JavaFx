@@ -77,9 +77,10 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                         while(it.hasNext()){
                             Classe c = it.next();
                             if (c.getX() <= x && c.getY() <= y && c.getX() + c.getLargeur() >= x && c.getY() + c.getLongueur() >= y) {
-//                                supprimer la classe
+                                modele.getClasses().remove(c.getNomPackage()+"."+c.getNom());
+                                modele.updateRelations();
                                 modele.notifierObservateur();
-                                break;
+                                System.out.println("Suppression");
                             }
                         }
                     });
@@ -95,7 +96,6 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 //                    ControlerImage.captureImage(modele.getScene(), modele.getVueClasse());
                 });
                 contextMenu.getItems().addAll(item2, item3);
-//                le menu ne s'affiche pas sur le classes
                 contextMenu.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
 //                contextMenu.setAutoHide(true);
 
