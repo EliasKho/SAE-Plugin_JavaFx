@@ -1,8 +1,14 @@
 package projet;
 
 import javafx.application.Application;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.SnapshotResult;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import projet.arborescence.Dossier;
@@ -10,8 +16,12 @@ import projet.arborescence.VueArborescence;
 import projet.classes.VueClasse;
 import projet.controleur.ControlerClic;
 import projet.controleur.ControlerDrag;
+import projet.controleur.ControlerImage;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 public class main extends Application {
 
@@ -112,6 +122,10 @@ public class main extends Application {
         scrollpane.setOnMouseClicked(controlerClic);
         scrollpane.setOnMousePressed(controlerDrag);
         scrollpane.setOnMouseReleased(controlerDrag);
+        Button scButton = new Button("Sauvegarder image");
+        scButton.setOnAction(e -> {
+            ControlerImage.captureImage(scrollpane.getScene(), scrollpane);
+        });
 
         //scrollpane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
@@ -119,6 +133,7 @@ public class main extends Application {
         scrollpane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
 
         hbox.getChildren().add(arborescence);
+        hbox.getChildren().add(scButton);
         hbox.getChildren().add(scrollpane);
 
 

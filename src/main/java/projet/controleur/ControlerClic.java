@@ -3,6 +3,7 @@ package projet.controleur;
 import javafx.event.EventHandler;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import projet.Modele;
@@ -51,6 +52,15 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
                 // on récupère le fichier sélectionné
                 modele.ajouterClasse(nomClasse, x, y);
+            }
+            //si clic droit
+            if (event.getButton() == MouseButton.SECONDARY) {
+                // on récupère les coordonnées du clic
+                double x = event.getX();
+                double y = event.getY();
+
+                // on récupère le fichier sélectionné
+                System.out.println("Clic droit");
             }
         }
     }
