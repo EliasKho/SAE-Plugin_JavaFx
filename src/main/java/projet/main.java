@@ -11,6 +11,8 @@ import projet.classes.VueClasse;
 import projet.controleur.ControlerClic;
 import projet.controleur.ControlerDrag;
 import projet.controleur.ControlerImage;
+import projet.controleur.ControlerDragAndDrop;
+import projet.controleur.ControlerDragDrop;
 
 import java.io.File;
 
@@ -99,6 +101,8 @@ public class main extends Application {
 
         // controleurs
         ControlerClic controlerClic = new ControlerClic(modele);
+        ControlerDragAndDrop controlerDragAndDrop = new ControlerDragAndDrop(modele);
+        ControlerDragDrop controlerDragDrop = new ControlerDragDrop(modele);
 
         HBox hbox = new HBox();
         VueArborescence arborescence = new VueArborescence(modele, controlerClic);
@@ -115,6 +119,8 @@ public class main extends Application {
         scButton.setOnAction(e -> {
             ControlerImage.captureImage(scrollpane.getScene(), scrollpane);
         });
+        scrollpane.setOnDragOver(controlerDragAndDrop);
+        scrollpane.setOnDragDropped(controlerDragDrop);
 
         //scrollpane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
@@ -138,10 +144,10 @@ public class main extends Application {
         scrollpane.setMaxWidth(scene.getWidth()*75/100);
 
         ControlerDrag controlerDrag = new ControlerDrag(modele);
-        scrollpane.setOnDragOver(controlerDrag);
-        scrollpane.setOnDragEntered(controlerDrag);
-        scrollpane.setOnDragExited(controlerDrag);
-        scrollpane.setOnDragDropped(controlerDrag);
+//        scrollpane.setOnDragOver(controlerDrag);
+//        scrollpane.setOnDragEntered(controlerDrag);
+//        scrollpane.setOnDragExited(controlerDrag);
+//        scrollpane.setOnDragDropped(controlerDrag);
 
         stage.setTitle("Diagramme Class Makker");
         stage.setScene(scene);
