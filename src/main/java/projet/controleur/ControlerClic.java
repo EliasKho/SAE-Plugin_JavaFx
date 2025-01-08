@@ -4,11 +4,18 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 import projet.Modele;
 import projet.arborescence.Fichier;
 import projet.arborescence.FileComposite;
@@ -16,6 +23,7 @@ import projet.classes.Classe;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 
 public class ControlerClic implements EventHandler<MouseEvent> {
     private Modele modele;
@@ -35,6 +43,7 @@ public class ControlerClic implements EventHandler<MouseEvent> {
         if (event.getSource() instanceof TreeView) {
             TreeView<FileComposite> item = (TreeView<FileComposite>) event.getSource();
             TreeItem<FileComposite> selectedItem = item.getSelectionModel().getSelectedItem();
+            item.setOnDragDetected(this);
 
             if (selectedItem != null) {
                 FileComposite file = selectedItem.getValue();
@@ -49,6 +58,11 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
                     if (file instanceof Fichier) {
                         this.nomClasse = packageName;
+                        Dragboard db = item.startDragAndDrop(TransferMode.MOVE);
+                        ClipboardContent content = new ClipboardContent();
+                        content.putString(this.nomClasse);
+                        db.setContent(content);
+                        event.consume();
                     }
                 }
             }
