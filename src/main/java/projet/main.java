@@ -106,7 +106,7 @@ public class main extends Application {
 //        modele.enregistrerObservateur((arborescence));
         VueUML vueUML = new VueUML(modele);
         modele.enregistrerObservateur(vueUML);
-        VueClasse scrollpane = new VueClasse(modele);
+        VueClasse scrollpane = new VueClasse(modele, controlerClic);
         modele.enregistrerObservateur(scrollpane);
 
         scrollpane.setOnMouseClicked(controlerClic);

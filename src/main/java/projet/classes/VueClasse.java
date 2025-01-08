@@ -15,6 +15,7 @@ import javafx.scene.text.Text;
 import projet.Modele;
 import projet.Observateur;
 import projet.Sujet;
+import projet.controleur.ControlerClic;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,9 +23,11 @@ import java.util.List;
 public class VueClasse extends Pane implements Observateur {
 
     private final Modele modele;
+    private ControlerClic controlerClic;
 
-    public VueClasse(Modele modele) {
+    public VueClasse(Modele modele, ControlerClic c) {
         this.modele = modele;
+        this.controlerClic = c;
         this.getChildren().clear();
     }
 
@@ -99,6 +102,8 @@ public class VueClasse extends Pane implements Observateur {
                 container.setTranslateX(classe.getX());
                 container.setTranslateY(classe.getY());
 
+                container.setId(packageName);
+
                 container.setOnDragDetected(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
@@ -113,6 +118,8 @@ public class VueClasse extends Pane implements Observateur {
                         mouseEvent.consume();
                     }
                 });
+
+                container.setOnMouseClicked(controlerClic);
 
                 this.getChildren().add(container);
             }

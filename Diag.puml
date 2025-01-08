@@ -1,12 +1,2 @@
 @startuml
-interface Observateur {
-+{abstract} actualiser(Sujet):void
-}
-
-class VueUML {
-+VueUML(Modele)
-+actualiser(Sujet):void
-}
-
-VueUML .u.|> Observateur : ""
 @enduml
