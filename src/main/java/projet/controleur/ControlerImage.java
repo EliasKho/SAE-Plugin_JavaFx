@@ -34,7 +34,7 @@ public class ControlerImage {
     public static void captureImageUML(){
         try {
             // Chemin vers votre fichier PlantUML
-            File source = new File("D.puml");
+            File source = new File("Diag.puml");
 
             // Création du lecteur de fichier source
             SourceFileReader reader = new SourceFileReader(source);
