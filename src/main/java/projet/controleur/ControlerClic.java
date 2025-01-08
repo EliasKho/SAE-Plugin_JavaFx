@@ -58,11 +58,17 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
                         if (file instanceof Fichier) {
                             this.nomClasse = packageName;
-                            Dragboard db = item.startDragAndDrop(TransferMode.MOVE);
-                            ClipboardContent content = new ClipboardContent();
-                            content.putString(this.nomClasse);
-                            db.setContent(content);
-                            event.consume();
+
+                            item.setOnDragDetected(new EventHandler<MouseEvent>() {
+                                @Override
+                                public void handle(MouseEvent mouseEvent) {
+                                    Dragboard db = item.startDragAndDrop(TransferMode.MOVE);
+                                    ClipboardContent content = new ClipboardContent();
+                                    content.putString(getNomClasse());
+                                    db.setContent(content);
+                                    event.consume();
+                                }
+                            });
                         }
                     }
                 }
@@ -79,6 +85,7 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                 }
             }
         }
+
         //si clic droit
         if (event.getButton() == MouseButton.SECONDARY) {
             contextMenu.getItems().clear();
@@ -113,5 +120,9 @@ public class ControlerClic implements EventHandler<MouseEvent> {
             }
             contextMenu.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
         }
+    }
+
+    public String getNomClasse() {
+        return nomClasse;
     }
 }
