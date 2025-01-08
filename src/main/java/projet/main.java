@@ -101,7 +101,6 @@ public class main extends Application {
 
         // controleurs
         ControlerClic controlerClic = new ControlerClic(modele);
-        ControlerDrag controlerDrag = new ControlerDrag(modele);
         ControlerDragAndDrop controlerDragAndDrop = new ControlerDragAndDrop(modele);
         ControlerDragDrop controlerDragDrop = new ControlerDragDrop(modele);
 
@@ -111,7 +110,7 @@ public class main extends Application {
 //        modele.enregistrerObservateur((arborescence));
         VueUML vueUML = new VueUML(modele);
         modele.enregistrerObservateur(vueUML);
-        VueClasse scrollpane = new VueClasse(modele);
+        VueClasse scrollpane = new VueClasse(modele, controlerClic);
         modele.enregistrerObservateur(scrollpane);
 
         scrollpane.setOnMouseClicked(controlerClic);
@@ -142,10 +141,10 @@ public class main extends Application {
         scrollpane.setMaxWidth(scene.getWidth()*75/100);
 
         ControlerDrag controlerDrag = new ControlerDrag(modele);
-        scrollpane.setOnDragOver(controlerDrag);
-        scrollpane.setOnDragEntered(controlerDrag);
-        scrollpane.setOnDragExited(controlerDrag);
-        scrollpane.setOnDragDropped(controlerDrag);
+//        scrollpane.setOnDragOver(controlerDrag);
+//        scrollpane.setOnDragEntered(controlerDrag);
+//        scrollpane.setOnDragExited(controlerDrag);
+//        scrollpane.setOnDragDropped(controlerDrag);
 
         stage.setTitle("Diagramme Class Makker");
         stage.setScene(scene);

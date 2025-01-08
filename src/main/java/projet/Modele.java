@@ -248,6 +248,20 @@ public class Modele implements Sujet{
         return res.toString();
     }
 
+    public void supprimerClasse(String nom){
+        classes.remove(nom);
+        updateRelations();
+        UML = createUML();
+        notifierObservateur();
+    }
+
+    public void viderClasses(){
+        classes.clear();
+        updateRelations();
+        UML = createUML();
+        notifierObservateur();
+    }
+
     public String getUML(){
         return UML;
     }
