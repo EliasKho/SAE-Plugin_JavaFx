@@ -43,21 +43,10 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
                 if (selectedItem != null) {
                     FileComposite file = selectedItem.getValue();
-                    // vérifier si le fichier est un fichier java
-                    if (file.getName().endsWith(".java")) {
-                        // récupérer le package de la classe du fichier
-                        String packageName = file.getPath().replace(File.separator, ".");
-                        // on retire le .java
-                        packageName = packageName.substring(0, packageName.length() - 5);
-                        // on retire tous les fichiers avant le /java/ compris
-                        packageName = packageName.substring(packageName.indexOf("java.") + 5);
-
+                    
                         if (file instanceof Fichier) {
-                            this.nomClasse = packageName;
-                        }
-
-                        if (file instanceof Fichier) {
-                            this.nomClasse = packageName;
+                            this.nomClasse = file.getAbsolutePath();
+                            System.out.println("Nom de la classe : " + this.nomClasse);
 
                             item.setOnDragDetected(new EventHandler<MouseEvent>() {
                                 @Override
@@ -70,7 +59,7 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                                 }
                             });
                         }
-                    }
+
                 }
             }
         }
