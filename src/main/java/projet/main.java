@@ -53,6 +53,8 @@ public class main extends Application {
         });
         scrollpane.setOnDragOver(controlerDrag);
         scrollpane.setOnDragDropped(controlerDrag);
+        arborescence.setOnDragOver(controlerDrag);
+        arborescence.setOnDragDropped(controlerDrag);
 
 
         //scrollpane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
