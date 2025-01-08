@@ -26,6 +26,7 @@ public class ControlerVues {
 //            La taille (hauteur et largeur) max de l'image est
             img.setPreserveRatio(true);
             img.setFitHeight(gridPane.getChildren().get(1).getBoundsInLocal().getHeight()-30);
+            img.setFitWidth(1000-gridPane.getChildren().get(1).getBoundsInLocal().getWidth()-30);
             img.setOnMouseClicked(controlerClic);
             gridPane.getChildren().remove(2);
             gridPane.add(img, 1,1);

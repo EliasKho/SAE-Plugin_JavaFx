@@ -6,6 +6,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
@@ -81,12 +82,15 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
         //si clic droit
         if (event.getButton() == MouseButton.SECONDARY) {
+            System.out.println("clic droit");
             contextMenu.getItems().clear();
+            ControlerImage controlerImage = new ControlerImage(modele);
 
             if(event.getSource() instanceof TreeView){
                 TreeView<FileComposite> item = (TreeView<FileComposite>) event.getSource();
                 TreeItem<FileComposite> selectedItem = item.getSelectionModel().getSelectedItem();
                 item.setOnDragDetected(this);
+
 
                 if (selectedItem != null) {
                     FileComposite file = selectedItem.getValue();
@@ -121,16 +125,21 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                     modele.viderClasses();
                 });
                 MenuItem item3 = new MenuItem("Exporter en image");
-                ControlerImage controlerImage = new ControlerImage(modele);
                 item3.setOnAction(e -> {
                     controlerImage.captureImage();
                 });
                 MenuItem item4 = new MenuItem("Exporter en image diagramme PlantUML");
                 item4.setOnAction(e -> {
-                    // Capture de l'image, comment faire pour récupérer la scene et la vueClasse
                     controlerImage.captureImageUML();
                 });
                 contextMenu.getItems().addAll(item2, item3, item4);
+            }
+            if (event.getSource() instanceof ImageView) {
+                MenuItem item4 = new MenuItem("Exporter en image diagramme PlantUML");
+                item4.setOnAction(e -> {
+                    controlerImage.captureImageUML();
+                });
+                contextMenu.getItems().add(item4);
             }
             contextMenu.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
         }
