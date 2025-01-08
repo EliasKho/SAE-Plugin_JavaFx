@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.WritableImage;
 import net.sourceforge.plantuml.GeneratedImage;
+import projet.Modele;
 import projet.classes.VueClasse;
 
 import net.sourceforge.plantuml.SourceFileReader;
@@ -15,11 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ControlerImage {
-    public static void captureImage(Scene scene, VueClasse scrollpane) {
-        WritableImage image = new WritableImage((int)scene.getWidth()*75/100, (int) scene.getHeight());
+    private Modele modele;
 
+    public ControlerImage(Modele modele) {
+        this.modele = modele;
+    }
+
+    public void captureImage() {
+        WritableImage image = new WritableImage((int)modele.getScene().getWidth()*75/100, (int) modele.getScene().getHeight());
         // Capturer le contenu du nœud dans l'image
-        scrollpane.snapshot(new SnapshotParameters(), image);
+        modele.getVueClasse().snapshot(new SnapshotParameters(), image);
 
         // Sauvegarder l'image dans un fichier
         File file = new File("capture.png");
@@ -31,7 +37,7 @@ public class ControlerImage {
         }
     }
 
-    public static void captureImageUML(){
+    public void captureImageUML(){
         try {
             // Chemin vers votre fichier PlantUML
             File source = new File("Diag.puml");

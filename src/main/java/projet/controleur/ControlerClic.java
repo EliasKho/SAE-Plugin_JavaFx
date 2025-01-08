@@ -96,14 +96,14 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                     modele.viderClasses();
                 });
                 MenuItem item3 = new MenuItem("Exporter en image");
+                ControlerImage controlerImage = new ControlerImage(modele);
                 item3.setOnAction(e -> {
-                    // Capture de l'image, comment faire pour récupérer la scene et la vueClasse
-                    ControlerImage.captureImage(modele.getScene(), modele.getVueClasse());
+                    controlerImage.captureImage();
                 });
                 MenuItem item4 = new MenuItem("Exporter en image diagramme PlantUML");
                 item4.setOnAction(e -> {
                     // Capture de l'image, comment faire pour récupérer la scene et la vueClasse
-                    ControlerImage.captureImageUML();
+                    controlerImage.captureImageUML();
                 });
                 contextMenu.getItems().addAll(item2, item3, item4);
             }

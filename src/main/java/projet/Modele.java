@@ -18,12 +18,14 @@ public class Modele implements Sujet{
     private String UML = "";
     private Scene scene;
     private VueClasse vueClasse;
+    private String vue;
 
     public Modele(FileComposite f) {
         this.file = f;
         this.observateurs = new ArrayList<>();
         this.classes = new HashMap<>();
         this.relations = new ArrayList<>();
+        this.vue = "classique";
     }
 
     public FileComposite getRacine() {
@@ -292,5 +294,13 @@ public class Modele implements Sujet{
 
     public VueClasse getVueClasse(){
         return vueClasse;
+    }
+
+    public void setVue(String vue){
+        this.vue = vue;
+    }
+
+    public String getVue(){
+        return vue;
     }
 }

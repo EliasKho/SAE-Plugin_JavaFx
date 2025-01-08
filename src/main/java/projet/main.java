@@ -3,15 +3,13 @@ package projet;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import projet.arborescence.Dossier;
 import projet.arborescence.VueArborescence;
 import projet.classes.VueClasse;
-import projet.controleur.ControlerClic;
-import projet.controleur.ControlerDrag;
-import projet.controleur.ControlerImage;
-import projet.controleur.ControlerDragDrop;
+import projet.controleur.*;
 
 import java.io.File;
 
@@ -84,8 +82,8 @@ public class main extends Application {
         Label txtBas = new Label("Pas de commande en cours");
         txtBas.setFont(new Font("Times", 16));
         txtBas.setTextAlignment(TextAlignment.CENTER);
-        vb.getChildren().add(txtBas);
-        psud.setBottom(vb);
+        vb.getChildren().add(txtBas);projet.Modele
+        psud.setBottom(vb);projet.Modele
         bp.setBottom(psud);
 
 
@@ -94,6 +92,9 @@ public class main extends Application {
         stage.setScene(scene);
         stage.show();
     }*/
+//        Supprimer le fichier Diag.png
+        File file = new File("Diag.png");
+        file.delete();
         // création du modèle
         Dossier dossier = new Dossier(new File("src/main/java/projet"));
         Modele modele = new Modele(dossier);
@@ -102,6 +103,8 @@ public class main extends Application {
         ControlerClic controlerClic = new ControlerClic(modele);
         ControlerDrag controlerDrag = new ControlerDrag(modele);
         ControlerDragDrop controlerDragDrop = new ControlerDragDrop(modele);
+        ControlerVues controlerVues = new ControlerVues(modele);
+        ControlerImage controlerImage = new ControlerImage(modele);
 
         HBox hbox = new HBox();
         VueArborescence arborescence = new VueArborescence(modele, controlerClic);
@@ -116,7 +119,7 @@ public class main extends Application {
 
         Button scButton = new Button("Sauvegarder image");
         scButton.setOnAction(e -> {
-            ControlerImage.captureImage(scrollpane.getScene(), scrollpane);
+            controlerImage.captureImage();
         });
         scrollpane.setOnDragOver(controlerDrag);
         scrollpane.setOnDragDropped(controlerDrag);
@@ -130,10 +133,33 @@ public class main extends Application {
         hbox.getChildren().add(arborescence);
         hbox.getChildren().add(scrollpane);
 
+        Button buttonVueUML = new Button("VueUML");
+
+
+
+        Button buttonVueClassique = new Button("VueClassique");
+
+        HBox vues = new HBox(buttonVueClassique, buttonVueUML);
+        GridPane gp = new GridPane();
+        buttonVueClassique.setOnAction(e -> {
+            controlerVues.afficherVueClasse(gp);
+        });
+        buttonVueUML.setOnAction(e -> {
+            controlerVues.afficherVueUML(gp);
+        });
+        gp.add(vues, 1, 0);
+        gp.add(arborescence, 0, 1);
+        gp.add(scrollpane, 1, 1);
+
+        ImageView img = new ImageView("file:Diag.png");
+        img.fitWidthProperty().bind(gp.widthProperty());
+        img.fitHeightProperty().bind(gp.heightProperty());
+        img.setPreserveRatio(true);
+//        gp.add(img, 1,1);
 
         //hbox.setSpacing(10); // Ajouter un espacement entre les éléments
 
-        Scene scene = new Scene(hbox, 1000, 600);
+        Scene scene = new Scene(gp, 1000, 600);
         modele.setScene(scene);
         modele.setVueClasse(scrollpane);
         arborescence.setMinWidth(scene.getWidth()*25/100);
