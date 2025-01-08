@@ -1,21 +1,12 @@
 @startuml
-class Fichier {
-+Fichier(File)
-+getChildren(): List
+interface Observateur {
++{abstract} actualiser(Sujet):void
 }
 
-class Dossier {
-+Dossier(File)
-+getChildren(): List
+class VueUML {
++VueUML(Modele)
++actualiser(Sujet):void
 }
 
-abstract class FileComposite {
-+FileComposite(File)
-+toString(): String
-+{abstract} getChildren(): List
-}
-
-Fichier -u-|> FileComposite : ""
-Dossier -u-|> FileComposite : ""
-Dossier "1" --> "*" FileComposite : ss_dossier
+VueUML .u.|> Observateur : ""
 @enduml

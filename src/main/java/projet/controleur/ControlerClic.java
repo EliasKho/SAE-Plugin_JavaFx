@@ -2,6 +2,7 @@ package projet.controleur;
 
 import javafx.event.EventHandler;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.ClipboardContent;
@@ -9,6 +10,8 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 import projet.Modele;
 import projet.arborescence.Fichier;
 import projet.arborescence.FileComposite;
@@ -29,8 +32,7 @@ public class ControlerClic implements EventHandler<MouseEvent> {
         if (event.getSource() instanceof TreeView) {
             TreeView<FileComposite> item = (TreeView<FileComposite>) event.getSource();
             TreeItem<FileComposite> selectedItem = item.getSelectionModel().getSelectedItem();
-
-            //item.setOnDragDetected(this);
+            item.setOnDragDetected(this);
 
             if (selectedItem != null) {
                 FileComposite file = selectedItem.getValue();
@@ -45,8 +47,6 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
                     if (file instanceof Fichier) {
                         this.nomClasse = packageName;
-                        //Savoir quoi mettre pour détecter le drag
-                        file.setOnDragDetected(this);
                         Dragboard db = item.startDragAndDrop(TransferMode.MOVE);
                         ClipboardContent content = new ClipboardContent();
                         content.putString(this.nomClasse);
