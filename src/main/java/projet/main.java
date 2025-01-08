@@ -11,6 +11,8 @@ import projet.classes.VueClasse;
 import projet.controleur.ControlerClic;
 import projet.controleur.ControlerDrag;
 import projet.controleur.ControlerImage;
+import projet.controleur.ControlerDragAndDrop;
+import projet.controleur.ControlerDragDrop;
 
 import java.io.File;
 
@@ -99,6 +101,9 @@ public class main extends Application {
 
         // controleurs
         ControlerClic controlerClic = new ControlerClic(modele);
+        ControlerDrag controlerDrag = new ControlerDrag(modele);
+        ControlerDragAndDrop controlerDragAndDrop = new ControlerDragAndDrop(modele);
+        ControlerDragDrop controlerDragDrop = new ControlerDragDrop(modele);
 
         HBox hbox = new HBox();
         VueArborescence arborescence = new VueArborescence(modele, controlerClic);
@@ -110,6 +115,10 @@ public class main extends Application {
         modele.enregistrerObservateur(scrollpane);
 
         scrollpane.setOnMouseClicked(controlerClic);
+        scrollpane.setOnMousePressed(controlerDrag);
+        scrollpane.setOnMouseReleased(controlerDrag);
+        scrollpane.setOnDragOver(controlerDragAndDrop);
+        scrollpane.setOnDragDropped(controlerDragDrop);
 
         //scrollpane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
@@ -117,6 +126,7 @@ public class main extends Application {
         scrollpane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
 
         hbox.getChildren().add(arborescence);
+        hbox.getChildren().add(scButton);
         hbox.getChildren().add(scrollpane);
 
 
