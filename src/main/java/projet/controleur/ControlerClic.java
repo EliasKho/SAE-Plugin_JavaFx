@@ -72,17 +72,6 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                         }
                     }
                 }
-
-                if (event.getSource() instanceof Pane) {
-                    if (nomClasse != null) {
-                        // on récupère les coordonnées du clic
-                        double x = event.getX();
-                        double y = event.getY();
-
-                        // on récupère le fichier sélectionné
-                        modele.ajouterClasse(nomClasse, x, y);
-                    }
-                }
             }
         }
 
