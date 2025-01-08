@@ -85,6 +85,7 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                 }
             }
         }
+
         //si clic droit
         if (event.getButton() == MouseButton.SECONDARY) {
             contextMenu.getItems().clear();
@@ -119,7 +120,6 @@ public class ControlerClic implements EventHandler<MouseEvent> {
             }
             contextMenu.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
         }
-
     }
 
     public String getNomClasse() {

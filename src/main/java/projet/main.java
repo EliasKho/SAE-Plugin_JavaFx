@@ -121,13 +121,13 @@ public class main extends Application {
         scrollpane.setOnDragOver(controlerDrag);
         scrollpane.setOnDragDropped(controlerDrag);
 
+
         //scrollpane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
         arborescence.setStyle("-fx-border-color: black; -fx-border-width: 2;");
         scrollpane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
 
         hbox.getChildren().add(arborescence);
-        hbox.getChildren().add(scButton);
         hbox.getChildren().add(scrollpane);
 
 
@@ -141,11 +141,6 @@ public class main extends Application {
 
         scrollpane.setMinWidth(scene.getWidth()*75/100);
         scrollpane.setMaxWidth(scene.getWidth()*75/100);
-
-//        scrollpane.setOnDragOver(controlerDrag);
-//        scrollpane.setOnDragEntered(controlerDrag);
-//        scrollpane.setOnDragExited(controlerDrag);
-//        scrollpane.setOnDragDropped(controlerDrag);
 
         stage.setTitle("Diagramme Class Makker");
         stage.setScene(scene);
