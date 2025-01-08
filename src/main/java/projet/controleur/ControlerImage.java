@@ -45,7 +45,6 @@ public class ControlerImage {
             // Création du lecteur de fichier source
             SourceFileReader reader = new SourceFileReader(source);
 
-            // Génération de l'image
             List<GeneratedImage> list = reader.getGeneratedImages();
 //            System.out.println(list);
 
