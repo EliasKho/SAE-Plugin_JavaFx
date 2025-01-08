@@ -95,12 +95,13 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                     // Capture de l'image, comment faire pour récupérer la scene et la vueClasse
                     ControlerImage.captureImage(modele.getScene(), modele.getVueClasse());
                 });
-                contextMenu.getItems().addAll(item2, item3);
+                MenuItem item4 = new MenuItem("Exporter en image diagramme PlantUML");
+                item4.setOnAction(e -> {
+                    // Capture de l'image, comment faire pour récupérer la scene et la vueClasse
+                    ControlerImage.captureImageUML();
+                });
+                contextMenu.getItems().addAll(item2, item3, item4);
                 contextMenu.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
-//                contextMenu.setAutoHide(true);
-
-                // on récupère le fichier sélectionné
-                System.out.println("Clic droit");
             }
         }
         if(event.getButton() == MouseButton.PRIMARY){
