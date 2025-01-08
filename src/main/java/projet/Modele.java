@@ -1,5 +1,6 @@
 package projet;
 
+import javafx.scene.Scene;
 import projet.arborescence.FileComposite;
 import projet.classes.*;
 
@@ -15,6 +16,8 @@ public class Modele implements Sujet{
     private final HashMap<String, Classe> classes;
     private final List<Fleche> relations;
     private String UML = "";
+    private Scene scene;
+    private VueClasse vueClasse;
 
     public Modele(FileComposite f) {
         this.file = f;
@@ -255,5 +258,21 @@ public class Modele implements Sujet{
 
     public List<Fleche> getRelations(){
         return relations;
+    }
+
+    public void setScene(Scene scene){
+        this.scene = scene;
+    }
+
+    public Scene getScene(){
+        return scene;
+    }
+
+    public void setVueClasse(VueClasse vueClasse){
+        this.vueClasse = vueClasse;
+    }
+
+    public VueClasse getVueClasse(){
+        return vueClasse;
     }
 }
