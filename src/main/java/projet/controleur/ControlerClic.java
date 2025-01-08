@@ -78,40 +78,40 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                     }
                 }
             }
-            //si clic droit
-            if (event.getButton() == MouseButton.SECONDARY) {
-                contextMenu.getItems().clear();
+        }
+        //si clic droit
+        if (event.getButton() == MouseButton.SECONDARY) {
+            contextMenu.getItems().clear();
 
-                if (event.getSource() instanceof VBox) {
-                    VBox box = (VBox) event.getSource();
-                    String nom = box.getId();
+            if (event.getSource() instanceof VBox) {
+                VBox box = (VBox) event.getSource();
+                String nom = box.getId();
 
-                    MenuItem item = new MenuItem("Supprimer");
-                    contextMenu.getItems().add(item);
-                    item.setOnAction(e -> {
-                        modele.supprimerClasse(nom);
-                    });
-                }
-
-                if (event.getSource() instanceof Pane) {
-                    MenuItem item2 = new MenuItem("Supprimer tout");
-                    item2.setOnAction(e -> {
-                        modele.viderClasses();
-                    });
-                    MenuItem item3 = new MenuItem("Exporter en image");
-                    item3.setOnAction(e -> {
-                        // Capture de l'image, comment faire pour récupérer la scene et la vueClasse
-                        ControlerImage.captureImage(modele.getScene(), modele.getVueClasse());
-                    });
-                    MenuItem item4 = new MenuItem("Exporter en image diagramme PlantUML");
-                    item4.setOnAction(e -> {
-                        // Capture de l'image, comment faire pour récupérer la scene et la vueClasse
-                        ControlerImage.captureImageUML();
-                    });
-                    contextMenu.getItems().addAll(item2, item3, item4);
-                }
-                contextMenu.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
+                MenuItem item = new MenuItem("Supprimer");
+                contextMenu.getItems().add(item);
+                item.setOnAction(e -> {
+                    modele.supprimerClasse(nom);
+                });
             }
+
+            if (event.getSource() instanceof Pane) {
+                MenuItem item2 = new MenuItem("Supprimer tout");
+                item2.setOnAction(e -> {
+                    modele.viderClasses();
+                });
+                MenuItem item3 = new MenuItem("Exporter en image");
+                item3.setOnAction(e -> {
+                    // Capture de l'image, comment faire pour récupérer la scene et la vueClasse
+                    ControlerImage.captureImage(modele.getScene(), modele.getVueClasse());
+                });
+                MenuItem item4 = new MenuItem("Exporter en image diagramme PlantUML");
+                item4.setOnAction(e -> {
+                    // Capture de l'image, comment faire pour récupérer la scene et la vueClasse
+                    ControlerImage.captureImageUML();
+                });
+                contextMenu.getItems().addAll(item2, item3, item4);
+            }
+            contextMenu.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
         }
     }
 }

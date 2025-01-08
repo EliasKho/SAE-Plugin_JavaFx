@@ -114,8 +114,8 @@ public class main extends Application {
         modele.enregistrerObservateur(scrollpane);
 
         scrollpane.setOnMouseClicked(controlerClic);
-        scrollpane.setOnMousePressed(controlerDrag);
-        scrollpane.setOnMouseReleased(controlerDrag);
+//        scrollpane.setOnMousePressed(controlerDrag);
+//        scrollpane.setOnMouseReleased(controlerDrag);
         scrollpane.setOnDragOver(controlerDragAndDrop);
         scrollpane.setOnDragDropped(controlerDragDrop);
 
@@ -125,7 +125,6 @@ public class main extends Application {
         scrollpane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
 
         hbox.getChildren().add(arborescence);
-        hbox.getChildren().add(scButton);
         hbox.getChildren().add(scrollpane);
 
 
