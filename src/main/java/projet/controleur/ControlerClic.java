@@ -18,6 +18,8 @@ import projet.arborescence.Fichier;
 import projet.arborescence.FileComposite;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ControlerClic implements EventHandler<MouseEvent> {
     private Modele modele;
@@ -27,6 +29,17 @@ public class ControlerClic implements EventHandler<MouseEvent> {
     public ControlerClic(Modele modele) {
         this.modele = modele;
         this.contextMenu=new ContextMenu();
+    }
+
+    private String getString(FileComposite fc){
+        // récupérer le package de la classe du fichier
+        String packageName = fc.getPath().replace(File.separator, ".");
+        // on retire le .java
+        packageName = packageName.substring(0, packageName.length() - 5);
+        // on retire tous les fichiers avant le /java/ compris
+        packageName = packageName.substring(packageName.indexOf("java.") + 5);
+
+        return packageName;
     }
 
     public void handle(MouseEvent event) {
@@ -45,16 +58,7 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                     FileComposite file = selectedItem.getValue();
                     // vérifier si le fichier est un fichier java
                     if (file.getName().endsWith(".java")) {
-                        // récupérer le package de la classe du fichier
-                        String packageName = file.getPath().replace(File.separator, ".");
-                        // on retire le .java
-                        packageName = packageName.substring(0, packageName.length() - 5);
-                        // on retire tous les fichiers avant le /java/ compris
-                        packageName = packageName.substring(packageName.indexOf("java.") + 5);
-
-                        if (file instanceof Fichier) {
-                            this.nomClasse = packageName;
-                        }
+                        String packageName = getString(file);
 
                         if (file instanceof Fichier) {
                             this.nomClasse = packageName;
@@ -78,6 +82,27 @@ public class ControlerClic implements EventHandler<MouseEvent> {
         //si clic droit
         if (event.getButton() == MouseButton.SECONDARY) {
             contextMenu.getItems().clear();
+
+            if(event.getSource() instanceof TreeView){
+                TreeView<FileComposite> item = (TreeView<FileComposite>) event.getSource();
+                TreeItem<FileComposite> selectedItem = item.getSelectionModel().getSelectedItem();
+                item.setOnDragDetected(this);
+
+                if (selectedItem != null) {
+                    FileComposite file = selectedItem.getValue();
+                    if(file.isDirectory()) {
+                        nomClasse = null;
+                        List<String> liste = new ArrayList<>();
+                        for(FileComposite fc: file.getChildren()){
+                            if(!fc.isDirectory()){
+                                String packageName = getString(fc);
+                                liste.add(packageName);
+                            }
+                        }
+                        modele.ajouterListClasses(liste);
+                    }
+                }
+            }
 
             if (event.getSource() instanceof VBox) {
                 VBox box = (VBox) event.getSource();

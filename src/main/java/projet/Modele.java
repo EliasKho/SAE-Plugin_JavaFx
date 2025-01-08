@@ -46,9 +46,10 @@ public class Modele implements Sujet{
         observateurs.remove(observateur);
     }
 
-    public void ajouterClasse(String className, double x, double y){
+    public Classe ajouterClasse(String className, double x, double y){
+        Classe classe = null;
         if (!classes.containsKey(className)) {
-            Classe classe = new Classe(className);
+            classe = new Classe(className);
 
             try {
                 Class<?> classeJava = Class.forName(className);
@@ -82,6 +83,27 @@ public class Modele implements Sujet{
             }
         }
         notifierObservateur();
+        return classe;
+    }
+
+    public void ajouterListClasses(List<String> liste){
+        double x=10;
+        double y=10;
+        double lonMax=0;
+        for(String className : liste){
+            Classe classe = ajouterClasse(className, x, y);
+            if(classe != null){
+                if(classe.getLongueur()>lonMax)
+                    lonMax = classe.getLongueur();
+
+                if(x+10+classe.getLargeur()>600){
+                    x=10;
+                    y+=10+lonMax;
+                } else {
+                    x+=10+classe.getLargeur();
+                }
+            }
+        }
     }
 
     /**
