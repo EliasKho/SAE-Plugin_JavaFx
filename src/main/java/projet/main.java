@@ -111,18 +111,12 @@ public class main extends Application {
 
         scrollpane.setOnMouseClicked(controlerClic);
 
-        Button scButton = new Button("Sauvegarder image");
-        scButton.setOnAction(e -> {
-            ControlerImage.captureImage(scrollpane.getScene(), scrollpane);
-        });
-
         //scrollpane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
         arborescence.setStyle("-fx-border-color: black; -fx-border-width: 2;");
         scrollpane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
 
         hbox.getChildren().add(arborescence);
-        hbox.getChildren().add(scButton);
         hbox.getChildren().add(scrollpane);
 
 
