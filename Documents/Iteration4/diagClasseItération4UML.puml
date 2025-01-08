@@ -1,0 +1,175 @@
+@startuml
+skinparam class {
+    BackgroundColor<<new>> LightYellow
+    BackgroundColor<<update>> LightBlue
+    BorderColor Black
+    ArrowColor Black
+}
+
+class Dossier extends FileComposite {
+    +Dossier(File)
+    +getChildren(): List<FileComposite>
+}
+
+class Fichier extends FileComposite {
+    +Fichier(File)
+    +getChildren(): List<FileComposite>
+}
+
+abstract class FileComposite {
+    +FileComposite(File)
+    {abstract}+ getChildren(): List<FileComposite>
+    +toString(): String
+}
+
+class VueArborescence implements Observateur{
+    -TreeView<FileComposite>: arborescence
+}
+
+class Attribut {
+    -nom: String
+    -type: Type
+    -modifier: int
+    +Attribut(String,Type,int)
+    +getUMLString():String
+    +getString():String
+    +equals(Object):boolean
+    +hashCode():int
+    +getter/setter(): void
+}
+
+class Classe{
+    -nom: String
+    -isInterface: boolean
+    -isAbstract: boolean
+    -nomPackage: String
+    -x: double
+    -y: double
+    -longeur: double
+    -largeur: double
+    +Classe(String)
+    +equals(Object):boolean
+    +hashCode():int
+    +getter/setter(): void
+}
+
+class Methode {
+    -nom: String
+    -typeRetour: Type
+    -parametres: List<Parameter>
+    -modifier: int
+    -constructeur: boolean
+    +Methode(String,Type,List<Parameter>,int)
+    +Methode(String,List<Parameter>,int)
+    +getUMLString():String
+    +getString():String
+    -getParametersString():String
+    +equals(Object):boolean
+    +hashCode():int
+    +getter/setter(): void
+}
+
+class Fleche {
+    +{static} IMPLEMENTS: String
+    +{static} EXTENDS: String
+    +{static} DEPENDANCE: String
+    +{static} nbRelations: HashMap<String, Interger>
+    -type: String
+    -nom: String
+    -parentCardinalite: String
+    -enfantCardinalite: String
+    -indexEnfantParent: int
+    -p1: double[]
+    -p2: double[]
+    +Fleche(Classe,Classe,String)
+    +calculerPosition()
+    +getUMLString():String
+    +equals(Object):boolean
+    +hashCode():int
+    +getter/setter(): void
+}
+
+class VueClasse <<update>> implements Observateur {
+    +VueClasse(Modele)
+    +actualiser(Sujet):void
+    +actualiserRelation(Sujet):void
+    +createArrow(Fleche):void
+}
+
+class ControlerClic <<update>>{
+    -nomClasse: String
+    -contexteMenu : ContexteMenu
+    +ControlerClic(Modele)
+    +handle(MouseEvent):void
+    +getNomClasse():String
+}
+
+class ControlerDrag <<update>> {
+    -x:double
+    -y:double
+    +ControlerDrag(Modele)
+    +handle(MouseEvent):void
+}
+
+class ControlerImage <<new>>{
+    +{static} captureImage(Scene,VueClasse)
+}
+
+class Modele <<update>> implements Sujet{
+    -UML: String
+    +Modele(FileComposite)
+    +enregistrerObservateur(Observateur):void
+    +notifierObservateur():void
+    +supprimerObservateur(Observateur):void
+    +ajouterClasse(String, x, y):void
+    +ajouterRelation(String, String, String, String, String, String):void
+    +updateRelationHeritage(Classe):void
+    +updateRelationAttributs(Classe):void
+    +updateRelations():void
+    +createUML():String
+    +isInDiagram(String): boolean
+    +methodes introspections()
+    +getters/setters()
+}
+
+interface Observateur {
+    +{abstract} actualiser(Sujet):void
+}
+
+interface Sujet {
+    +{abstract} notifierObservateur():void
+    +{abstract} supprimerObservateur(Observateur):void
+    +{abstract} enregistrerObservateur(Observateur):void
+}
+
+class VueUML implements Observateur{
+    +VueUML(Modele)
+    +actualiser(Sujet):void
+}
+
+
+Dossier "1" --> "*" FileComposite: -ss_dossiers
+
+VueArborescence "1" -> "1" Modele : modele
+VueArborescence "1" -> "1" ControlerClic : controler
+
+Classe "1" --> "*" Attribut: -attributs
+Classe "1" --> "*" Methode: -methodes
+
+Fleche "*" --> "1" Classe: -parent
+Fleche "*" --> "1" Classe: -enfant
+
+VueClasse "1" -> "1" Modele : modele
+
+ControlerClic "1" --> "1" Modele : modele
+
+ControlerDrag "1" --> "1" Modele : modele
+
+VueUML "1" -> "1" Modele : modele
+
+Modele "*" -> "1" Classe : -classes
+Modele "*" -> "1" FileComposite : -racine
+Modele "*" --> "*" Observateur : -observateurs
+Modele "*" --> "*" Fleche : -fleches
+
+@enduml
