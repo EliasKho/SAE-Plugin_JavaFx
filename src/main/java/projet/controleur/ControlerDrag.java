@@ -31,20 +31,32 @@ public class ControlerDrag implements EventHandler<DragEvent> {
             boolean success = false;
             // on verifie si l'evenement est un setOnDragDropped
             if (dragEvent.getGestureSource() != dragEvent.getTarget() && dragEvent.getDragboard().hasString()) {
+
                 // on récupère la classe
                 String nomClasse = dragEvent.getDragboard().getString();
-                Classe classe = modele.getClasses().get(nomClasse);
 
-                // on modifie les coordonnées de la classe (on la déplace tel que la position de la souris soit le centre)
-                double x = dragEvent.getX() - classe.getLargeur() / 2;
-                double y = dragEvent.getY() - classe.getLongueur() / 2;
-                if (x < 0) x = 0;
-                if (y < 0) y = 0;
-                classe.setX(x);
-                classe.setY(y);
+                if (modele.isInDiagram(nomClasse)) {
 
-                success = true;
+                    Classe classe = modele.getClasses().get(nomClasse);
+
+                    // on modifie les coordonnées de la classe (on la déplace tel que la position de la souris soit le centre)
+                    double x = dragEvent.getX() - classe.getLargeur() / 2;
+                    double y = dragEvent.getY() - classe.getLongueur() / 2;
+                    if (x < 0) x = 0;
+                    if (y < 0) y = 0;
+                    classe.setX(x);
+                    classe.setY(y);
+
+                    success = true;
+                }
+                else{
+                    double x = dragEvent.getX();
+                    double y = dragEvent.getY();
+                    modele.ajouterClasse(nomClasse, x, y);
+                    success = true;
+                }
             }
+
             dragEvent.setDropCompleted(success);
             dragEvent.consume();
             modele.notifierObservateur();

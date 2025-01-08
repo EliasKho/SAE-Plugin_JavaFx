@@ -112,9 +112,6 @@ public class VueClasse extends Pane implements Observateur {
                         content.putString(packageName);
                         content.putImage(container.snapshot(null, null));
                         db.setContent(content);
-
-                        System.out.println("Deplacement de la classe : " + packageName);
-
                         mouseEvent.consume();
                     }
                 });

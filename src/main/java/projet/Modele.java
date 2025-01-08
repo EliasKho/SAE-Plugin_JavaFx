@@ -218,6 +218,10 @@ public class Modele implements Sujet{
         notifierObservateur();
     }
 
+    public boolean isInDiagram(String nom){
+        return classes.containsKey(nom);
+    }
+
 
 
     public String createUML(){
