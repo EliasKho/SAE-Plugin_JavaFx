@@ -18,7 +18,7 @@ public class ControlerImage {
         scrollpane.snapshot(new SnapshotParameters(), image);
 
         // Sauvegarder l'image dans un fichier
-        File file = new File("snapshot.png");
+        File file = new File("capture.png");
         try {
             ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
             System.out.println("Image enregistrée : " + file.getAbsolutePath());

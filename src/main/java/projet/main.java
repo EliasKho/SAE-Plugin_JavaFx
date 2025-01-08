@@ -140,6 +140,8 @@ public class main extends Application {
         //hbox.setSpacing(10); // Ajouter un espacement entre les éléments
 
         Scene scene = new Scene(hbox, 1000, 600);
+        modele.setScene(scene);
+        modele.setVueClasse(scrollpane);
         arborescence.setMinWidth(scene.getWidth()*25/100);
         arborescence.setMaxWidth(scene.getWidth()*25/100);
 
