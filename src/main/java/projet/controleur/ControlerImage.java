@@ -31,7 +31,7 @@ public class ControlerImage {
         File file = new File("capture.png");
         try {
             ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
-            System.out.println("Image enregistrée : " + file.getAbsolutePath());
+//            System.out.println("Image enregistrée : " + file.getAbsolutePath());
         } catch (IOException e) {
             System.err.println("Erreur lors de l'enregistrement de l'image : " + e.getMessage());
         }
@@ -45,13 +45,12 @@ public class ControlerImage {
             // Création du lecteur de fichier source
             SourceFileReader reader = new SourceFileReader(source);
 
-            // Génération de l'image
             List<GeneratedImage> list = reader.getGeneratedImages();
-            System.out.println(list);
+//            System.out.println(list);
 
             if (!list.isEmpty()) {
                 File png = list.get(0).getPngFile();
-                System.out.println("Image générée : " + png.getAbsolutePath());
+//                System.out.println("Image générée : " + png.getAbsolutePath());
             } else {
                 System.out.println("Aucune image n'a été générée.");
             }

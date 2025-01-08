@@ -140,6 +140,8 @@ public class VueClasse extends Pane implements Observateur {
 
     private Pane createArrow(Fleche r) {
         Pane arrow = new Pane();
+        //couleur de fond rouge
+        arrow.setStyle("-fx-background-color: red;");
 
         // Coordonnées de la relation
         double[] coord = r.getPosition();

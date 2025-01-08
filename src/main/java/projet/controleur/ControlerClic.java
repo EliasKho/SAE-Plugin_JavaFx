@@ -6,6 +6,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
@@ -18,6 +19,8 @@ import projet.arborescence.Fichier;
 import projet.arborescence.FileComposite;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ControlerClic implements EventHandler<MouseEvent> {
     private Modele modele;
@@ -26,7 +29,18 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
     public ControlerClic(Modele modele) {
         this.modele = modele;
-        this.contextMenu=new ContextMenu();
+        this.contextMenu = new ContextMenu();
+    }
+
+    private String getString(FileComposite fc) {
+        // récupérer le package de la classe du fichier
+        String packageName = fc.getPath().replace(File.separator, ".");
+        // on retire le .java
+        packageName = packageName.substring(0, packageName.length() - 5);
+        // on retire tous les fichiers avant le /java/ compris
+        packageName = packageName.substring(packageName.indexOf("java.") + 5);
+
+        return packageName;
     }
 
     public void handle(MouseEvent event) {
@@ -43,22 +57,20 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
                 if (selectedItem != null) {
                     FileComposite file = selectedItem.getValue();
-                    
-                        if (file instanceof Fichier) {
-                            this.nomClasse = file.getAbsolutePath();
-                            System.out.println("Nom de la classe : " + this.nomClasse);
+                    if (file instanceof Fichier) {
+                        this.nomClasse = file.getAbsolutePath();
 
-                            item.setOnDragDetected(new EventHandler<MouseEvent>() {
-                                @Override
-                                public void handle(MouseEvent mouseEvent) {
-                                    Dragboard db = item.startDragAndDrop(TransferMode.MOVE);
-                                    ClipboardContent content = new ClipboardContent();
-                                    content.putString(getNomClasse());
-                                    db.setContent(content);
-                                    event.consume();
-                                }
-                            });
-                        }
+                        item.setOnDragDetected(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent mouseEvent) {
+                                Dragboard db = item.startDragAndDrop(TransferMode.MOVE);
+                                ClipboardContent content = new ClipboardContent();
+                                content.putString(getNomClasse());
+                                db.setContent(content);
+                                event.consume();
+                            }
+                        });
+                    }
 
                 }
             }
@@ -66,7 +78,31 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
         //si clic droit
         if (event.getButton() == MouseButton.SECONDARY) {
+            System.out.println("clic droit");
             contextMenu.getItems().clear();
+            ControlerImage controlerImage = new ControlerImage(modele);
+
+            if (event.getSource() instanceof TreeView) {
+                TreeView<FileComposite> item = (TreeView<FileComposite>) event.getSource();
+                TreeItem<FileComposite> selectedItem = item.getSelectionModel().getSelectedItem();
+                item.setOnDragDetected(this);
+
+
+                if (selectedItem != null) {
+                    FileComposite file = selectedItem.getValue();
+                    if (file.isDirectory()) {
+                        nomClasse = null;
+                        List<String> liste = new ArrayList<>();
+                        for (FileComposite fc : file.getChildren()) {
+                            if (!fc.isDirectory()) {
+                                String packageName = getString(fc);
+                                liste.add(packageName);
+                            }
+                        }
+                        modele.ajouterListClasses(liste);
+                    }
+                }
+            }
 
             if (event.getSource() instanceof VBox) {
                 VBox box = (VBox) event.getSource();
@@ -85,16 +121,21 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                     modele.viderClasses();
                 });
                 MenuItem item3 = new MenuItem("Exporter en image");
-                ControlerImage controlerImage = new ControlerImage(modele);
                 item3.setOnAction(e -> {
                     controlerImage.captureImage();
                 });
                 MenuItem item4 = new MenuItem("Exporter en image diagramme PlantUML");
                 item4.setOnAction(e -> {
-                    // Capture de l'image, comment faire pour récupérer la scene et la vueClasse
                     controlerImage.captureImageUML();
                 });
                 contextMenu.getItems().addAll(item2, item3, item4);
+            }
+            if (event.getSource() instanceof ImageView) {
+                MenuItem item4 = new MenuItem("Exporter en image diagramme PlantUML");
+                item4.setOnAction(e -> {
+                    controlerImage.captureImageUML();
+                });
+                contextMenu.getItems().add(item4);
             }
             contextMenu.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
         }
