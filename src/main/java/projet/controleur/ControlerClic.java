@@ -32,17 +32,6 @@ public class ControlerClic implements EventHandler<MouseEvent> {
         this.contextMenu = new ContextMenu();
     }
 
-    private String getString(FileComposite fc) {
-        // récupérer le package de la classe du fichier
-        String packageName = fc.getPath().replace(File.separator, ".");
-        // on retire le .java
-        packageName = packageName.substring(0, packageName.length() - 5);
-        // on retire tous les fichiers avant le /java/ compris
-        packageName = packageName.substring(packageName.indexOf("java.") + 5);
-
-        return packageName;
-    }
-
     public void handle(MouseEvent event) {
         event.consume();
 
@@ -95,8 +84,7 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                         List<String> liste = new ArrayList<>();
                         for (FileComposite fc : file.getChildren()) {
                             if (!fc.isDirectory()) {
-                                String packageName = getString(fc);
-                                liste.add(packageName);
+                                liste.add(fc.getAbsolutePath());
                             }
                         }
                         modele.ajouterListClasses(liste);

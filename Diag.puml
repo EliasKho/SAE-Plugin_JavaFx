@@ -1,18 +1,28 @@
 @startuml
-interface Observateur {
-+{abstract} actualiser(Sujet):void
+class Fichier {
++Fichier(File)
++getChildren():List
 }
 
-class VueUML {
-+VueUML(Modele)
+class Dossier {
++Dossier(File)
++getChildren():List
+}
+
+class VueArborescence {
++VueArborescence(Modele,ControlerClic)
++getArbre(FileComposite):TreeItem
 +actualiser(Sujet):void
 }
 
-interface Sujet {
-+{abstract} enregistrerObservateur(Observateur):void
-+{abstract} notifierObservateur():void
-+{abstract} supprimerObservateur(Observateur):void
+abstract class FileComposite {
++FileComposite(File)
++toString():String
++{abstract} getChildren():List
 }
 
-VueUML .u.|> Observateur : ""
+Fichier -u-|> FileComposite : ""
+Dossier -u-|> FileComposite : ""
+Dossier "1" --> "*" FileComposite : ss_dossier
+VueArborescence "1" --> "*" FileComposite : arbre
 @enduml
