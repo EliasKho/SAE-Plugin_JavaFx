@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Modele implements Sujet, Serializable{
 
@@ -412,5 +414,40 @@ public class Modele implements Sujet, Serializable{
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean genererCodeSource() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            for (Classe c : classes.values()) {
+                try {
+                    String nom = c.getNom();
+                    String nomPackage = c.getNomPackage();
+                    File fichier = new File(nom + ".java");
+                    FileWriter fw = new FileWriter(fichier);
+                    BufferedWriter bw = new BufferedWriter(fw);
+                    bw.write("package " + nomPackage + ";\n\n");
+                    if (c.isInterface()) {
+                        bw.write("public interface " + nom + " {\n");
+                    } else if (c.isAbstract()) {
+                        bw.write("public abstract class " + nom + " {\n");
+                    } else {
+                        bw.write("public class " + nom + " {\n");
+                    }
+                    for (Attribut a : c.getAttributs()) {
+                        bw.write("\t"+a.getStringCode() + "\n");
+                    }
+                    for (Methode m : c.getMethodes()) {
+                        bw.write("\t"+m.getStringCode() + "{}\n");
+                    }
+                    bw.write("}\n");
+                    bw.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        executor.shutdownNow();
+        return true;
     }
 }

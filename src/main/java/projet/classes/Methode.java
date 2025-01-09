@@ -81,6 +81,36 @@ public class Methode implements Serializable {
         return affichage;
     }
 
+    public String getStringCode(){
+        String affichage=getModifierString();
+        if(!constructeur){
+            affichage+=getTypeRetourString()+" ";
+        }
+        affichage+=nom+"(";
+        if (parametres != null) {
+            int i=1;
+            String initialeType="";
+            for (Parametre parametre : parametres) {
+                if (initialeType.equals(String.valueOf(parametre.getType().charAt(0)))){
+                    affichage+= parametre.getType()+" "+initialeType.toLowerCase()+i+",";
+                    i++;
+                }
+                else {
+                    affichage += parametre.getType()+" "+String.valueOf(parametre.getType().charAt(0)).toLowerCase()+
+                            ",";
+                    i = 1;
+                }
+                initialeType = String.valueOf(parametre.getType().charAt(0));
+            }
+            //supprimer la derniere virgule
+            if(parametres.size()>0){
+                affichage=affichage.substring(0, affichage.length()-1);
+            }
+        }
+        affichage+= ")";
+        return affichage;
+    }
+
     public String getModifierUMLString(){
         String affichage="";
         if(modifier == 1){
