@@ -1,18 +1,17 @@
 package projet.controleur;
 
 import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.Scene;
+
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.WritableImage;
 import net.sourceforge.plantuml.GeneratedImage;
 import projet.Modele;
-import projet.classes.VueClasse;
+
 
 import net.sourceforge.plantuml.SourceFileReader;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ControlerImage {
@@ -23,7 +22,7 @@ public class ControlerImage {
     }
 
     public void captureImage() {
-        WritableImage image = new WritableImage((int)modele.getScene().getWidth()*75/100, (int) modele.getScene().getHeight());
+        WritableImage image = new WritableImage((int)modele.getScene().getWidth()*75/100, (int) modele.getScene().getHeight()-(int)modele.getScene().getWindow().getHeight()+(int) modele.getScene().getHeight());
         // Capturer le contenu du nœud dans l'image
         modele.getVueClasse().snapshot(new SnapshotParameters(), image);
 
@@ -49,7 +48,7 @@ public class ControlerImage {
 //            System.out.println(list);
 
             if (!list.isEmpty()) {
-                File png = list.get(0).getPngFile();
+                list.getFirst().getPngFile();
 //                System.out.println("Image générée : " + png.getAbsolutePath());
             } else {
                 System.out.println("Aucune image n'a été générée.");

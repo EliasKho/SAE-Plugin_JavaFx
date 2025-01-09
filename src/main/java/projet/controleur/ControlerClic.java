@@ -19,11 +19,11 @@ import projet.arborescence.FileComposite;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@SuppressWarnings("unchecked")
 public class ControlerClic implements EventHandler<MouseEvent> {
-    private Modele modele;
+    private final Modele modele;
     private String nomClasse;
-    private ContextMenu contextMenu;
+    private final ContextMenu contextMenu;
 
     public ControlerClic(Modele modele) {
         this.modele = modele;
