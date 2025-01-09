@@ -1,6 +1,7 @@
 package projet;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -119,8 +120,31 @@ public class main extends Application {
         });
 
         buttonGenererCodeSource.setOnAction(e -> {
-//            buttonGenererCodeSource.setStyle("-fx-background-color: #001e42; -fx-text-fill: white;");
-            modele.genererCodeSource();
+            boolean res = modele.genererCodeSource();
+            if (res) {
+                Popup popup = new Popup();
+                popup.setX(scrollpane.getWidth() / 2);
+                popup.setY(scrollpane.getHeight() / 2);
+                VBox popupVBox = new VBox();
+                popupVBox.getChildren().add(new Label("Le code source a été généré avec succès !"));
+
+                // Fermer 1 seconde après
+                popup.getContent().add(popupVBox);
+                popup.show(stage);
+
+                // Utiliser Platform.runLater pour manipuler l'interface utilisateur
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                    // Cacher le popup sur le thread d'application JavaFX
+                    Platform.runLater(() -> {
+                        popup.hide();
+                    });
+                }).start();
+            }
         });
 
 
