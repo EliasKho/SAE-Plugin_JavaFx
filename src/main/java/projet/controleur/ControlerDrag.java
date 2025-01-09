@@ -53,8 +53,6 @@ public class ControlerDrag implements EventHandler<DragEvent> {
                         init_x = dragEvent.getSceneX();
                         init_y = dragEvent.getSceneY();
                     }
-                    if (x < 0) x = 0;
-                    if (y < 0) y = 0;
                     classe.setX(x);
                     classe.setY(y);
                     setXY(dragEvent.getSceneX(), dragEvent.getSceneY());
@@ -75,19 +73,19 @@ public class ControlerDrag implements EventHandler<DragEvent> {
         }
 
         if (dragEvent.getEventType() == DragEvent.DRAG_DROPPED) {
-            boolean success = false;
-            // on verifie si l'evenement est un setOnDragDropped et on vérifie si l'élément placer est sur l'arborescence
-            if (dragEvent.getGestureSource() != dragEvent.getTarget() && dragEvent.getDragboard().hasString() && dragEvent.getGestureTarget() instanceof VueArborescence){
-                String nomClasse = dragEvent.getDragboard().getString();
-                //Petite vérification pour être sûr si la classe est bien présente dans la fenêtre
-                if(modele.isInDiagram(nomClasse)){
-                    modele.supprimerClasse(nomClasse);
-                    success = true;
+            if (dragEvent.getGestureSource() != dragEvent.getTarget() && dragEvent.getDragboard().hasString()) {
+                boolean success = false;
+                // on verifie si l'evenement est un setOnDragDropped et on vérifie si l'élément placer est sur l'arborescence
+                if (dragEvent.getX() < 0 || dragEvent.getY() < 0) {
+                    String nomClasse = dragEvent.getDragboard().getString();
+                    //Petite vérification pour être sûr si la classe est bien présente dans la fenêtre
+                    if (modele.isInDiagram(nomClasse)) {
+                        modele.supprimerClasse(nomClasse);
+                        success = true;
+                    }
                 }
-            }
-            //Si ce n'est pas sur l'arborescence cela déplace ou place la classe dans la fenêtre
-            else{
-                if (dragEvent.getGestureSource() != dragEvent.getTarget() && dragEvent.getDragboard().hasString()) {
+                //Si ce n'est pas sur l'arborescence cela déplace ou place la classe dans la fenêtre
+                else {
                     // on récupère la classe
                     String nomClasse = dragEvent.getDragboard().getString();
 
@@ -96,8 +94,8 @@ public class ControlerDrag implements EventHandler<DragEvent> {
                         Classe classe = modele.getClasses().get(nomClasse);
 
                         // on modifie les coordonnées de la classe (on la déplace tel que la position de la souris sur la classe reste la même)
-                        double x = dragEvent.getSceneX()+classe.getX()-init_x;
-                        double y = dragEvent.getSceneY()+classe.getY()-init_y;
+                        double x = dragEvent.getSceneX() + classe.getX() - init_x;
+                        double y = dragEvent.getSceneY() + classe.getY() - init_y;
                         if (x < 0) x = 0;
                         if (y < 0) y = 0;
                         classe.setX(x);
@@ -110,12 +108,13 @@ public class ControlerDrag implements EventHandler<DragEvent> {
                         modele.ajouterClasse(nomClasse, x, y);
                         success = true;
                     }
-                }
-            }
 
-            dragEvent.setDropCompleted(success);
-            dragEvent.consume();
-            modele.notifierObservateur();
+                }
+
+                dragEvent.setDropCompleted(success);
+                dragEvent.consume();
+                modele.notifierObservateur();
+            }
         }
     }
 }
