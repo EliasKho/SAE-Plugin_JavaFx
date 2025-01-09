@@ -106,45 +106,6 @@ public class main extends Application {
 
         Button buttonVueClassique = new Button("VueClassique");
 
-        Button buttonGenererCodeSource = new Button("Générer le code source correspondant au diagramme");
-        buttonGenererCodeSource.setStyle("-fx-background-color: #2c8cff; -fx-text-fill: white;");
-
-
-        buttonGenererCodeSource.setOnMousePressed(e -> {
-            buttonGenererCodeSource.setStyle("-fx-background-color: #001e42; -fx-text-fill: white;");
-        });
-        buttonGenererCodeSource.setOnMouseReleased(e -> {
-            buttonGenererCodeSource.setStyle("-fx-background-color: #2c8cff; -fx-text-fill: white;");
-        });
-
-        buttonGenererCodeSource.setOnAction(e -> {
-            boolean res = modele.genererCodeSource();
-            if (res) {
-                Popup popup = new Popup();
-                popup.setX(scrollpane.getWidth() / 2);
-                popup.setY(scrollpane.getHeight() / 2);
-                VBox popupVBox = new VBox();
-                popupVBox.getChildren().add(new Label("Le code source a été généré avec succès !"));
-
-                // Fermer 1 seconde après
-                popup.getContent().add(popupVBox);
-                popup.show(stage);
-
-                // Utiliser Platform.runLater pour manipuler l'interface utilisateur
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e1) {
-                        e1.printStackTrace();
-                    }
-                    // Cacher le popup sur le thread d'application JavaFX
-                    Platform.runLater(() -> {
-                        popup.hide();
-                    });
-                }).start();
-            }
-        });
-
         HBox vues = new HBox(buttonVueClassique, buttonVueUML);
         GridPane gp = new GridPane();
 
@@ -210,8 +171,6 @@ public class main extends Application {
         gp.add(vues, 1, 0);
         gp.add(arborescence, 0, 1);
         gp.add(scrollpane, 1, 1);
-        gp.add(buttonGenererCodeSource, 0,2, 2,1);
-        // le bouton prend toute la largeur de l'écran
 
         ImageView img = new ImageView("file:Diag.png");
         img.fitWidthProperty().bind(gp.widthProperty());
@@ -232,7 +191,6 @@ public class main extends Application {
         //hbox.setSpacing(10); // Ajouter un espacement entre les éléments
 
         Scene scene = new Scene(gp, 1000, 600);
-        buttonGenererCodeSource.setPrefWidth(scene.getWidth());
         modele.setScene(scene);
         modele.setVueClasse(scrollpane);
         stage.setTitle("Diagramme Class Makker");

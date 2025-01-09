@@ -1,11 +1,9 @@
 package projet.controleur;
 
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
@@ -14,6 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Popup;
 import projet.Modele;
 import projet.arborescence.Fichier;
 import projet.arborescence.FileComposite;
@@ -102,7 +101,6 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                     modele.supprimerClasse(nom);
                 });
             }
-
             if (event.getSource() instanceof Pane) {
                 MenuItem item2 = new MenuItem("Supprimer tout");
                 item2.setOnAction(e -> {
@@ -116,15 +114,72 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                 item4.setOnAction(e -> {
                     controlerImage.captureImageUML();
                 });
-                contextMenu.getItems().addAll(item2, item3, item4);
+                MenuItem item5 = new MenuItem("Générer le code source correspondant au diagramme");
+                item5.setOnAction(e -> {
+                    boolean res = modele.genererCodeSource();
+                    if (res) {
+                        Popup popup = new Popup();
+                        popup.setX(modele.getVueClasse().getScene().getWindow().getWidth() / 2);
+                        popup.setY(modele.getVueClasse().getScene().getWindow().getHeight() / 2);
+                        VBox popupVBox = new VBox();
+                        popupVBox.getChildren().add(new Label("Le code source a été généré avec succès !"));
+
+
+                        popup.getContent().add(popupVBox);
+                        popup.show(modele.getVueClasse().getScene().getWindow());
+
+                        // Fermer 1 seconde après
+                        new Thread(() -> {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e1) {
+                                e1.printStackTrace();
+                            }
+                            // Cacher le popup sur le thread d'application JavaFX
+                            Platform.runLater(() -> {
+                                popup.hide();
+                            });
+                        }).start();
+                    }
+                });
+                contextMenu.getItems().addAll(item2, item3, item4, item5);
             }
             if (event.getSource() instanceof ImageView) {
                 MenuItem item4 = new MenuItem("Exporter en image diagramme PlantUML");
                 item4.setOnAction(e -> {
                     controlerImage.captureImageUML();
                 });
-                contextMenu.getItems().add(item4);
+                MenuItem item5 = new MenuItem("Générer le code source correspondant au diagramme");
+                item5.setOnAction(e -> {
+                    boolean res = modele.genererCodeSource();
+                    if (res) {
+                        Popup popup = new Popup();
+                        popup.setX(modele.getVueClasse().getScene().getWindow().getWidth() / 2);
+                        popup.setY(modele.getVueClasse().getScene().getWindow().getHeight() / 2);
+                        VBox popupVBox = new VBox();
+                        popupVBox.getChildren().add(new Label("Le code source a été généré avec succès !"));
+
+
+                        popup.getContent().add(popupVBox);
+                        popup.show(modele.getVueClasse().getScene().getWindow());
+
+                        // Fermer 1 seconde après
+                        new Thread(() -> {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e1) {
+                                e1.printStackTrace();
+                            }
+                            // Cacher le popup sur le thread d'application JavaFX
+                            Platform.runLater(() -> {
+                                popup.hide();
+                            });
+                        }).start();
+                    }
+                });
+                contextMenu.getItems().addAll(item4, item5);
             }
+
             contextMenu.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
         }
     }
