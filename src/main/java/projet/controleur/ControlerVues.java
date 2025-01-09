@@ -28,7 +28,7 @@ public class ControlerVues {
             img.setFitHeight(gridPane.getChildren().get(1).getBoundsInLocal().getHeight()-30);
             img.setFitWidth(1000-gridPane.getChildren().get(1).getBoundsInLocal().getWidth()-30);
             img.setOnMouseClicked(controlerClic);
-            gridPane.getChildren().remove(2);
+            gridPane.getChildren().remove(modele.getVueClasse());
             gridPane.add(img, 1,1);
             GridPane.setHalignment(img, HPos.CENTER);
             GridPane.setValignment(img, VPos.CENTER);
@@ -41,7 +41,11 @@ public class ControlerVues {
 //        gridPane.getChildren().remove(2);
         if (modele.getVue().equals("UML")){
             modele.setVue("classique");
-            gridPane.getChildren().remove(2);
+//            gridPane.getChildren().remove(2);
+//            System.out.println(gridPane.getChildren().size());
+            System.out.println(gridPane.getChildren().get(3));
+            gridPane.getChildren().remove(modele.getVueClasse());
+//            gridPane.getChildren().remove(1,1);
             gridPane.add(modele.getVueClasse(), 1, 1);
         }
     }

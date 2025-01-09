@@ -46,10 +46,6 @@ public class main extends Application {
 
         scrollpane.setOnMouseClicked(controlerClic);
 
-        Button scButton = new Button("Sauvegarder image");
-        scButton.setOnAction(e -> {
-            controlerImage.captureImage();
-        });
 
         scrollpane.setOnDragOver(controlerDrag);
         scrollpane.setOnDragDropped(controlerDrag);
@@ -71,6 +67,13 @@ public class main extends Application {
 
         Button buttonVueClassique = new Button("VueClassique");
 
+        Button buttonGenererCodeSource = new Button("Générer le code source correspondant au diagramme");
+        buttonGenererCodeSource.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+
+        buttonGenererCodeSource.setOnAction(e -> {
+//            modele.genererCodeSource();
+        });
+
         HBox vues = new HBox(buttonVueClassique, buttonVueUML);
         GridPane gp = new GridPane();
         buttonVueClassique.setOnAction(e -> {
@@ -82,6 +85,7 @@ public class main extends Application {
         gp.add(vues, 1, 0);
         gp.add(arborescence, 0, 1);
         gp.add(scrollpane, 1, 1);
+        gp.add(buttonGenererCodeSource, 0,2, 2,1);
 
         ImageView img = new ImageView("file:Diag.png");
         img.fitWidthProperty().bind(gp.widthProperty());
