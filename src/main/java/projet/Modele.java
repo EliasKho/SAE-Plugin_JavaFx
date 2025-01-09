@@ -14,7 +14,7 @@ import java.util.TreeSet;
 
 public class Modele implements Sujet, Serializable{
 
-    private final FileComposite racine;
+    private FileComposite racine;
     private final List<Observateur> observateurs;
     private final HashMap<String, Classe> classes;
     private final List<Fleche> relations;
@@ -23,8 +23,8 @@ public class Modele implements Sujet, Serializable{
     private VueClasse vueClasse;
     private String vue;
 
-    public Modele(FileComposite f) {
-        this.racine = f;
+    public Modele() {
+        this.racine = null;
         this.observateurs = new ArrayList<>();
         this.classes = new HashMap<>();
         this.relations = new ArrayList<>();
@@ -33,6 +33,10 @@ public class Modele implements Sujet, Serializable{
 
     public FileComposite getRacine() {
         return racine;
+    }
+
+    public void setRacine(FileComposite racine) {
+        this.racine = racine;
     }
 
     public void notifierObservateur(){

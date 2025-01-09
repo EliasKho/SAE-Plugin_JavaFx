@@ -5,14 +5,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.stage.Modality;
-import javafx.stage.Popup;
-import javafx.stage.Stage;
+import javafx.stage.*;
 import projet.arborescence.Dossier;
 import projet.arborescence.VueArborescence;
 import projet.classes.VueClasse;
@@ -34,8 +30,10 @@ public class main extends Application {
         File file = new File("Diag.png");
         file.delete();
         // création du modèle
-        Dossier dossier = new Dossier(new File("C:\\Users\\leofo\\Desktop\\S3 BUT\\QDev S3\\Qdev\\src/"));
-        Modele modele = new Modele(dossier);
+        Dossier dossier = new Dossier(new File("src/main/java/projet"));
+        Modele modele = new Modele();
+        // on met un dossier par défaut le temps de travailler, sinon on devra sélectionner un dossier à chaque fois
+        modele.setRacine(dossier);
 
         // controleurs
         ControlerClic controlerClic = new ControlerClic(modele);
@@ -123,21 +121,11 @@ public class main extends Application {
 //            modele.genererCodeSource();
         });
 
-
-        Button buttonSave = new Button("Save");
-
-        Button buttonLoad = new Button("Load");
-
-        HBox vues = new HBox(buttonVueClassique, buttonVueUML, buttonSave, buttonLoad);
+        HBox vues = new HBox(buttonVueClassique, buttonVueUML);
         GridPane gp = new GridPane();
 
         buttonVueClassique.setStyle("-fx-background-color: #001e42; -fx-text-fill: white;");
-        buttonSave.setOnAction(e -> {
-            modele.saveToFile("modele.sav");
-        });
-        buttonLoad.setOnAction(e ->{
-            modele.loadFromFile("modele.sav");
-        });
+
         buttonVueClassique.setOnAction(e -> {
             controlerVues.afficherVueClasse(gp);
             buttonVueClassique.setStyle("-fx-background-color: #001e42; -fx-text-fill: white;");
@@ -148,7 +136,53 @@ public class main extends Application {
             buttonVueUML.setStyle("-fx-background-color: #001e42; -fx-text-fill: white;");
             buttonVueClassique.setStyle("-fx-background-color: #2c8cff; -fx-text-fill: white;");
         });
-        gp.add(buttonAjoutClasse, 0, 0);
+
+        MenuButton menuButtonOptions = new MenuButton("Options");
+
+        // Créer les éléments du menu
+        MenuItem chooseDirectory = new MenuItem("Choisir un répertoire");
+        MenuItem saveDiagram = new MenuItem("Sauvegarder le diagramme");
+        MenuItem loadDiagram = new MenuItem("Charger un diagramme");
+
+        // Ajouter des actions aux éléments du menu
+        chooseDirectory.setOnAction(e -> {
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            directoryChooser.setTitle("Choisir un répertoire");
+            File selectedDirectory = directoryChooser.showDialog(stage);
+            if (selectedDirectory != null) {
+                Dossier dos = new Dossier(selectedDirectory);
+                modele.setRacine(dos);
+                arborescence.actualiser(modele);
+            }
+        });
+
+        saveDiagram.setOnAction(e -> {
+            // choisir où sauvegarder le nouveau fichier et son nom
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Sauvegarder le diagramme");
+            File selectedFile = fileChooser.showSaveDialog(stage);
+            if (selectedFile!= null) {
+                modele.saveToFile(selectedFile.getAbsolutePath());
+            }
+        });
+
+        loadDiagram.setOnAction(e -> {
+            // choisir le fichier à charger
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Choisir un fichier");
+            File selectedFile = fileChooser.showOpenDialog(stage);
+            if (selectedFile!= null && selectedFile.exists() && selectedFile.getName().endsWith(".sav")) {
+                modele.loadFromFile(selectedFile.getAbsolutePath());
+                arborescence.actualiser(modele);
+            }
+        });
+
+        // Ajouter les éléments au MenuButton
+        menuButtonOptions.getItems().addAll(chooseDirectory, saveDiagram, loadDiagram);
+
+
+        gp.add(menuButtonOptions, 0, 0);
+//        gp.add(buttonAjoutClasse, 0, 0);
         gp.add(vues, 1, 0);
         gp.add(arborescence, 0, 1);
         gp.add(scrollpane, 1, 1);
