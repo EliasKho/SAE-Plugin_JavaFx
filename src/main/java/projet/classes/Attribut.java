@@ -6,12 +6,12 @@ import java.util.Objects;
 
 public class Attribut {
     private String nom;
-    private Type type;
+    private String type;
     private int modifier;
 
-    public Attribut(String nom, Type type, int modifier) {
+    public Attribut(String nom, String type, int modifier) {
         this.nom = nom;
-        this.type = type;
+        this.type = type.substring(type.lastIndexOf(".")+1);
         this.modifier = modifier;
     }
 
@@ -22,10 +22,10 @@ public class Attribut {
         this.nom = nom;
     }
 
-    public Type getType() {
+    public String getType() {
         return type;
     }
-    public void setType(Type type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -53,7 +53,7 @@ public class Attribut {
         if(Modifier.isAbstract(modifier)){
             affichage+="{abstract} ";
         }
-        return affichage+nom+":"+ type.getTypeName().substring(type.getTypeName().lastIndexOf(".")+1);
+        return affichage+nom+":"+ type;
     }
 
     public String getString() {
@@ -73,7 +73,7 @@ public class Attribut {
         if(Modifier.isAbstract(modifier)){
             affichage+="abstract ";
         }
-        return affichage+nom+":"+ type.getTypeName().substring(type.getTypeName().lastIndexOf(".")+1);
+        return affichage+nom+":"+ type;
     }
 
 

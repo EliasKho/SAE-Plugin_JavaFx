@@ -48,10 +48,7 @@ public class main extends Application {
 
         scrollpane.setOnMouseClicked(controlerClic);
 
-        Button scButton = new Button("Sauvegarder image");
-        scButton.setOnAction(e -> {
-            controlerImage.captureImage();
-        });
+
         scrollpane.setOnDragOver(controlerDrag);
         scrollpane.setOnDragDropped(controlerDrag);
         arborescence.setOnDragOver(controlerDrag);
@@ -71,6 +68,14 @@ public class main extends Application {
 
 
         Button buttonVueClassique = new Button("VueClassique");
+
+        Button buttonGenererCodeSource = new Button("Générer le code source correspondant au diagramme");
+        buttonGenererCodeSource.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+
+        buttonGenererCodeSource.setOnAction(e -> {
+//            modele.genererCodeSource();
+        });
+
 
         Button buttonSave = new Button("Save");
 
@@ -93,6 +98,7 @@ public class main extends Application {
         gp.add(vues, 1, 0);
         gp.add(arborescence, 0, 1);
         gp.add(scrollpane, 1, 1);
+        gp.add(buttonGenererCodeSource, 0,2, 2,1);
 
         ImageView img = new ImageView("file:Diag.png");
         img.fitWidthProperty().bind(gp.widthProperty());
@@ -100,17 +106,21 @@ public class main extends Application {
         img.setPreserveRatio(true);
 //        gp.add(img, 1,1);
 
+        // Configurer les tailles dynamiques
+        arborescence.minWidthProperty().bind(gp.widthProperty().multiply(0.2));
+        arborescence.maxWidthProperty().bind(gp.widthProperty().multiply(0.2));
+
+        scrollpane.minWidthProperty().bind(gp.widthProperty().multiply(0.8));
+        scrollpane.maxWidthProperty().bind(gp.widthProperty().multiply(0.8));
+
+        scrollpane.prefHeightProperty().bind(gp.heightProperty());
+        arborescence.prefHeightProperty().bind(gp.heightProperty());
+
         //hbox.setSpacing(10); // Ajouter un espacement entre les éléments
 
         Scene scene = new Scene(gp, 1000, 600);
         modele.setScene(scene);
         modele.setVueClasse(scrollpane);
-        arborescence.setMinWidth(scene.getWidth()*25/100);
-        arborescence.setMaxWidth(scene.getWidth()*25/100);
-
-        scrollpane.setMinWidth(scene.getWidth()*75/100);
-        scrollpane.setMaxWidth(scene.getWidth()*75/100);
-
         stage.setTitle("Diagramme Class Makker");
         stage.setScene(scene);
         stage.show();

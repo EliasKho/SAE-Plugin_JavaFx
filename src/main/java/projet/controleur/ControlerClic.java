@@ -29,18 +29,7 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
     public ControlerClic(Modele modele) {
         this.modele = modele;
-        this.contextMenu=new ContextMenu();
-    }
-
-    private String getString(FileComposite fc){
-        // récupérer le package de la classe du fichier
-        String packageName = fc.getPath().replace(File.separator, ".");
-        // on retire le .java
-        packageName = packageName.substring(0, packageName.length() - 5);
-        // on retire tous les fichiers avant le /java/ compris
-        packageName = packageName.substring(packageName.indexOf("java.") + 5);
-
-        return packageName;
+        this.contextMenu = new ContextMenu();
     }
 
     public void handle(MouseEvent event) {
@@ -57,25 +46,21 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
                 if (selectedItem != null) {
                     FileComposite file = selectedItem.getValue();
-                    // vérifier si le fichier est un fichier java
-                    if (file.getName().endsWith(".java")) {
-                        String packageName = getString(file);
+                    if (file instanceof Fichier) {
+                        this.nomClasse = file.getAbsolutePath();
 
-                        if (file instanceof Fichier) {
-                            this.nomClasse = packageName;
-
-                            item.setOnDragDetected(new EventHandler<MouseEvent>() {
-                                @Override
-                                public void handle(MouseEvent mouseEvent) {
-                                    Dragboard db = item.startDragAndDrop(TransferMode.MOVE);
-                                    ClipboardContent content = new ClipboardContent();
-                                    content.putString(getNomClasse());
-                                    db.setContent(content);
-                                    event.consume();
-                                }
-                            });
-                        }
+                        item.setOnDragDetected(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent mouseEvent) {
+                                Dragboard db = item.startDragAndDrop(TransferMode.MOVE);
+                                ClipboardContent content = new ClipboardContent();
+                                content.putString(getNomClasse());
+                                db.setContent(content);
+                                event.consume();
+                            }
+                        });
                     }
+
                 }
             }
         }
@@ -86,7 +71,7 @@ public class ControlerClic implements EventHandler<MouseEvent> {
             contextMenu.getItems().clear();
             ControlerImage controlerImage = new ControlerImage(modele);
 
-            if(event.getSource() instanceof TreeView){
+            if (event.getSource() instanceof TreeView) {
                 TreeView<FileComposite> item = (TreeView<FileComposite>) event.getSource();
                 TreeItem<FileComposite> selectedItem = item.getSelectionModel().getSelectedItem();
                 item.setOnDragDetected(this);
@@ -94,13 +79,12 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
                 if (selectedItem != null) {
                     FileComposite file = selectedItem.getValue();
-                    if(file.isDirectory()) {
+                    if (file.isDirectory()) {
                         nomClasse = null;
                         List<String> liste = new ArrayList<>();
-                        for(FileComposite fc: file.getChildren()){
-                            if(!fc.isDirectory()){
-                                String packageName = getString(fc);
-                                liste.add(packageName);
+                        for (FileComposite fc : file.getChildren()) {
+                            if (!fc.isDirectory()) {
+                                liste.add(fc.getAbsolutePath());
                             }
                         }
                         modele.ajouterListClasses(liste);

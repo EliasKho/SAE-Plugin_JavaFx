@@ -18,6 +18,10 @@ public class VueArborescence extends Pane implements Observateur {
         this.modele = m;
         this.controlerClic = c;
         actualiser(m);
+
+        // Liaison de la taille du TreeView à celle du conteneur
+        this.widthProperty().addListener((obs, oldWidth, newWidth) -> majTaille());
+        this.heightProperty().addListener((obs, oldHeight, newHeight) -> majTaille());
     }
 
     public TreeItem<FileComposite> getArbre(FileComposite file) {
@@ -35,9 +39,14 @@ public class VueArborescence extends Pane implements Observateur {
         FileComposite file = m.getRacine();
 
         this.arbre= new TreeView<>(getArbre(file));
-        this.arbre.setMaxSize(250,600);
-        this.arbre.setMinSize(250,600);
         this.arbre.setOnMouseClicked(controlerClic);
         this.getChildren().add(arbre);
+
+        majTaille();
+    }
+
+    public void majTaille() {
+        this.arbre.setPrefWidth(this.getWidth());
+        this.arbre.setPrefHeight(this.getHeight());
     }
 }
