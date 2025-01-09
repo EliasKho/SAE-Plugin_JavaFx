@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 @SuppressWarnings("unchecked")
 public class ControlerClic implements EventHandler<MouseEvent> {
-    private final Modele modele;
+    private Modele modele;
     private String nomClasse;
-    private final ContextMenu contextMenu;
+    private ContextMenu contextMenu;
 
     public ControlerClic(Modele modele) {
         this.modele = modele;
