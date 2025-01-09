@@ -1,10 +1,11 @@
 package projet.classes;
 
+import java.io.Serializable;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.Objects;
 
-public class Attribut {
+public class Attribut implements Serializable {
     private String nom;
     private String type;
     private int modifier;

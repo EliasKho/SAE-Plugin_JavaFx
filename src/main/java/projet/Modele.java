@@ -1,6 +1,7 @@
 package projet;
 
 import javafx.scene.Scene;
+import projet.arborescence.Dossier;
 import projet.arborescence.FileComposite;
 import projet.classes.*;
 
@@ -9,8 +10,9 @@ import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 
-public class Modele implements Sujet{
+public class Modele implements Sujet, Serializable{
 
     private final FileComposite racine;
     private final List<Observateur> observateurs;
@@ -49,6 +51,7 @@ public class Modele implements Sujet{
 
     public Classe ajouterClasse(String className, double x, double y){
         Classe classe = null;
+        System.out.println(className);
         if (!classes.containsKey(className)) {
             classe = new Classe(className);
             try {
@@ -366,11 +369,8 @@ public class Modele implements Sujet{
         File file = new File(fileP);
         try(FileOutputStream fose = new FileOutputStream(file);
             ObjectOutputStream oss = new ObjectOutputStream(fose)){
-            String res = "";
-            for (HashMap.Entry<String, Classe> entry : this.classes.entrySet()){
-                res += entry.getValue().toString();
-            }
-            oss.writeObject(res);
+            oss.writeObject(this.getClasses());
+            oss.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -378,11 +378,25 @@ public class Modele implements Sujet{
 
     public void loadFromFile(String file){
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
-            String res = (String) ois.readObject();
-            String[] classeParts = res.split("\n");
-            for(String i : classeParts) {
-                String[] difParts = i.split(":");
-                this.ajouterClasse(difParts[0], Double.parseDouble(difParts[1]), Double.parseDouble(difParts[2]));
+            HashMap<String , Classe> res = (HashMap<String, Classe>) ois.readObject();
+
+            Object[] classesKeyObject = res.keySet().toArray();
+            String[] classesKey = new String[classesKeyObject.length];
+            //Une boucle pour transformer les Objets sortis du fichier soit en chaîne de caractère
+            for(int j = 0;j<classesKeyObject.length;j++){
+                classesKey[j] = classesKeyObject[j].toString();
+            }
+            //On prend le chemin absolue du projet
+            String absolutePath = racine.getAbsolutePath();
+
+            Classe c;
+            for (int i=0; i<classesKey.length;i++){
+                c = res.get(classesKey[i]);
+                //On relie les classe qui était présente dans le fichier de sauvegarde au chemin
+                String cheminClasse = absolutePath + "'" + c.getNom() + ".java";
+                cheminClasse = cheminClasse.replaceAll("'","\\\\");
+
+                this.ajouterClasse(cheminClasse,c.getX(),c.getY());
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
