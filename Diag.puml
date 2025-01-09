@@ -1,28 +1,2 @@
 @startuml
-class Fichier {
-+Fichier(File)
-+getChildren():List
-}
-
-class Dossier {
-+Dossier(File)
-+getChildren():List
-}
-
-class VueArborescence {
-+VueArborescence(Modele,ControlerClic)
-+getArbre(FileComposite):TreeItem
-+actualiser(Sujet):void
-}
-
-abstract class FileComposite {
-+FileComposite(File)
-+toString():String
-+{abstract} getChildren():List
-}
-
-Fichier -u-|> FileComposite : ""
-Dossier -u-|> FileComposite : ""
-Dossier "1" --> "*" FileComposite : ss_dossier
-VueArborescence "1" --> "*" FileComposite : arbre
 @enduml

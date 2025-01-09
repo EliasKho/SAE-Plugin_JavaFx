@@ -128,21 +128,13 @@ public class VueClasse extends Pane implements Observateur {
         Modele m = (Modele) s;
 
         for (Fleche r : m.getRelations()) {
-            // Créez la flèche correspondante
-            Pane arrowHead = createArrow(r);
-
-            // Ajoutez la flèche au canevas
-            this.getChildren().add(arrowHead);
+            createArrow(r);
         }
     }
 
 
 
-    private Pane createArrow(Fleche r) {
-        Pane arrow = new Pane();
-        //couleur de fond rouge
-        arrow.setStyle("-fx-background-color: red;");
-
+    private void createArrow(Fleche r) {
         // Coordonnées de la relation
         double[] coord = r.getPosition();
         double startX = coord[0];
@@ -192,7 +184,7 @@ public class VueClasse extends Pane implements Observateur {
                 Text attributeLabel = new Text(label);
                 attributeLabel.setX((startX + endX) / 2);
                 attributeLabel.setY((startY + endY) / 2 - 10); // Position au-dessus de la ligne
-                arrow.getChildren().add(attributeLabel);
+                this.getChildren().add(attributeLabel);
             }
 
             // Ajouter les cardinalités
@@ -202,7 +194,7 @@ public class VueClasse extends Pane implements Observateur {
                 // Positionner en dehors de la boîte source
                 cardinalityFromText.setX(startX + 15 * Math.cos(angle)); // Décaler selon l'angle
                 cardinalityFromText.setY(startY + 15 * Math.sin(angle)); // Décaler selon l'angle
-                arrow.getChildren().add(cardinalityFromText);
+                this.getChildren().add(cardinalityFromText);
             }
             if (cardinalityTo != null && !cardinalityTo.isEmpty()) {
                 Text cardinalityToText = new Text(cardinalityTo);
@@ -210,12 +202,10 @@ public class VueClasse extends Pane implements Observateur {
                 // Positionner en dehors de la boîte cible
                 cardinalityToText.setX(endX - 15 * Math.cos(angle)); // Décaler selon l'angle
                 cardinalityToText.setY(endY - 15 * Math.sin(angle)); // Décaler selon l'angle
-                arrow.getChildren().add(cardinalityToText);
+                this.getChildren().add(cardinalityToText);
             }
         }
         triangle.getPoints().addAll(endX, endY, x1, y1, x2, y2);
-        arrow.getChildren().addAll(mainLine, triangle);
-
-        return arrow;
+        this.getChildren().addAll(mainLine, triangle);
     }
 }
