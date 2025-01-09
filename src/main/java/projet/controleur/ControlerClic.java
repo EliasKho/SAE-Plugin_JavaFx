@@ -17,7 +17,6 @@ import projet.Modele;
 import projet.arborescence.Fichier;
 import projet.arborescence.FileComposite;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,15 +47,12 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                     if (file instanceof Fichier) {
                         this.nomClasse = file.getAbsolutePath();
 
-                        item.setOnDragDetected(new EventHandler<MouseEvent>() {
-                            @Override
-                            public void handle(MouseEvent mouseEvent) {
-                                Dragboard db = item.startDragAndDrop(TransferMode.MOVE);
-                                ClipboardContent content = new ClipboardContent();
-                                content.putString(getNomClasse());
-                                db.setContent(content);
-                                event.consume();
-                            }
+                        item.setOnDragDetected(_ -> {
+                            Dragboard db = item.startDragAndDrop(TransferMode.MOVE);
+                            ClipboardContent content = new ClipboardContent();
+                            content.putString(getNomClasse());
+                            db.setContent(content);
+                            event.consume();
                         });
                     }
 
@@ -91,97 +87,61 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                 }
             }
 
-            if (event.getSource() instanceof VBox) {
-                VBox box = (VBox) event.getSource();
+            if (event.getSource() instanceof VBox box) {
                 String nom = box.getId();
 
                 MenuItem item = new MenuItem("Supprimer");
                 contextMenu.getItems().add(item);
-                item.setOnAction(e -> {
-                    modele.supprimerClasse(nom);
-                });
+                item.setOnAction(_ -> modele.supprimerClasse(nom));
             }
             if (event.getSource() instanceof Pane) {
                 MenuItem item2 = new MenuItem("Supprimer tout");
-                item2.setOnAction(e -> {
-                    modele.viderClasses();
-                });
+                item2.setOnAction(_ -> modele.viderClasses());
                 MenuItem item3 = new MenuItem("Exporter en image");
-                item3.setOnAction(e -> {
-                    controlerImage.captureImage();
-                });
-                MenuItem item4 = new MenuItem("Exporter en image diagramme PlantUML");
-                item4.setOnAction(e -> {
-                    controlerImage.captureImageUML();
-                });
-                MenuItem item5 = new MenuItem("Générer le code source correspondant au diagramme");
-                item5.setOnAction(e -> {
-                    boolean res = modele.genererCodeSource();
-                    if (res) {
-                        Popup popup = new Popup();
-                        popup.setX(modele.getVueClasse().getScene().getWindow().getWidth() / 2);
-                        popup.setY(modele.getVueClasse().getScene().getWindow().getHeight() / 2);
-                        VBox popupVBox = new VBox();
-                        popupVBox.getChildren().add(new Label("Le code source a été généré avec succès !"));
-
-
-                        popup.getContent().add(popupVBox);
-                        popup.show(modele.getVueClasse().getScene().getWindow());
-
-                        // Fermer 1 seconde après
-                        new Thread(() -> {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e1) {
-                                e1.printStackTrace();
-                            }
-                            // Cacher le popup sur le thread d'application JavaFX
-                            Platform.runLater(() -> {
-                                popup.hide();
-                            });
-                        }).start();
-                    }
-                });
-                contextMenu.getItems().addAll(item2, item3, item4, item5);
+                item3.setOnAction(_ -> controlerImage.captureImage());
+                contextMenu.getItems().addAll(item2, item3);
             }
-            if (event.getSource() instanceof ImageView) {
+            if (event.getSource() instanceof ImageView || event.getSource() instanceof Pane) {
                 MenuItem item4 = new MenuItem("Exporter en image diagramme PlantUML");
-                item4.setOnAction(e -> {
-                    controlerImage.captureImageUML();
-                });
-                MenuItem item5 = new MenuItem("Générer le code source correspondant au diagramme");
-                item5.setOnAction(e -> {
-                    boolean res = modele.genererCodeSource();
-                    if (res) {
-                        Popup popup = new Popup();
-                        popup.setX(modele.getVueClasse().getScene().getWindow().getWidth() / 2);
-                        popup.setY(modele.getVueClasse().getScene().getWindow().getHeight() / 2);
-                        VBox popupVBox = new VBox();
-                        popupVBox.getChildren().add(new Label("Le code source a été généré avec succès !"));
-
-
-                        popup.getContent().add(popupVBox);
-                        popup.show(modele.getVueClasse().getScene().getWindow());
-
-                        // Fermer 1 seconde après
-                        new Thread(() -> {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e1) {
-                                e1.printStackTrace();
-                            }
-                            // Cacher le popup sur le thread d'application JavaFX
-                            Platform.runLater(() -> {
-                                popup.hide();
-                            });
-                        }).start();
-                    }
-                });
+                item4.setOnAction(_ -> controlerImage.captureImageUML());
+                MenuItem item5 = getItem5();
                 contextMenu.getItems().addAll(item4, item5);
             }
 
             contextMenu.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
         }
+    }
+
+    private MenuItem getItem5() {
+        MenuItem item5 = new MenuItem("Générer le code source correspondant au diagramme");
+        item5.setOnAction(_ -> {
+            boolean res = modele.genererCodeSource();
+            if (res) {
+                Popup popup = new Popup();
+                popup.setX(600);
+                popup.setY(100);
+                VBox popupVBox = new VBox();
+                popupVBox.getChildren().add(new Label("Le code source a été généré avec succès !"));
+                popupVBox.setStyle("-fx-background-color: #2c8cff; -fx-text-fill: white; -fx-padding: 10px;");
+
+
+                popup.getContent().add(popupVBox);
+
+                popup.show(modele.getScene().getWindow());
+
+                // Fermer 1 seconde après
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                    // Cacher le popup sur le thread d'application JavaFX
+                    Platform.runLater(popup::hide);
+                }).start();
+            }
+        });
+        return item5;
     }
 
     public String getNomClasse() {
