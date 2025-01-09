@@ -34,7 +34,7 @@ public class main extends Application {
         File file = new File("Diag.png");
         file.delete();
         // création du modèle
-        Dossier dossier = new Dossier(new File("src/main/java/projet"));
+        Dossier dossier = new Dossier(new File("C:\\Users\\leofo\\Desktop\\S3 BUT\\QDev S3\\Qdev\\src/"));
         Modele modele = new Modele(dossier);
 
         // controleurs

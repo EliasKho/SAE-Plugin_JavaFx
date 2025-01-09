@@ -53,12 +53,12 @@ public class Modele implements Sujet, Serializable{
         Classe classe = null;
         System.out.println(className);
         if (!classes.containsKey(className)) {
-            classe = new Classe(className);
             try {
                 String packageName = ClasseLoader.loadClass(className, racine);
                 Class<?> classeJava = ClasseLoader.getClasses().get(packageName);
                 classe = new Classe(packageName);
                 classe.setNomPackage(getPackage(classeJava));
+                classe.setAbsolutePath(className);
 
                 if (classeJava.isInterface()) {
                     classe.setInterface(true);
@@ -398,17 +398,12 @@ public class Modele implements Sujet, Serializable{
             for(int j = 0;j<classesKeyObject.length;j++){
                 classesKey[j] = classesKeyObject[j].toString();
             }
-            //On prend le chemin absolue du projet
-            String absolutePath = racine.getAbsolutePath();
 
             Classe c;
             for (int i=0; i<classesKey.length;i++){
                 c = res.get(classesKey[i]);
                 //On relie les classe qui était présente dans le fichier de sauvegarde au chemin
-                String cheminClasse = absolutePath + "'" + c.getNom() + ".java";
-                cheminClasse = cheminClasse.replaceAll("'","\\\\");
-
-                this.ajouterClasse(cheminClasse,c.getX(),c.getY());
+                this.ajouterClasse(c.getAbsolutePath(),c.getX(),c.getY());
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

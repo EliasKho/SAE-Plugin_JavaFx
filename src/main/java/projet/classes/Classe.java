@@ -16,6 +16,7 @@ public class Classe implements Serializable{
     private double y;
     private double longueur;
     private double largeur;
+    private String absolutePath;
 
     public Classe(String nom){
         this.nom = nom.substring(nom.lastIndexOf(".")+1);
@@ -26,6 +27,14 @@ public class Classe implements Serializable{
         isAbstract = false;
         largeur = 200;
         longueur = 30;
+    }
+
+    public String getAbsolutePath() {
+        return absolutePath;
+    }
+
+    public void setAbsolutePath(String absolutePath) {
+        this.absolutePath = absolutePath;
     }
 
     public String getNom() {
