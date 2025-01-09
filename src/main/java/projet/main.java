@@ -64,15 +64,25 @@ public class main extends Application {
         hbox.getChildren().add(scrollpane);
 
         Button buttonVueUML = new Button("VueUML");
+        buttonVueUML.setStyle("-fx-background-color: #2c8cff; -fx-text-fill: white;");
 
 
 
         Button buttonVueClassique = new Button("VueClassique");
 
         Button buttonGenererCodeSource = new Button("Générer le code source correspondant au diagramme");
-        buttonGenererCodeSource.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+        buttonGenererCodeSource.setStyle("-fx-background-color: #2c8cff; -fx-text-fill: white;");
+
+
+        buttonGenererCodeSource.setOnMousePressed(e -> {
+            buttonGenererCodeSource.setStyle("-fx-background-color: #001e42; -fx-text-fill: white;");
+        });
+        buttonGenererCodeSource.setOnMouseReleased(e -> {
+            buttonGenererCodeSource.setStyle("-fx-background-color: #2c8cff; -fx-text-fill: white;");
+        });
 
         buttonGenererCodeSource.setOnAction(e -> {
+//            buttonGenererCodeSource.setStyle("-fx-background-color: #001e42; -fx-text-fill: white;");
 //            modele.genererCodeSource();
         });
 
@@ -83,6 +93,8 @@ public class main extends Application {
 
         HBox vues = new HBox(buttonVueClassique, buttonVueUML, buttonSave, buttonLoad);
         GridPane gp = new GridPane();
+
+        buttonVueClassique.setStyle("-fx-background-color: #001e42; -fx-text-fill: white;");
         buttonSave.setOnAction(e -> {
             modele.saveToFile("modele.sav");
         });
@@ -91,14 +103,19 @@ public class main extends Application {
         });
         buttonVueClassique.setOnAction(e -> {
             controlerVues.afficherVueClasse(gp);
+            buttonVueClassique.setStyle("-fx-background-color: #001e42; -fx-text-fill: white;");
+            buttonVueUML.setStyle("-fx-background-color: #2c8cff; -fx-text-fill: white;");
         });
         buttonVueUML.setOnAction(e -> {
             controlerVues.afficherVueUML(gp);
+            buttonVueUML.setStyle("-fx-background-color: #001e42; -fx-text-fill: white;");
+            buttonVueClassique.setStyle("-fx-background-color: #2c8cff; -fx-text-fill: white;");
         });
         gp.add(vues, 1, 0);
         gp.add(arborescence, 0, 1);
         gp.add(scrollpane, 1, 1);
         gp.add(buttonGenererCodeSource, 0,2, 2,1);
+        // le bouton prend toute la largeur de l'écran
 
         ImageView img = new ImageView("file:Diag.png");
         img.fitWidthProperty().bind(gp.widthProperty());
@@ -119,6 +136,7 @@ public class main extends Application {
         //hbox.setSpacing(10); // Ajouter un espacement entre les éléments
 
         Scene scene = new Scene(gp, 1000, 600);
+        buttonGenererCodeSource.setPrefWidth(scene.getWidth());
         modele.setScene(scene);
         modele.setVueClasse(scrollpane);
         stage.setTitle("Diagramme Class Makker");
