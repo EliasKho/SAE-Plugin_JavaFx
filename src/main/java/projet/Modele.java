@@ -214,18 +214,21 @@ public class Modele implements Sujet, Serializable{
             }
             System.out.println(method.getModifiers());
 
-            Methode methode;
-            methode = new Methode(method.getName(), method.getReturnType(), parametres, method.getModifiers());
-            if (classe.isInterface()) {
-                if (Modifier.isPublic(method.getModifiers())) {
-                    methode = new Methode(method.getName(), method.getReturnType(), parametres, 1);
+            if (!method.isSynthetic()) {
+                Methode methode;
+                methode = new Methode(method.getName(), method.getReturnType(), parametres, method.getModifiers());
+                if (classe.isInterface()) {
+                    if (Modifier.isPublic(method.getModifiers())) {
+                        methode = new Methode(method.getName(), method.getReturnType(), parametres, 1);
+                    } else if (Modifier.isProtected(method.getModifiers())) {
+                        methode = new Methode(method.getName(), method.getReturnType(), parametres, 2);
+                    } else {
+                        methode = new Methode(method.getName(), method.getReturnType(), parametres, 4);
+                    }
                 }
-                else {
-                    methode = new Methode(method.getName(), method.getReturnType(), parametres, 4);
-                }
-            }
 
-            methodes.add(methode);
+                methodes.add(methode);
+            }
         }
         return methodes;
     }
