@@ -33,7 +33,6 @@ public class main extends Application {
         // controleurs
         ControlerClic controlerClic = new ControlerClic(modele);
         ControlerDrag controlerDrag = new ControlerDrag(modele);
-        ControlerDragDrop controlerDragDrop = new ControlerDragDrop(modele);
         ControlerVues controlerVues = new ControlerVues(modele);
         ControlerImage controlerImage = new ControlerImage(modele);
 
