@@ -1,6 +1,8 @@
 package projet.classes;
 
-public class Parametre {
+import java.io.Serializable;
+
+public class Parametre implements Serializable {
     private String type;
 
     public Parametre(String type) {

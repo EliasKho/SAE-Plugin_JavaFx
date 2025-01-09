@@ -1,11 +1,12 @@
 package projet.classes;
 
+import java.io.Serializable;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Objects;
 
-public class Methode {
+public class Methode implements Serializable {
     private String nom;
     private Type typeRetour;
     private List<Parametre> parametres;

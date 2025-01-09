@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Classe {
+public class Classe implements Serializable{
     private final String nom;
     private List<Methode> methodes;
     private List<Attribut> attributs;
