@@ -21,12 +21,9 @@ public class ControlerVues {
             ControlerClic controlerClic = new ControlerClic(modele);
             controlerImage.captureImageUML();
             ImageView img = new ImageView("file:Diag.png");
-//            img.fitWidthProperty().bind(gridPane.widthProperty());
-//            img.fitHeightProperty().bind(gridPane.heightProperty());
-//            La taille (hauteur et largeur) max de l'image est
             img.setPreserveRatio(true);
-            img.setFitHeight(gridPane.getChildren().get(1).getBoundsInLocal().getHeight()-30);
-            img.setFitWidth(1000-gridPane.getChildren().get(1).getBoundsInLocal().getWidth()-30);
+            img.setFitHeight(modele.getVueClasse().getBoundsInLocal().getHeight()-30);
+            img.setFitWidth(modele.getVueClasse().getBoundsInLocal().getWidth()-30);
             img.setOnMouseClicked(controlerClic);
             gridPane.getChildren().remove(modele.getVueClasse());
             gridPane.add(img, 1,1);
@@ -38,14 +35,14 @@ public class ControlerVues {
     }
 
     public void afficherVueClasse(GridPane gridPane){
-//        gridPane.getChildren().remove(2);
         if (modele.getVue().equals("UML")){
             modele.setVue("classique");
-//            gridPane.getChildren().remove(2);
-//            System.out.println(gridPane.getChildren().size());
-            System.out.println(gridPane.getChildren().get(3));
-            gridPane.getChildren().remove(modele.getVueClasse());
-//            gridPane.getChildren().remove(1,1);
+            System.out.println(gridPane.getChildren());
+            for (int i = 0; i < gridPane.getChildren().size(); i++) {
+                if (gridPane.getChildren().get(i) instanceof ImageView){
+                    gridPane.getChildren().remove(i);
+                }
+            }
             gridPane.add(modele.getVueClasse(), 1, 1);
         }
     }
