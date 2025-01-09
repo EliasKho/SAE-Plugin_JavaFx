@@ -37,43 +37,53 @@ public class Attribut {
     }
 
     public String getUMLString() {
-        String affichage="";
-        if(Modifier.isPublic(modifier)){
-            affichage+="+";
-        }
-        if(Modifier.isProtected(modifier)){
-            affichage+="#";
-        }
-        if(Modifier.isPrivate(modifier)){
-            affichage+="-";
-        }
-        if(Modifier.isStatic(modifier)){
-            affichage+="{static} ";
-        }
-        if(Modifier.isAbstract(modifier)){
-            affichage+="{abstract} ";
-        }
+        String affichage = getModifierUMLString();
         return affichage+nom+":"+ type;
     }
 
     public String getString() {
+        String affichage = getModifierString();
+        return affichage+nom+":"+ type;
+    }
+
+    public String getModifierUMLString(){
         String affichage="";
-        if(Modifier.isPublic(modifier)){
+        if(modifier == 1){
+            affichage+="+";
+        }
+        if(modifier == 4){
+            affichage+="#";
+        }
+        if(modifier == 2){
+            affichage+="-";
+        }
+        if(modifier == 9){
+            affichage+="+{static} ";
+        }
+        if(modifier == 1025){
+            affichage+="+{abstract} ";
+        }
+        return affichage;
+    }
+
+    public String getModifierString(){
+        String affichage="";
+        if(modifier == 1){
             affichage+="public ";
         }
-        if(Modifier.isProtected(modifier)){
+        if(modifier == 4){
             affichage+="protected ";
         }
-        if(Modifier.isPrivate(modifier)){
+        if(modifier == 2){
             affichage+="private ";
         }
-        if(Modifier.isStatic(modifier)){
-            affichage+="static ";
+        if(modifier == 9){
+            affichage+="public static ";
         }
-        if(Modifier.isAbstract(modifier)){
-            affichage+="abstract ";
+        if(modifier == 1025){
+            affichage+="public abstract ";
         }
-        return affichage+nom+":"+ type;
+        return affichage;
     }
 
 

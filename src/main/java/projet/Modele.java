@@ -187,11 +187,23 @@ public class Modele implements Sujet{
     public ArrayList<Methode> getMethode(Class<?> classe){
         ArrayList<Methode> methodes = new ArrayList<>();
         for (Constructor<?> constructor : classe.getDeclaredConstructors()){
-            Methode methode = new Methode(constructor.getName(), List.of(constructor.getParameters()), constructor.getModifiers());
+            List<Class<?>> parameters = List.of(constructor.getParameterTypes());
+            List<Parametre> parametres = new ArrayList<>();
+            for (Class<?> param : parameters){
+                Parametre p = new Parametre(param.getName());
+                parametres.add(p);
+            }
+            Methode methode = new Methode(constructor.getName(), parametres, constructor.getModifiers());
             methodes.add(methode);
         }
         for (Method method : classe.getDeclaredMethods()){
-            Methode methode = new Methode(method.getName(), method.getReturnType(), List.of(method.getParameters()), method.getModifiers());
+            List<Class<?>> parameters = List.of(method.getParameterTypes());
+            List<Parametre> parametres = new ArrayList<>();
+            for (Class<?> param : parameters){
+                Parametre p = new Parametre(param.getName());
+                parametres.add(p);
+            }
+            Methode methode = new Methode(method.getName(), method.getReturnType(), parametres, method.getModifiers());
             methodes.add(methode);
         }
         return methodes;
