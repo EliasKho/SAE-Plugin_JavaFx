@@ -8,11 +8,11 @@ import java.util.Objects;
 public class Methode {
     private String nom;
     private Type typeRetour;
-    private List<Parameter> parametres;
+    private List<Parametre> parametres;
     private int modifier;
     private boolean constructeur;
 
-    public Methode(String nom, Type typeRetour, List<Parameter> parametres, int modifier) {
+    public Methode(String nom, Type typeRetour, List<Parametre> parametres, int modifier) {
         this.nom = nom;
         this.typeRetour = typeRetour;
         this.parametres = parametres;
@@ -20,7 +20,7 @@ public class Methode {
         this.constructeur = false;
     }
 
-    public Methode(String nom, List<Parameter> parametres, int modifier) {
+    public Methode(String nom, List<Parametre> parametres, int modifier) {
         this.nom = nom.substring(nom.lastIndexOf(".")+1);
         this.parametres = parametres;
         this.modifier = modifier;
@@ -41,10 +41,10 @@ public class Methode {
         this.typeRetour = typeRetour;
     }
 
-    public List<Parameter> getParametres() {
+    public List<Parametre> getParametres() {
         return parametres;
     }
-    public void setParametres(List<Parameter> parametres) {
+    public void setParametres(List<Parametre> parametres) {
         this.parametres = parametres;
     }
 
@@ -63,6 +63,24 @@ public class Methode {
     }
 
     public String getUMLString() {
+        String affichage=getModifierUMLString();
+        affichage+=getParametersString();
+        if(!constructeur){
+            affichage+= ":"+getTypeRetourString();
+        }
+        return affichage;
+    }
+
+    public String getString(){
+        String affichage=getModifierString();
+        affichage+=getParametersString();
+        if(!constructeur){
+            affichage+= ":"+getTypeRetourString();
+        }
+        return affichage;
+    }
+
+    public String getModifierUMLString(){
         String affichage="";
         if(modifier == 1){
             affichage+="+";
@@ -79,11 +97,10 @@ public class Methode {
         if(modifier == 1025){
             affichage+="+{abstract} ";
         }
-        affichage+=getParametersString();
         return affichage;
     }
 
-    public String getString(){
+    public String getModifierString(){
         String affichage="";
         if(modifier == 1){
             affichage+="public ";
@@ -100,27 +117,25 @@ public class Methode {
         if(modifier == 1025){
             affichage+="public abstract ";
         }
-        affichage+=getParametersString();
         return affichage;
     }
 
     private String getParametersString() {
         String affichage=nom+"(";
         if (parametres != null) {
-            for (Parameter parametre : parametres) {
-                affichage+= parametre.getType().getName().substring(parametre.getType().getName().lastIndexOf(".")+1)+",";
+            for (Parametre parametre : parametres) {
+                affichage+= parametre.getType()+",";
             }
             if(parametres.size()>0){
                 affichage=affichage.substring(0, affichage.length()-1);
             }
         }
-        if (constructeur){
-            affichage+=")";
-        }
-        else {
-            affichage += "):" + typeRetour.getTypeName().substring(typeRetour.getTypeName().lastIndexOf(".") + 1);
-        }
+        affichage+= ")";
         return affichage;
+    }
+
+    public String getTypeRetourString(){
+        return typeRetour.getTypeName().substring(typeRetour.getTypeName().lastIndexOf(".")+1);
     }
 
     @Override
