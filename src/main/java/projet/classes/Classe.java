@@ -1,5 +1,6 @@
 package projet.classes;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -104,5 +105,9 @@ public class Classe {
     @Override
     public int hashCode() {
         return Objects.hash(getNom(), getMethodes(), getAttributs(), isInterface());
+    }
+
+    public String toString(){
+        return this.nomPackage + "." + this.nom + ":" + this.x + ":" + this.y + "\n";
     }
 }

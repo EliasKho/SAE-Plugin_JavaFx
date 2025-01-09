@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import projet.arborescence.FileComposite;
 import projet.classes.*;
 
+import java.io.*;
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -324,5 +325,32 @@ public class Modele implements Sujet{
 
     public String getVue(){
         return vue;
+    }
+
+    public void saveToFile(String fileP){
+        File file = new File(fileP);
+        try(FileOutputStream fose = new FileOutputStream(file);
+            ObjectOutputStream oss = new ObjectOutputStream(fose)){
+            String res = "";
+            for (HashMap.Entry<String, Classe> entry : this.classes.entrySet()){
+                res += entry.getValue().toString();
+            }
+            oss.writeObject(res);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void loadFromFile(String file){
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            String res = (String) ois.readObject();
+            String[] classeParts = res.split("\n");
+            for(String i : classeParts) {
+                String[] difParts = i.split(":");
+                this.ajouterClasse(difParts[0], Double.parseDouble(difParts[1]), Double.parseDouble(difParts[2]));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

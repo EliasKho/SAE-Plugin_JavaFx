@@ -12,6 +12,7 @@ import projet.classes.VueClasse;
 import projet.controleur.*;
 
 import java.io.File;
+import java.io.IOException;
 
 public class main extends Application {
 
@@ -71,8 +72,18 @@ public class main extends Application {
 
         Button buttonVueClassique = new Button("VueClassique");
 
-        HBox vues = new HBox(buttonVueClassique, buttonVueUML);
+        Button buttonSave = new Button("Save");
+
+        Button buttonLoad = new Button("Load");
+
+        HBox vues = new HBox(buttonVueClassique, buttonVueUML, buttonSave, buttonLoad);
         GridPane gp = new GridPane();
+        buttonSave.setOnAction(e -> {
+            modele.saveToFile("modele.sav");
+        });
+        buttonLoad.setOnAction(e ->{
+            modele.loadFromFile("modele.sav");
+        });
         buttonVueClassique.setOnAction(e -> {
             controlerVues.afficherVueClasse(gp);
         });
