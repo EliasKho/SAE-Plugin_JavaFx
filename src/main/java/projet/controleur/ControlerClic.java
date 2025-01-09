@@ -69,16 +69,7 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
         //si clic droit
         if (event.getButton() == MouseButton.SECONDARY) {
-            Modele.setRatio(Modele.getRatio()*0.5);
-            for(Classe c : modele.getClasses().values()){
-                System.out.println("LARG CONTR AV "+c.getLongueur());
-                c.setLargeur(c.getLargeur()*Modele.getRatio());
-                c.setLongueur(c.getLongueur()*Modele.getRatio());
-                System.out.println("LARG CONTR APR "+c.getLongueur());
-
-            };
-            modele.getVueClasse().agrandir(Modele.getRatio());
-            modele.notifierObservateur();
+            modele.setRatio(modele.getRatio()*0.75);
             modele.updateRelations();
             contextMenu.getItems().clear();
             ControlerImage controlerImage = new ControlerImage(modele);

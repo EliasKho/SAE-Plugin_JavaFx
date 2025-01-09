@@ -55,7 +55,7 @@ public class Fleche {
         double x2Min = parent.getX();
         double y2Min = parent.getY();
         double x2Max = x2Min + parent.getLargeur();
-        double y2Max = y2Min + parent.getLongueur()*Modele.getRatio();
+        double y2Max = y2Min + parent.getLongueur();
 
         // Identifier les relations spatiales
         boolean parentAuDessus = y1Max < y2Min; // Parent au-dessus de l'enfant

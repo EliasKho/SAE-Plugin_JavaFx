@@ -378,11 +378,18 @@ public class Modele implements Sujet{
         }
     }
 
-    public static double getRatio() {
+    public  double getRatio() {
         return ratio;
     }
-    public static void setRatio(double r) {
-        ratio = r;
+    public void setRatio(double r) {
+        ratio = getRatio()*r;
+        for(Classe c:this.classes.values()){
+            c.setLongueur(c.getLongueur()*ratio);
+            c.setLargeur(c.getLargeur()*ratio);
+            getVueClasse().agrandir(ratio);
+            getVueClasse().actualiserRelations(this);
+        }
+        notifierObservateur();
     }
 
 }

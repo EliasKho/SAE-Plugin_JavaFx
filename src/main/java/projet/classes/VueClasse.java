@@ -93,7 +93,7 @@ public class VueClasse extends Pane implements Observateur {
 
                 // Mettre à jour la largeur de la classe
                 //System.out.println(Modele.getRatio());
-                classe.setLargeur((largeurMax+10)*Modele.getRatio()); // +10 avec le padding
+                classe.setLargeur((largeurMax+10)); // +10 avec le padding
 
                 // Mettre à jour la hauteur totale
                 double totalHeight = classBoxContainer.getHeight() + attributesContainer.getHeight() + methodsContainer.getHeight();
@@ -123,7 +123,7 @@ public class VueClasse extends Pane implements Observateur {
             }
         }
         actualiserRelations(s);
-        this.agrandir(Modele.getRatio());
+        this.agrandir(modele.getRatio());
     }
 
     public void actualiserRelations(Sujet s) {
