@@ -120,7 +120,7 @@ public class main extends Application {
 
         buttonGenererCodeSource.setOnAction(e -> {
 //            buttonGenererCodeSource.setStyle("-fx-background-color: #001e42; -fx-text-fill: white;");
-//            modele.genererCodeSource();
+            modele.genererCodeSource();
         });
 
 
