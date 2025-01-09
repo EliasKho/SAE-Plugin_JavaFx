@@ -1,6 +1,7 @@
 package projet.controleur;
 
 import javafx.geometry.HPos;
+import javafx.geometry.Rectangle2D;
 import javafx.geometry.VPos;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -20,11 +21,13 @@ public class ControlerVues {
             ControlerImage controlerImage = new ControlerImage(modele);
             ControlerClic controlerClic = new ControlerClic(modele);
             controlerImage.captureImageUML();
+
             ImageView img = new ImageView("file:Diag.png");
             img.setPreserveRatio(true);
-            img.setFitHeight(modele.getVueClasse().getBoundsInLocal().getHeight()-30);
-            img.setFitWidth(modele.getVueClasse().getBoundsInLocal().getWidth()-30);
+            img.setFitWidth(gridPane.getWidth()-gridPane.getChildren().get(2).getBoundsInLocal().getWidth()-30);
+            img.setFitHeight(gridPane.getHeight()-80);
             img.setOnMouseClicked(controlerClic);
+
             gridPane.getChildren().remove(modele.getVueClasse());
             gridPane.add(img, 1,1);
             GridPane.setHalignment(img, HPos.CENTER);
@@ -37,7 +40,6 @@ public class ControlerVues {
     public void afficherVueClasse(GridPane gridPane){
         if (modele.getVue().equals("UML")){
             modele.setVue("classique");
-            System.out.println(gridPane.getChildren());
             for (int i = 0; i < gridPane.getChildren().size(); i++) {
                 if (gridPane.getChildren().get(i) instanceof ImageView){
                     gridPane.getChildren().remove(i);
