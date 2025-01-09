@@ -16,6 +16,7 @@ import projet.Modele;
 import projet.Observateur;
 import projet.Sujet;
 import projet.controleur.ControlerClic;
+import projet.controleur.ControlerDrag;
 
 import java.util.HashMap;
 import java.util.List;
@@ -110,9 +111,9 @@ public class VueClasse extends Pane implements Observateur {
                         Dragboard db = container.startDragAndDrop(TransferMode.MOVE);
                         ClipboardContent content = new ClipboardContent();
                         content.putString(packageName);
-                        content.putImage(container.snapshot(null, null));
                         db.setContent(content);
                         mouseEvent.consume();
+                        ControlerDrag.setXY(mouseEvent.getSceneX(), mouseEvent.getSceneY());
                     }
                 });
 

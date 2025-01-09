@@ -1,10 +1,17 @@
 package projet;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.stage.Modality;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import projet.arborescence.Dossier;
 import projet.arborescence.VueArborescence;
@@ -33,7 +40,6 @@ public class main extends Application {
         // controleurs
         ControlerClic controlerClic = new ControlerClic(modele);
         ControlerDrag controlerDrag = new ControlerDrag(modele);
-        ControlerDragDrop controlerDragDrop = new ControlerDragDrop(modele);
         ControlerVues controlerVues = new ControlerVues(modele);
         ControlerImage controlerImage = new ControlerImage(modele);
 
@@ -66,7 +72,38 @@ public class main extends Application {
         Button buttonVueUML = new Button("VueUML");
         buttonVueUML.setStyle("-fx-background-color: #2c8cff; -fx-text-fill: white;");
 
+        Button buttonAjoutClasse = new Button("Ajouter une classe");
+        buttonAjoutClasse.setOnAction(e -> {
+            Stage popupStage = new Stage();
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+            popupStage.setTitle("Ma fenêtre popup");
 
+            VBox layout = new VBox(10);
+            layout.setPadding(new Insets(20));
+            TextField textField = new TextField();
+            Button addButton = new Button("Ajouter");
+            layout.getChildren().addAll(textField, addButton);
+
+            Scene scene = new Scene(layout);
+            popupStage.setScene(scene);
+
+            addButton.setOnAction(f -> {
+                String text = textField.getText();
+                //TODO
+                // Ne fonctionne pas pour les packages
+                modele.ajouterClasse("projet."+text+".java",0,0);
+                popupStage.close();
+            });
+            EventHandler<ActionEvent> handleInput = g -> {
+                String text = textField.getText();
+                //TODO
+                // Ne fonctionne pas pour les packages
+                modele.ajouterClasse("projet."+text+".java",0,0);
+                popupStage.close();
+            };
+            textField.setOnAction(handleInput);
+            popupStage.show();
+        });
 
         Button buttonVueClassique = new Button("VueClassique");
 
@@ -111,6 +148,7 @@ public class main extends Application {
             buttonVueUML.setStyle("-fx-background-color: #001e42; -fx-text-fill: white;");
             buttonVueClassique.setStyle("-fx-background-color: #2c8cff; -fx-text-fill: white;");
         });
+        gp.add(buttonAjoutClasse, 0, 0);
         gp.add(vues, 1, 0);
         gp.add(arborescence, 0, 1);
         gp.add(scrollpane, 1, 1);
