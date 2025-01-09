@@ -92,7 +92,8 @@ public class VueClasse extends Pane implements Observateur {
                 );
 
                 // Mettre à jour la largeur de la classe
-                classe.setLargeur(largeurMax+10); // +10 avec le padding
+                //System.out.println(Modele.getRatio());
+                classe.setLargeur((largeurMax+10)*Modele.getRatio()); // +10 avec le padding
 
                 // Mettre à jour la hauteur totale
                 double totalHeight = classBoxContainer.getHeight() + attributesContainer.getHeight() + methodsContainer.getHeight();
@@ -122,19 +123,52 @@ public class VueClasse extends Pane implements Observateur {
             }
         }
         actualiserRelations(s);
+        this.agrandir(Modele.getRatio());
     }
 
     public void actualiserRelations(Sujet s) {
         Modele m = (Modele) s;
 
         for (Fleche r : m.getRelations()) {
-            createArrow(r);
+            // Créez la flèche correspondante
+            Pane arrowHead = createArrow(r);
+
+            // Ajoutez la flèche au canevas
+            this.getChildren().add(arrowHead);
         }
     }
 
+    // Méthode pour agrandir la classe
+    public void agrandir(double ratio) {
+        for (javafx.scene.Node child : this.getChildren()) {
+            if (child instanceof VBox) {
+                VBox container = (VBox) child;
+                // Appliquer le ratio sur les éléments enfants
+                for (javafx.scene.Node innerChild : container.getChildren()) {
+                    if (innerChild instanceof StackPane) {
+                        StackPane stackPane = (StackPane) innerChild;
+                        for (javafx.scene.Node stackChild : stackPane.getChildren()) {
+                            if (stackChild instanceof Text) {
+                                Text text = (Text) stackChild;
+                                text.setStyle("-fx-font-size: " + (text.getFont().getSize() * ratio) + "px;");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
+    // Méthode pour rétrécir la classe
+    public void retrecir(double ratio) {
+        agrandir(1 / ratio); // Inverse du ratio pour rétrécir
+    }
 
-    private void createArrow(Fleche r) {
+    private Pane createArrow(Fleche r) {
+        Pane arrow = new Pane();
+        //couleur de fond rouge
+       // arrow.setStyle("-fx-background-color: red;");
+
         // Coordonnées de la relation
         double[] coord = r.getPosition();
         double startX = coord[0];
@@ -184,7 +218,7 @@ public class VueClasse extends Pane implements Observateur {
                 Text attributeLabel = new Text(label);
                 attributeLabel.setX((startX + endX) / 2);
                 attributeLabel.setY((startY + endY) / 2 - 10); // Position au-dessus de la ligne
-                this.getChildren().add(attributeLabel);
+                arrow.getChildren().add(attributeLabel);
             }
 
             // Ajouter les cardinalités
@@ -194,7 +228,7 @@ public class VueClasse extends Pane implements Observateur {
                 // Positionner en dehors de la boîte source
                 cardinalityFromText.setX(startX + 15 * Math.cos(angle)); // Décaler selon l'angle
                 cardinalityFromText.setY(startY + 15 * Math.sin(angle)); // Décaler selon l'angle
-                this.getChildren().add(cardinalityFromText);
+                arrow.getChildren().add(cardinalityFromText);
             }
             if (cardinalityTo != null && !cardinalityTo.isEmpty()) {
                 Text cardinalityToText = new Text(cardinalityTo);
@@ -202,10 +236,12 @@ public class VueClasse extends Pane implements Observateur {
                 // Positionner en dehors de la boîte cible
                 cardinalityToText.setX(endX - 15 * Math.cos(angle)); // Décaler selon l'angle
                 cardinalityToText.setY(endY - 15 * Math.sin(angle)); // Décaler selon l'angle
-                this.getChildren().add(cardinalityToText);
+                arrow.getChildren().add(cardinalityToText);
             }
         }
         triangle.getPoints().addAll(endX, endY, x1, y1, x2, y2);
-        this.getChildren().addAll(mainLine, triangle);
+        arrow.getChildren().addAll(mainLine, triangle);
+
+        return arrow;
     }
 }

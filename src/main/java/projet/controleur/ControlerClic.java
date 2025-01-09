@@ -17,6 +17,8 @@ import javafx.scene.layout.VBox;
 import projet.Modele;
 import projet.arborescence.Fichier;
 import projet.arborescence.FileComposite;
+import projet.classes.Classe;
+import projet.classes.Fleche;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -67,7 +69,17 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
         //si clic droit
         if (event.getButton() == MouseButton.SECONDARY) {
-            System.out.println("clic droit");
+            Modele.setRatio(Modele.getRatio()*0.5);
+            for(Classe c : modele.getClasses().values()){
+                System.out.println("LARG CONTR AV "+c.getLongueur());
+                c.setLargeur(c.getLargeur()*Modele.getRatio());
+                c.setLongueur(c.getLongueur()*Modele.getRatio());
+                System.out.println("LARG CONTR APR "+c.getLongueur());
+
+            };
+            modele.getVueClasse().agrandir(Modele.getRatio());
+            modele.notifierObservateur();
+            modele.updateRelations();
             contextMenu.getItems().clear();
             ControlerImage controlerImage = new ControlerImage(modele);
 

@@ -1,5 +1,7 @@
 package projet.classes;
 
+import projet.Modele;
+
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -53,7 +55,7 @@ public class Fleche {
         double x2Min = parent.getX();
         double y2Min = parent.getY();
         double x2Max = x2Min + parent.getLargeur();
-        double y2Max = y2Min + parent.getLongueur();
+        double y2Max = y2Min + parent.getLongueur()*Modele.getRatio();
 
         // Identifier les relations spatiales
         boolean parentAuDessus = y1Max < y2Min; // Parent au-dessus de l'enfant

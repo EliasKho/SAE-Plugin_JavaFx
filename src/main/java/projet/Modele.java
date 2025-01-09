@@ -20,6 +20,7 @@ public class Modele implements Sujet{
     private Scene scene;
     private VueClasse vueClasse;
     private String vue;
+    private static double ratio = 1;
 
     public Modele(FileComposite f) {
         this.racine = f;
@@ -376,4 +377,12 @@ public class Modele implements Sujet{
             throw new RuntimeException(e);
         }
     }
+
+    public static double getRatio() {
+        return ratio;
+    }
+    public static void setRatio(double r) {
+        ratio = r;
+    }
+
 }
