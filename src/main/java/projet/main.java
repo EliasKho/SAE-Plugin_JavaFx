@@ -141,27 +141,28 @@ public class main extends Application {
                 optionsGrid.setHgap(10);
                 optionsGrid.setVgap(10);
 
-                int row = 0;
+                // Ajouter les options sur la même ligne, avec différentes colonnes
+                int col = 0; // Initialiser la première colonne
 
                 if (option1.isSelected()) {
-                    optionsGrid.add(new Label("Affichage des getters/setters"), 0, row++);
+                    optionsGrid.add(new Label("Affichage des getters/setters"), col++, 0);
                     modele.setVoirGetSet(true);
                 } else {
-                    optionsGrid.add(new Label("Masquage des getters/setters"), 0, row++);
+                    optionsGrid.add(new Label("Masquage des getters/setters"), col++, 0);
                     modele.setVoirGetSet(false);
                 }
                 if (option2.isSelected()) {
-                    optionsGrid.add(new Label("Affichage des attributs hérités"), 0, row++);
+                    optionsGrid.add(new Label("Affichage des attributs hérités"), col++, 0);
                     modele.setVoirAttributsHerites(true);
                 } else {
-                    optionsGrid.add(new Label("Masquage des attributs hérités"), 0, row++);
+                    optionsGrid.add(new Label("Masquage des attributs hérités"), col++, 0);
                     modele.setVoirAttributsHerites(false);
                 }
                 if (option3.isSelected()) {
-                    optionsGrid.add(new Label("Affichage des flèches"), 0, row++);
+                    optionsGrid.add(new Label("Affichage des flèches"), col++, 0);
                     modele.setVoirFleches(true);
                 } else {
-                    optionsGrid.add(new Label("Masquage des flèches"), 0, row++);
+                    optionsGrid.add(new Label("Masquage des flèches"), col++, 0);
                     modele.setVoirFleches(false);
                 }
 
@@ -175,6 +176,7 @@ public class main extends Application {
             // Afficher la fenêtre popup
             popupStage.showAndWait();
         });
+
 
 
         saveDiagram.setOnAction(e -> {
