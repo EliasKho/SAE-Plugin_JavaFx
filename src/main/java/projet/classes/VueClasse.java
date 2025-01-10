@@ -72,7 +72,14 @@ public class VueClasse extends Pane implements Observateur {
 
                 StringBuilder strMet = new StringBuilder();
                 for (Methode methode : methodes) {
-                    strMet.append(methode.getString()).append("\n");
+                    if(modele.isVoirGetSet()){
+                        strMet.append(methode.getString()).append("\n");
+                    } else {
+                        if(!methode.getString().contains("get")&&!methode.getString().contains("set")&&!methode.getString().contains("is")){
+                            strMet.append(methode.getString()).append("\n");
+                        }
+                    }
+
                 }
                 Text methodsText = new Text(strMet.toString());
                 methodsContainer.getChildren().add(methodsText);
@@ -131,6 +138,9 @@ public class VueClasse extends Pane implements Observateur {
 
 
     private void createArrow(Fleche r) {
+        if(!modele.isVoirFleches()){
+            return;
+        }
         // Coordonnées de la relation
         double[] coord = r.getPosition();
         double startX = coord[0];

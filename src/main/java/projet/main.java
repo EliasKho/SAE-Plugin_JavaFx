@@ -1,6 +1,7 @@
 package projet;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -90,6 +91,7 @@ public class main extends Application {
         MenuItem chooseDirectory = new MenuItem("Choisir un répertoire");
         MenuItem saveDiagram = new MenuItem("Sauvegarder le diagramme");
         MenuItem loadDiagram = new MenuItem("Charger un diagramme");
+        MenuItem affichage = new MenuItem("Modifier l'affichage");
 
         // Ajouter des actions aux éléments du menu
         chooseDirectory.setOnAction(e -> {
@@ -102,6 +104,78 @@ public class main extends Application {
                 arborescence.actualiser(modele);
             }
         });
+
+        affichage.setOnAction(e -> {
+            // Créer une nouvelle fenêtre popup
+            Stage popupStage = new Stage();
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+            popupStage.setTitle("Modifier l'affichage");
+
+            // Créer un VBox pour contenir les CheckBox et le bouton de validation
+            VBox layout = new VBox(10);
+            layout.setPadding(new Insets(20));
+
+            // Créer les CheckBox
+            CheckBox option1 = new CheckBox("Afficher les getters/setters");
+            CheckBox option2 = new CheckBox("Afficher les attributs hérités");
+            CheckBox option3 = new CheckBox("Afficher les flèches");
+
+            // Créer un bouton pour valider les choix
+            Button validateButton = new Button("Valider");
+
+            // Ajouter les CheckBox et le bouton au layout
+            layout.getChildren().addAll(option1, option2, option3, validateButton);
+
+            // Créer une scène pour la fenêtre popup
+            Scene popupScene = new Scene(layout);
+            popupStage.setScene(popupScene);
+
+            // Action du bouton valider
+            validateButton.setOnAction(action -> {
+                // Nettoyer les options précédentes affichées dans le GridPane
+                gp.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node) >= 2);
+
+                // Créer un nouveau GridPane pour organiser les options sélectionnées
+                GridPane optionsGrid = new GridPane();
+                optionsGrid.setPadding(new Insets(10));
+                optionsGrid.setHgap(10);
+                optionsGrid.setVgap(10);
+
+                int row = 0;
+
+                if (option1.isSelected()) {
+                    optionsGrid.add(new Label("Affichage des getters/setters"), 0, row++);
+                    modele.setVoirGetSet(true);
+                } else {
+                    optionsGrid.add(new Label("Masquage des getters/setters"), 0, row++);
+                    modele.setVoirGetSet(false);
+                }
+                if (option2.isSelected()) {
+                    optionsGrid.add(new Label("Affichage des attributs hérités"), 0, row++);
+                    modele.setVoirAttributsHerites(true);
+                } else {
+                    optionsGrid.add(new Label("Masquage des attributs hérités"), 0, row++);
+                    modele.setVoirAttributsHerites(false);
+                }
+                if (option3.isSelected()) {
+                    optionsGrid.add(new Label("Affichage des flèches"), 0, row++);
+                    modele.setVoirFleches(true);
+                } else {
+                    optionsGrid.add(new Label("Masquage des flèches"), 0, row++);
+                    modele.setVoirFleches(false);
+                }
+
+                // Ajouter les nouvelles options au GridPane principal
+                gp.add(optionsGrid, 0, 2, 2, 1);
+
+                // Fermer la fenêtre popup
+                popupStage.close();
+            });
+
+            // Afficher la fenêtre popup
+            popupStage.showAndWait();
+        });
+
 
         saveDiagram.setOnAction(e -> {
             // choisir où sauvegarder le nouveau fichier et son nom
@@ -125,7 +199,7 @@ public class main extends Application {
         });
 
         // Ajouter les éléments au MenuButton
-        menuButtonOptions.getItems().addAll(chooseDirectory, saveDiagram, loadDiagram);
+        menuButtonOptions.getItems().addAll(chooseDirectory, saveDiagram, loadDiagram, affichage);
 
 
         gp.add(menuButtonOptions, 0, 0);

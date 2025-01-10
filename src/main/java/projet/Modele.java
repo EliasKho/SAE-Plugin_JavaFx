@@ -20,6 +20,9 @@ public class Modele implements Sujet, Serializable{
     private Scene scene;
     private VueClasse vueClasse;
     private String vue;
+    private static boolean voirGetSet;
+    private static boolean voirFleches;
+    private static boolean voirAttributsHerites;
 
     public Modele() {
         this.racine = null;
@@ -27,6 +30,9 @@ public class Modele implements Sujet, Serializable{
         this.classes = new HashMap<>();
         this.relations = new ArrayList<>();
         this.vue = "classique";
+        voirGetSet = true;
+        voirFleches = true;
+        voirAttributsHerites = false;
     }
 
     public FileComposite getRacine() {
@@ -77,9 +83,10 @@ public class Modele implements Sujet, Serializable{
                     }
 
                     ArrayList<Methode> methodes = getMethode(classeJava);
-                    ArrayList<Attribut> attributs = getAttributs(classeJava);
+                    ArrayList<ArrayList<Attribut>> listAttributs = getAttributs(classeJava);
 
-                    classe.setAttributs(attributs);
+                    classe.setHeritesAttributs(listAttributs.get(0));
+                    classe.setNonHeritesAttributs(listAttributs.get(1));
                     classe.setMethodes(methodes);
 
                     classe.setX(x);
@@ -118,7 +125,8 @@ public class Modele implements Sujet, Serializable{
                 default:
                     break;
             }
-            classe.setAttributs(attributs);
+            classe.setNonHeritesAttributs(attributs);
+            classe.setHeritesAttributs(attributs);
             classe.setMethodes(methodes);
 
             classes.put(className, classe);
@@ -173,14 +181,15 @@ public class Modele implements Sujet, Serializable{
         return classe.getPackage().getName();
     }
 
-    public ArrayList<Attribut> getAttributs(Class<?> classe){
-        ArrayList<Attribut> attributs = new ArrayList<>();
+    public ArrayList<ArrayList<Attribut>> getAttributs(Class<?> classe){
+        ArrayList<Attribut> attributsHerites = new ArrayList<>();
+        ArrayList<Attribut> attributsNonHerites = new ArrayList<>();
 
         for (Field field : classe.getDeclaredFields()) {
             Class<?> type = field.getType();
             if (typePrimitif(type)) {
                 Attribut attribut = new Attribut(field.getName(), field.getType().getName(), field.getModifiers());
-                attributs.add(attribut);
+                attributsNonHerites.add(attribut);
             }
             else if (!classeExiste(type.getName())) {
                 Type genericType = field.getGenericType();
@@ -191,14 +200,39 @@ public class Modele implements Sujet, Serializable{
                         if (arg instanceof Class) {
                             if (!classeExiste(arg.getTypeName())) {
                                 Attribut attribut = getAttribut(field, paramT);
-                                attributs.add(attribut);
+                                attributsNonHerites.add(attribut);
                             }
                         }
                     }
                 }
             }
         }
-        return attributs;
+        for (Field field : classe.getFields()) {
+            Class<?> type = field.getType();
+            if (typePrimitif(type)) {
+                Attribut attribut = new Attribut(field.getName(), field.getType().getName(), field.getModifiers());
+                attributsHerites.add(attribut);
+            }
+            else if (!classeExiste(type.getName())) {
+                Type genericType = field.getGenericType();
+                if (genericType instanceof ParameterizedType) {
+                    ParameterizedType paramT = (ParameterizedType) genericType;
+                    Type[] typeArguments = paramT.getActualTypeArguments();
+                    for (Type arg : typeArguments) {
+                        if (arg instanceof Class) {
+                            if (!classeExiste(arg.getTypeName())) {
+                                Attribut attribut = getAttribut(field, paramT);
+                                attributsHerites.add(attribut);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        ArrayList<ArrayList<Attribut>> listAttributs = new ArrayList<>();
+        listAttributs.add(attributsHerites);
+        listAttributs.add(attributsNonHerites);
+        return listAttributs;
     }
 
     private static Attribut getAttribut(Field field, ParameterizedType paramT) {
@@ -587,5 +621,32 @@ public class Modele implements Sujet, Serializable{
             UML = createUML();
             notifierObservateur();
         }
+    }
+
+    public static boolean isVoirGetSet() {
+        return voirGetSet;
+    }
+
+    public void setVoirGetSet(boolean voirGetSet) {
+        this.voirGetSet = voirGetSet;
+        notifierObservateur();
+    }
+
+    public static boolean isVoirFleches() {
+        return voirFleches;
+    }
+
+    public void setVoirFleches(boolean voirFleches) {
+        this.voirFleches = voirFleches;
+        notifierObservateur();
+    }
+
+    public static boolean isVoirAttributsHerites() {
+        return voirAttributsHerites;
+    }
+
+    public void setVoirAttributsHerites(boolean voirAttributsHerites) {
+        this.voirAttributsHerites = voirAttributsHerites;
+        notifierObservateur();
     }
 }

@@ -4,11 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import projet.Modele;
 
 public class Classe implements Serializable{
     private final String nom;
     private List<Methode> methodes;
-    private List<Attribut> attributs;
+    private List<Attribut> attributsHerites;
+    private List<Attribut> attributsNonHerites;
     private boolean isInterface;
     private boolean isAbstract;
     private String nomPackage;
@@ -28,7 +30,8 @@ public class Classe implements Serializable{
             this.nomPackage = "";
         }
         methodes = new ArrayList<>();
-        attributs = new ArrayList<>();
+        attributsHerites = new ArrayList<>();
+        attributsNonHerites = new ArrayList<>();
         classesExternes = new ArrayList<>();
         isInterface = false;
         isAbstract = false;
@@ -69,10 +72,16 @@ public class Classe implements Serializable{
     }
 
     public List<Attribut> getAttributs() {
-        return attributs;
+        if(Modele.isVoirAttributsHerites()){
+            return attributsHerites;
+        }
+        return attributsNonHerites;
     }
-    public void setAttributs(List<Attribut> attributs) {
-        this.attributs = attributs;
+    public void setHeritesAttributs(List<Attribut> attributs) {
+        this.attributsHerites = attributs;
+    }
+    public void setNonHeritesAttributs(List<Attribut> attributs) {
+        this.attributsNonHerites = attributs;
     }
 
     public boolean isInterface() {
