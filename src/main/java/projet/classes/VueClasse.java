@@ -51,12 +51,12 @@ public class VueClasse extends Pane implements Observateur {
                 classNameText.setText(nom);
 
                 // 2. Créer un StackPane pour la classe
-                StackPane classBoxContainer = new StackPane();
+                Pane classBoxContainer = new StackPane();
                 classBoxContainer.setStyle("-fx-background-color: lightgray; -fx-padding: 5px;");
                 classBoxContainer.getChildren().add(classNameText);
 
                 // 3. Attributs
-                StackPane attributesContainer = new StackPane();
+                Pane attributesContainer = new StackPane();
                 attributesContainer.setStyle("-fx-background-color: lightyellow; -fx-padding: 5px;");
 
                 StringBuilder strAtr = new StringBuilder();
@@ -67,7 +67,7 @@ public class VueClasse extends Pane implements Observateur {
                 attributesContainer.getChildren().add(attributesText);
 
                 // 4. Méthodes
-                StackPane methodsContainer = new StackPane();
+                Pane methodsContainer = new StackPane();
                 methodsContainer.setStyle("-fx-background-color: lightgreen; -fx-padding: 5px;");
 
                 StringBuilder strMet = new StringBuilder();
