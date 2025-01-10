@@ -97,31 +97,58 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                     }
                 }
             }
-
+            Menu sousMenuExport = new Menu("Exporter");
+            Menu sousMenuAjouter = new Menu("Ajouter");
+            Menu classesExternes = null;
             if (event.getSource() instanceof VBox box) {
                 String nom = box.getId();
 
                 MenuItem item = new MenuItem("Supprimer");
+                item.setOnAction(_ -> modele.supprimerClasse(nom));
+                contextMenu.getItems().add(item);
+
                 MenuItem ajouterMethode = itemAjouterMethode(nom);
                 MenuItem ajouterAttribut = itemAjouterAttribut(nom);
-                contextMenu.getItems().addAll(item, ajouterMethode, ajouterAttribut);
-                item.setOnAction(_ -> modele.supprimerClasse(nom));
+                sousMenuAjouter.getItems().addAll(ajouterMethode, ajouterAttribut);
+
+                classesExternes = new Menu("Classes externes");
+                for (String classe : modele.getClasses().get(nom).getClassesExternes()) {
+                    MenuItem itemClasse = new MenuItem(classe);
+                    itemClasse.setOnAction(e -> {
+                        modele.ajouterClasse(classe, 10, 10);
+                    });
+                    classesExternes.getItems().add(itemClasse);
+                }
+                if (classesExternes.getItems().isEmpty()){
+                    MenuItem itemClasse = new MenuItem("Aucune classe externe");
+                    itemClasse.setDisable(true);
+                    classesExternes.getItems().add(itemClasse);
+                }
+                contextMenu.getItems().add(classesExternes);
             }
             if (event.getSource() instanceof Pane) {
                 MenuItem item2 = new MenuItem("Supprimer tout");
                 item2.setOnAction(_ -> modele.viderClasses());
-                MenuItem item3 = new MenuItem("Exporter en image");
-                item3.setOnAction(_ -> controlerImage.captureImage());
+                contextMenu.getItems().add(item2);
+
                 MenuItem ajouterClasse = itemAjouterClasse();
                 MenuItem ajouterRelation = itemAjouterRelation();
-                contextMenu.getItems().addAll(item2, item3, ajouterClasse, ajouterRelation);
+                sousMenuAjouter.getItems().addAll(ajouterClasse, ajouterRelation);
+
+                MenuItem item3 = new MenuItem("Exporter en image");
+                sousMenuExport.getItems().add(item3);
+                item3.setOnAction(_ -> controlerImage.captureImage());
             }
             if (event.getSource() instanceof ImageView || event.getSource() instanceof Pane) {
                 MenuItem item4 = new MenuItem("Exporter en image diagramme PlantUML");
                 item4.setOnAction(_ -> controlerImage.captureImageUML());
                 MenuItem item5 = itemCodeSource();
-                contextMenu.getItems().addAll(item4, item5);
+                sousMenuExport.getItems().addAll(item4, item5);
             }
+            if (classesExternes != null) {
+                contextMenu.getItems().add(classesExternes);
+            }
+            contextMenu.getItems().addAll(sousMenuAjouter,sousMenuExport);
 
             contextMenu.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
         }

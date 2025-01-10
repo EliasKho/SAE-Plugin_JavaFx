@@ -17,6 +17,7 @@ public class Classe implements Serializable{
     private double longueur;
     private double largeur;
     private String absolutePath;
+    private ArrayList<String> classesExternes;
 
     public Classe(String nom){
         this.nom = nom.substring(nom.lastIndexOf(".")+1);
@@ -28,6 +29,7 @@ public class Classe implements Serializable{
         }
         methodes = new ArrayList<>();
         attributs = new ArrayList<>();
+        classesExternes = new ArrayList<>();
         isInterface = false;
         isAbstract = false;
         largeur = 200;
@@ -36,6 +38,16 @@ public class Classe implements Serializable{
 
     public void ajouterMethode(Methode methode){
         methodes.add(methode);
+    }
+
+    public void ajouterClasseExterne(String classe){
+        if (!classesExternes.contains(classe)) {
+            classesExternes.add(classe);
+        }
+    }
+
+    public ArrayList<String> getClassesExternes(){
+        return classesExternes;
     }
 
     public String getAbsolutePath() {

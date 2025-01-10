@@ -58,32 +58,39 @@ public class Modele implements Sujet, Serializable{
             try {
                 String packageName = ClasseLoader.loadClass(className, racine);
                 Class<?> classeJava = ClasseLoader.getClasses().get(packageName);
-                classe = new Classe(packageName);
-                classe.setNomPackage(getPackage(classeJava));
-                classe.setAbsolutePath(className);
 
-                if (classeJava.isInterface()) {
-                    classe.setInterface(true);
-                } else {
-                    if (Modifier.isAbstract(classeJava.getModifiers())) {
-                        classe.setAbstract(true);
-                    }
+                if(classeJava == null){
+                    classeJava = Class.forName(className);
+                    packageName = classeJava.getName();
                 }
 
-                ArrayList<Methode> methodes = getMethode(classeJava);
-                ArrayList<Attribut> attributs = getAttributs(classeJava);
+                    classe = new Classe(packageName);
+                    classe.setNomPackage(getPackage(classeJava));
+                    classe.setAbsolutePath(className);
 
-                classe.setAttributs(attributs);
-                classe.setMethodes(methodes);
+                    if (classeJava.isInterface()) {
+                        classe.setInterface(true);
+                    } else {
+                        if (Modifier.isAbstract(classeJava.getModifiers())) {
+                            classe.setAbstract(true);
+                        }
+                    }
 
-                classe.setX(x);
-                classe.setY(y);
+                    ArrayList<Methode> methodes = getMethode(classeJava);
+                    ArrayList<Attribut> attributs = getAttributs(classeJava);
 
-                classes.put(packageName, classe);
+                    classe.setAttributs(attributs);
+                    classe.setMethodes(methodes);
 
-                updateRelations();
-                // génération du diagramme UML
-                UML = createUML();
+                    classe.setX(x);
+                    classe.setY(y);
+
+                    classes.put(packageName, classe);
+
+                    updateRelations();
+                    // génération du diagramme UML
+                    UML = createUML();
+
             } catch (StringIndexOutOfBoundsException e) {
 
             }
@@ -259,28 +266,40 @@ public class Modele implements Sujet, Serializable{
         return methodes;
     }
 
-    public void updateRelationHeritage(Classe classe) {
+    public void updateRelationHeritage(Classe classe) throws ClassNotFoundException {
         String enfant;
         String parent;
         Class<?> className = ClasseLoader.getClasses().get(classe.getRealName());
+
         if (className != null) {
             Class<?> superClass = className.getSuperclass();
 
             enfant = className.getName();
 
-            if (superClass != null && superClass != Object.class && classeInDiagramme(superClass.getName())) {
+            if (superClass != null && superClass != Object.class) {
                 parent = superClass.getName();
-                ajouterRelation(parent, enfant, Fleche.EXTENDS, null, null, "\"\"");
+                if (!classeInDiagramme(parent)) {
+                    if(!parent.substring(0, parent.indexOf(".")).equals(enfant.substring(0, enfant.indexOf(".")))) {
+                        classe.ajouterClasseExterne(parent);
+                    }
+                }
+                else {
+                    ajouterRelation(parent, enfant, Fleche.EXTENDS, null, null, "\"\"");
+                }
             }
 
             Class<?>[] interfaces = className.getInterfaces();
 
             for (Class<?> interfaceClass : interfaces) {
                 if (!classeInDiagramme(interfaceClass.getName())) {
-                    continue;
+                    if (!interfaceClass.getName().substring(0, interfaceClass.getName().indexOf(".")).equals(enfant.substring(0, enfant.indexOf(".")))) {
+                        classe.ajouterClasseExterne(interfaceClass.getName());
+                    }
                 }
-                parent = interfaceClass.getName();
-                ajouterRelation(parent, enfant, Fleche.IMPLEMENTS, null, null, "\"\"");
+                else {
+                    parent = interfaceClass.getName();
+                    ajouterRelation(parent, enfant, Fleche.IMPLEMENTS, null, null, "\"\"");
+                }
             }
         }
     }
@@ -316,7 +335,9 @@ public class Modele implements Sujet, Serializable{
     }
 
     public void updateRelations(){
-        for (Classe classe : classes.values()) {
+        Iterator<Classe> it = classes.values().iterator();
+        while (it.hasNext()){
+            Classe classe = it.next();
             try {
                 updateRelationHeritage(classe);
                 updateRelationAttributs(classe);
@@ -387,6 +408,7 @@ public class Modele implements Sujet, Serializable{
 
     public void viderClasses(){
         classes.clear();
+        Fleche.reinitialiserNbRelations();
         updateRelations();
         UML = createUML();
         notifierObservateur();

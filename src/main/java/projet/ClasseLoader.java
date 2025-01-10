@@ -54,9 +54,7 @@ public class ClasseLoader {
                 return packageName;
             } catch (ClassNotFoundException | MalformedURLException e) {
                 if (i == 0) {
-                    System.out.println("Classe non trouvée");
-                    // renvoi d'une exception
-                    throw new ClassNotFoundException("Classe non trouvée");
+                    return null;
                 }
             }
         }
