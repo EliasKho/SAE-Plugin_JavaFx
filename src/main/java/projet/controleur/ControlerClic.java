@@ -21,9 +21,7 @@ import javafx.stage.Stage;
 import projet.Modele;
 import projet.arborescence.Fichier;
 import projet.arborescence.FileComposite;
-import projet.classes.Attribut;
 import projet.classes.Fleche;
-import projet.classes.Methode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -229,7 +227,7 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                     alert.showAndWait();
                     return;
                 }
-                modele.ajouterClasseInexistante(classe, type,0, 0, new ArrayList<>(), new ArrayList<>());
+                modele.ajouterClasseInexistante(classe, type,10, 10, new ArrayList<>(), new ArrayList<>());
                 popupStage.hide();
             });
 
@@ -486,18 +484,18 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                     cardinaliteCibleField.setDisable(true);
                     cardinaliteSourceField.setDisable(true);
                     nomRelationField.setDisable(true);
-                    cardinaliteCibleField.setText("");
-                    cardinaliteSourceField.setText("");
-                    nomRelationField.setText("");
+                    cardinaliteCibleField.setText(null);
+                    cardinaliteSourceField.setText(null);
+                    nomRelationField.setText("\"\"");
                 } else if (type.equals(Fleche.EXTENDS)) {
                     labelCibleClasse.setText("Classe mère:");
                     labelSourceClasse.setText("Classe fille:");
                     cardinaliteCibleField.setDisable(true);
                     cardinaliteSourceField.setDisable(true);
                     nomRelationField.setDisable(true);
-                    cardinaliteCibleField.setText("");
-                    cardinaliteSourceField.setText("");
-                    nomRelationField.setText("");
+                    cardinaliteCibleField.setText(null);
+                    cardinaliteSourceField.setText(null);
+                    nomRelationField.setText("\"\"");
                 } else {
                     labelCibleClasse.setText("Classe cible:");
                     labelSourceClasse.setText("Classe source:");
