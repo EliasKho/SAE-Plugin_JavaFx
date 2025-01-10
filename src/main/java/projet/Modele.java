@@ -262,7 +262,7 @@ public class Modele implements Sujet, Serializable{
     public void updateRelationHeritage(Classe classe) {
         String enfant;
         String parent;
-        Class<?> className = ClasseLoader.getClasses().get(classe.getNomPackage() + "." + classe.getNom());
+        Class<?> className = ClasseLoader.getClasses().get(classe.getRealName());
         if (className != null) {
             Class<?> superClass = className.getSuperclass();
 
@@ -286,7 +286,7 @@ public class Modele implements Sujet, Serializable{
     }
 
     public void updateRelationAttributs(Classe c) {
-        String className = c.getNomPackage() + "." + c.getNom();
+        String className = c.getRealName();
         Class<?> classe = ClasseLoader.getClasses().get(className);
         if (classe!= null) {
 
@@ -336,17 +336,8 @@ public class Modele implements Sujet, Serializable{
         Iterator<Fleche> it = relations.iterator();
         while (it.hasNext()){
             Fleche r = it.next();
-            String nomParent, nomEnfant;
-            if (r.getParent().getNomPackage().isEmpty()) {
-                nomParent = r.getParent().getNom();
-            } else {
-                nomParent = r.getParent().getNomPackage()+"."+r.getParent().getNom();
-            }
-            if (r.getEnfant().getNomPackage().isEmpty()) {
-                nomEnfant = r.getEnfant().getNom();
-            } else {
-                nomEnfant = r.getEnfant().getNomPackage()+"."+r.getEnfant().getNom();
-            }
+            String nomParent = r.getParent().getRealName();
+            String nomEnfant = r.getEnfant().getRealName();
 
             if (!isInDiagram(nomEnfant) || !isInDiagram(nomParent)){
                 it.remove();

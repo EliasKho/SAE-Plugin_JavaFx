@@ -32,17 +32,8 @@ public class Fleche implements Serializable {
         this.parentCardinalite = null;
         this.enfantCardinalite = null;
 
-        String nomParent, nomEnfant;
-        if (parent.getNomPackage().isEmpty()) {
-            nomParent = parent.getNom();
-        } else {
-            nomParent = parent.getNomPackage()+"."+parent.getNom();
-        }
-        if (enfant.getNomPackage().isEmpty()) {
-            nomEnfant = enfant.getNom();
-        } else {
-            nomEnfant = enfant.getNomPackage()+"."+enfant.getNom();
-        }
+        String nomParent = parent.getRealName();
+        String nomEnfant = enfant.getRealName();
         String keyEnfantParent = nomParent+nomEnfant;
         if (nbRelations.containsKey(keyEnfantParent)) {
             nbRelations.put(keyEnfantParent, nbRelations.get(keyEnfantParent)+1);

@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("unchecked")
 public class ControlerClic implements EventHandler<MouseEvent> {
     private Modele modele;
     private String nomClasse;
@@ -399,14 +400,14 @@ public class ControlerClic implements EventHandler<MouseEvent> {
             }
 
             // choisir la classe source
-            ComboBox<String> classeSource = new ComboBox<>();
-            classeSource.getItems().addAll(nomsClasses.keySet());
-            classeSource.setValue(nomsClasses.get(0));
-
-            // choisir la classe cible
             ComboBox<String> classeCible = new ComboBox<>();
             classeCible.getItems().addAll(nomsClasses.keySet());
             classeCible.setValue(nomsClasses.get(0));
+
+            // choisir la classe cible
+            ComboBox<String> classeSource = new ComboBox<>();
+            classeSource.getItems().addAll(nomsClasses.keySet());
+            classeSource.setValue(nomsClasses.get(0));
 
             Button addButton = new Button("Ajouter");
 
@@ -423,8 +424,8 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
             layout.getChildren().addAll(
                     new Label("Type de relation:"), typeRelation,
-                    labelCibleClasse, classeSource,
-                    labelSourceClasse, classeCible,
+                    labelCibleClasse, classeCible,
+                    labelSourceClasse, classeSource,
                     labelCardinaliteCible, cardinaliteCibleField,
                     labelCardinaliteSource, cardinaliteSourceField,
                     labelNomRelation, nomRelationField,
@@ -432,8 +433,8 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
             addButton.setOnAction(e1 -> {
                 String type = typesRelation.get(typeRelation.getValue());
-                String source = nomsClasses.get(classeSource.getValue());
                 String cible = nomsClasses.get(classeCible.getValue());
+                String source = nomsClasses.get(classeSource.getValue());
                 String cardinaliteCible = cardinaliteCibleField.getText();
                 String cardinaliteSource = cardinaliteSourceField.getText();
                 String nomRelation = nomRelationField.getText();
@@ -447,7 +448,7 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                     alert.showAndWait();
                     return;
                 }
-                modele.ajouterRelation(source, cible, type, cardinaliteSource, cardinaliteCible, nomRelation);
+                modele.ajouterRelation(cible, source, type, cardinaliteCible, cardinaliteSource, nomRelation);
                 popupStage.hide();
             });
 

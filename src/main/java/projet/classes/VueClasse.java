@@ -23,7 +23,7 @@ import java.util.List;
 
 public class VueClasse extends Pane implements Observateur {
 
-    private final Modele modele;
+    private Modele modele;
     private ControlerClic controlerClic;
 
     public VueClasse(Modele modele, ControlerClic c) {

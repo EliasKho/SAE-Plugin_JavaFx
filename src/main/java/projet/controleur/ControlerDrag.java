@@ -62,7 +62,7 @@ public class ControlerDrag implements EventHandler<DragEvent> {
                         double y = dragEvent.getY();
                         Classe c = modele.ajouterClasse(nomClasse, x, y);
                         ClipboardContent content = new ClipboardContent();
-                        content.putString(c.getNomPackage()+"."+c.getNom());
+                        content.putString(c.getRealName());
                         dragEvent.getDragboard().setContent(content);
                         setXY(dragEvent.getSceneX(), dragEvent.getSceneY());
                     }
