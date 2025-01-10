@@ -54,149 +54,40 @@ public class Attribut implements Serializable {
 
     public String getModifierUMLString(){
         String affichage="";
-        switch (modifier) {
-            case 1:
-                affichage += "+";
-                break;
-            case 2:
-                affichage += "-";
-                break;
-            case 4:
-                affichage += "#";
-                break;
-            case 8, 9:
-                affichage += "+{static} ";
-                break;
-            case 16, 17:
-                affichage += "+{final} ";
-                break;
-            case 1024, 1025:
-                affichage += "+{abstract} ";
-                break;
-            case 25:
-                affichage += "+{static final} ";
-                break;
-            case 10:
-                affichage += "-{static} ";
-                break;
-            case 18:
-                affichage += "-{final} ";
-                break;
-            case 26:
-                affichage += "-{static final} ";
-                break;
-            case 1026:
-                affichage += "-{abstract} ";
-                break;
-            case 12:
-                affichage += "# {static} ";
-                break;
-            case 20:
-                affichage += "# {final} ";
-                break;
-            case 28:
-                affichage += "# {static final} ";
-                break;
-            case 1028:
-                affichage += "# {abstract} ";
-                break;
-            case 1033:
-                affichage += "+{static abstract} ";
-                break;
-            case 1041:
-                affichage += "+{final abstract} ";
-                break;
-            case 1049:
-                affichage += "+{static final abstract} ";
-                break;
-            case 1050:
-                affichage += "-{static final abstract} ";
-                break;
-            case 1052:
-                affichage += "# {static final abstract} ";
-                break;
-            default:
-                // Optionnel : gérer les cas non définis
+        if(Modifier.isPublic(modifier)){
+            affichage="+";
         }
-
+        if(Modifier.isProtected(modifier)){
+            affichage="#";
+        }
+        if(Modifier.isPrivate(modifier)){
+            affichage="-";
+        }
+        if(Modifier.isStatic(modifier)){
+            affichage="+{static} ";
+        }
+        if(Modifier.isAbstract(modifier)){
+            affichage="+{abstract} ";
+        }
         return affichage;
     }
 
     public String getModifierString(){
         String affichage="";
-        switch (modifier) {
-            case 1:
-                affichage += "public ";
-                break;
-            case 2:
-                affichage += "private ";
-                break;
-            case 4:
-                affichage += "protected ";
-                break;
-            case 8:
-                affichage += "static ";
-                break;
-            case 16:
-                affichage += "final ";
-                break;
-            case 1024:
-                affichage += "abstract ";
-                break;
-            case 9:
-                affichage += "public static ";
-                break;
-            case 17:
-                affichage += "public final ";
-                break;
-            case 25:
-                affichage += "public static final ";
-                break;
-            case 1025:
-                affichage += "public abstract ";
-                break;
-            case 10:
-                affichage += "private static ";
-                break;
-            case 18:
-                affichage += "private final ";
-                break;
-            case 26:
-                affichage += "private static final ";
-                break;
-            case 1026:
-                affichage += "private abstract ";
-                break;
-            case 12:
-                affichage += "protected static ";
-                break;
-            case 20:
-                affichage += "protected final ";
-                break;
-            case 28:
-                affichage += "protected static final ";
-                break;
-            case 1028:
-                affichage += "protected abstract ";
-                break;
-            case 1033:
-                affichage += "public static abstract ";
-                break;
-            case 1041:
-                affichage += "public final abstract ";
-                break;
-            case 1049:
-                affichage += "public static final abstract ";
-                break;
-            case 1050:
-                affichage += "private static final abstract ";
-                break;
-            case 1052:
-                affichage += "protected static final abstract ";
-                break;
-            default:
-                // Optionnel : gérer les cas non définis
-                // affichage += "Modificateur non reconnu";
+        if(Modifier.isPublic(modifier)){
+            affichage+="public ";
+        }
+        if(Modifier.isProtected(modifier)){
+            affichage+="protected ";
+        }
+        if(Modifier.isPrivate(modifier)){
+            affichage+="private ";
+        }
+        if(Modifier.isStatic(modifier)){
+            affichage+="static ";
+        }
+        if(Modifier.isAbstract(modifier)){
+            affichage+="abstract ";
         }
         return affichage;
     }

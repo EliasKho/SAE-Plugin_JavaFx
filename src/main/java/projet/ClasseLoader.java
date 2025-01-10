@@ -43,7 +43,6 @@ public class ClasseLoader {
 
         for (int i = cheminAbsoluTab.length - 2; i >= 0; i--) {
             packageName = cheminAbsoluTab[i] + "." + packageName;
-            System.out.println("essai : " + packageName);
             try {
                 URL url = new File(cheminRacine).toURI().toURL();
                 URL[] urls = new URL[]{url};
@@ -51,7 +50,6 @@ public class ClasseLoader {
 
                 Class classe = classeLoader.loadClass(packageName);
 
-                System.out.println("Classe trouvée : " + classe.getName());
                 classes.put(packageName, classe);
                 return packageName;
             } catch (ClassNotFoundException | MalformedURLException e) {

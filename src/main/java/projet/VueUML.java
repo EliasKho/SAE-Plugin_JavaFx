@@ -15,7 +15,6 @@ public class VueUML implements Observateur{
     public void actualiser(Sujet s){
         Modele m = (Modele) s;
         String UML = m.getUML();
-        //System.out.println(UML);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("Diag.puml"))) {
             writer.write(UML);

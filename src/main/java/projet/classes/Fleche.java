@@ -1,9 +1,10 @@
 package projet.classes;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class Fleche {
+public class Fleche implements Serializable {
 
     public static final String IMPLEMENTS = ".u.|>";
     public static final String EXTENDS = "-u-|>";
@@ -31,7 +32,18 @@ public class Fleche {
         this.parentCardinalite = null;
         this.enfantCardinalite = null;
 
-        String keyEnfantParent = parent.getNomPackage()+"."+parent.getNom()+enfant.getNomPackage()+"."+enfant.getNom();
+        String nomParent, nomEnfant;
+        if (parent.getNomPackage().isEmpty()) {
+            nomParent = parent.getNom();
+        } else {
+            nomParent = parent.getNomPackage()+"."+parent.getNom();
+        }
+        if (enfant.getNomPackage().isEmpty()) {
+            nomEnfant = enfant.getNom();
+        } else {
+            nomEnfant = enfant.getNomPackage()+"."+enfant.getNom();
+        }
+        String keyEnfantParent = nomParent+nomEnfant;
         if (nbRelations.containsKey(keyEnfantParent)) {
             nbRelations.put(keyEnfantParent, nbRelations.get(keyEnfantParent)+1);
         } else {
@@ -170,6 +182,12 @@ public class Fleche {
         this.enfantCardinalite = enfantCardinalite;
     }
 
+    public static void retirer1Relation(String key){
+        if (nbRelations.containsKey(key)) {
+            nbRelations.put(key, nbRelations.get(key)-1);
+        }
+    }
+
     public static void reinitialiserNbRelations(){
         nbRelations.clear();
     }
@@ -184,5 +202,20 @@ public class Fleche {
     @Override
     public int hashCode() {
         return Objects.hash(getParent(), getEnfant(), getType());
+    }
+
+    @Override
+    public String toString() {
+        return "Fleche{" +
+                "parent=" + parent +
+                ", enfant=" + enfant +
+                ", type='" + type + '\'' +
+                ", nom='" + nom + '\'' +
+                ", parentCardinalite='" + parentCardinalite + '\'' +
+                ", enfantCardinalite='" + enfantCardinalite + '\'' +
+                ", indexEnfantParent=" + indexEnfantParent +
+                ", p1=" + p1 +
+                ", p2=" + p2 +
+                '}';
     }
 }

@@ -71,38 +71,6 @@ public class main extends Application {
         Button buttonVueUML = new Button("VueUML");
         buttonVueUML.setStyle("-fx-background-color: #2c8cff; -fx-text-fill: white;");
 
-        Button buttonAjoutClasse = new Button("Ajouter une classe");
-        buttonAjoutClasse.setOnAction(e -> {
-            Stage popupStage = new Stage();
-            popupStage.initModality(Modality.APPLICATION_MODAL);
-            popupStage.setTitle("Ma fenêtre popup");
-
-            VBox layout = new VBox(10);
-            layout.setPadding(new Insets(20));
-            TextField textField = new TextField();
-            Button addButton = new Button("Ajouter");
-            layout.getChildren().addAll(textField, addButton);
-
-            Scene scene = new Scene(layout);
-            popupStage.setScene(scene);
-
-            addButton.setOnAction(f -> {
-                String text = textField.getText();
-                //TODO
-                // Ne fonctionne pas pour les packages
-                modele.ajouterClasse("projet."+text+".java",0,0);
-                popupStage.close();
-            });
-            EventHandler<ActionEvent> handleInput = g -> {
-                String text = textField.getText();
-                //TODO
-                // Ne fonctionne pas pour les packages
-                modele.ajouterClasse("projet."+text+".java",0,0);
-                popupStage.close();
-            };
-            textField.setOnAction(handleInput);
-            popupStage.show();
-        });
 
         Button buttonVueClassique = new Button("VueClassique");
 

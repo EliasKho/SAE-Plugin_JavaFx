@@ -1,6 +1,7 @@
 package projet.classes;
 
 import java.io.Serializable;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -8,14 +9,19 @@ import java.util.Objects;
 
 public class Methode implements Serializable {
     private String nom;
-    private Type typeRetour;
+    private String typeRetour;
     private List<Parametre> parametres;
     private int modifier;
     private boolean constructeur;
 
-    public Methode(String nom, Type typeRetour, List<Parametre> parametres, int modifier) {
+    public Methode(String nom, String typeRetour, List<Parametre> parametres, int modifier) {
+        if (typeRetour.contains(".")){
+            this.typeRetour = typeRetour.substring(typeRetour.lastIndexOf(".")+1);
+        }
+        else {
+            this.typeRetour = typeRetour;
+        }
         this.nom = nom;
-        this.typeRetour = typeRetour;
         this.parametres = parametres;
         this.modifier = modifier;
         this.constructeur = false;
@@ -35,10 +41,10 @@ public class Methode implements Serializable {
         this.nom = nom;
     }
 
-    public Type getTypeRetour() {
+    public String getTypeRetour() {
         return typeRetour;
     }
-    public void setTypeRetour(Type typeRetour) {
+    public void setTypeRetour(String typeRetour) {
         this.typeRetour = typeRetour;
     }
 
@@ -113,40 +119,40 @@ public class Methode implements Serializable {
 
     public String getModifierUMLString(){
         String affichage="";
-        if(modifier == 1){
-            affichage+="+";
+        if(Modifier.isPublic(modifier)){
+            affichage="+";
         }
-        if(modifier == 4){
-            affichage+="#";
+        if(Modifier.isProtected(modifier)){
+            affichage="#";
         }
-        if(modifier == 2){
-            affichage+="-";
+        if(Modifier.isPrivate(modifier)){
+            affichage="-";
         }
-        if(modifier == 9){
-            affichage+="+{static} ";
+        if(Modifier.isStatic(modifier)){
+            affichage="+{static} ";
         }
-        if(modifier == 1025){
-            affichage+="+{abstract} ";
+        if(Modifier.isAbstract(modifier)){
+            affichage="+{abstract} ";
         }
         return affichage;
     }
 
     public String getModifierString(){
         String affichage="";
-        if(modifier == 1){
+        if(Modifier.isPublic(modifier)){
             affichage+="public ";
         }
-        if(modifier == 4){
+        if(Modifier.isProtected(modifier)){
             affichage+="protected ";
         }
-        if(modifier == 2){
+        if(Modifier.isPrivate(modifier)){
             affichage+="private ";
         }
-        if(modifier == 9){
-            affichage+="public static ";
+        if(Modifier.isStatic(modifier)){
+            affichage+="static ";
         }
-        if(modifier == 1025){
-            affichage+="public abstract ";
+        if(Modifier.isAbstract(modifier)){
+            affichage+="abstract ";
         }
         return affichage;
     }
@@ -166,7 +172,7 @@ public class Methode implements Serializable {
     }
 
     public String getTypeRetourString(){
-        return typeRetour.getTypeName().substring(typeRetour.getTypeName().lastIndexOf(".")+1);
+        return typeRetour;
     }
 
     @Override

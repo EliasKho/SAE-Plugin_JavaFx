@@ -20,13 +20,22 @@ public class Classe implements Serializable{
 
     public Classe(String nom){
         this.nom = nom.substring(nom.lastIndexOf(".")+1);
-        this.nomPackage = nom.substring(0, nom.lastIndexOf("."));
+        if (nom.contains(".")) {
+            this.nomPackage = nom.substring(0, nom.lastIndexOf("."));
+        }
+        else {
+            this.nomPackage = "";
+        }
         methodes = new ArrayList<>();
         attributs = new ArrayList<>();
         isInterface = false;
         isAbstract = false;
         largeur = 200;
         longueur = 30;
+    }
+
+    public void ajouterMethode(Methode methode){
+        methodes.add(methode);
     }
 
     public String getAbsolutePath() {
@@ -73,6 +82,13 @@ public class Classe implements Serializable{
     }
     public void setNomPackage(String nomPackage) {
         this.nomPackage = nomPackage;
+    }
+
+    public String getRealName(){
+        if (this.nomPackage.equals("")){
+            return this.nom;
+        }
+        return this.nomPackage + "." + this.nom;
     }
 
     public double getX() {

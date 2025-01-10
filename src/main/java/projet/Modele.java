@@ -7,10 +7,7 @@ import projet.classes.*;
 
 import java.io.*;
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -57,7 +54,6 @@ public class Modele implements Sujet, Serializable{
 
     public Classe ajouterClasse(String className, double x, double y){
         Classe classe = null;
-        System.out.println(className);
         if (!classes.containsKey(className)) {
             try {
                 String packageName = ClasseLoader.loadClass(className, racine);
@@ -88,12 +84,41 @@ public class Modele implements Sujet, Serializable{
                 updateRelations();
                 // génération du diagramme UML
                 UML = createUML();
-            } catch (Exception e) {
+            } catch (StringIndexOutOfBoundsException e) {
+
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
         notifierObservateur();
         return classe;
+    }
+
+    public void ajouterClasseInexistante(String className, String type, double x, double y, List<Attribut> attributs, List<Methode> methodes){
+        if (!classes.containsKey(className)) {
+            Classe classe = new Classe(className);
+            classe.setX(x);
+            classe.setY(y);
+
+            switch(type){
+                case "interface":
+                    classe.setInterface(true);
+                    break;
+                case "abstract":
+                    classe.setAbstract(true);
+                    break;
+                default:
+                    break;
+            }
+            classe.setAttributs(attributs);
+            classe.setMethodes(methodes);
+
+            classes.put(className, classe);
+            updateRelations();
+            UML = createUML();
+            notifierObservateur();
+        }
     }
 
     public void ajouterListClasses(List<String> liste){
@@ -180,7 +205,7 @@ public class Modele implements Sujet, Serializable{
         return attributs;
     }
 
-    private void ajouterRelation(String parent, String enfant, String type, String parentCardinalite, String enfantCardinalite, String nom){
+    public void ajouterRelation(String parent, String enfant, String type, String parentCardinalite, String enfantCardinalite, String nom){
         // récupération de la classe dans la map
         Classe parentClasse = classes.get(parent);
         Classe enfantClasse = classes.get(enfant);
@@ -191,6 +216,8 @@ public class Modele implements Sujet, Serializable{
         if (!relations.contains(fleche)){
             relations.add(fleche);
         }
+        UML = createUML();
+        notifierObservateur();
     }
 
     public ArrayList<Methode> getMethode(Class<?> classe){
@@ -212,18 +239,17 @@ public class Modele implements Sujet, Serializable{
                 Parametre p = new Parametre(param.getName());
                 parametres.add(p);
             }
-            System.out.println(method.getModifiers());
 
             if (!method.isSynthetic()) {
                 Methode methode;
-                methode = new Methode(method.getName(), method.getReturnType(), parametres, method.getModifiers());
+                methode = new Methode(method.getName(), method.getReturnType().getTypeName(), parametres, method.getModifiers());
                 if (classe.isInterface()) {
                     if (Modifier.isPublic(method.getModifiers())) {
-                        methode = new Methode(method.getName(), method.getReturnType(), parametres, 1);
+                        methode = new Methode(method.getName(), method.getReturnType().getTypeName(), parametres, 1);
                     } else if (Modifier.isProtected(method.getModifiers())) {
-                        methode = new Methode(method.getName(), method.getReturnType(), parametres, 2);
+                        methode = new Methode(method.getName(), method.getReturnType().getTypeName(), parametres, 2);
                     } else {
-                        methode = new Methode(method.getName(), method.getReturnType(), parametres, 4);
+                        methode = new Methode(method.getName(), method.getReturnType().getTypeName(), parametres, 4);
                     }
                 }
 
@@ -237,60 +263,59 @@ public class Modele implements Sujet, Serializable{
         String enfant;
         String parent;
         Class<?> className = ClasseLoader.getClasses().get(classe.getNomPackage() + "." + classe.getNom());
-        Class<?> superClass = className.getSuperclass();
+        if (className != null) {
+            Class<?> superClass = className.getSuperclass();
 
-        enfant = className.getName();
+            enfant = className.getName();
 
-        if (superClass != null && superClass != Object.class && classeInDiagramme(superClass.getName())) {
-            parent = superClass.getName();
-            ajouterRelation(parent, enfant, Fleche.EXTENDS, null, null, "\"\"");
-        }
-
-        Class<?>[] interfaces = className.getInterfaces();
-
-        for (Class<?> interfaceClass : interfaces) {
-            if (!classeInDiagramme(interfaceClass.getName())) {
-                continue;
+            if (superClass != null && superClass != Object.class && classeInDiagramme(superClass.getName())) {
+                parent = superClass.getName();
+                ajouterRelation(parent, enfant, Fleche.EXTENDS, null, null, "\"\"");
             }
-            parent = interfaceClass.getName();
-            ajouterRelation(parent, enfant, Fleche.IMPLEMENTS, null, null, "\"\"");
+
+            Class<?>[] interfaces = className.getInterfaces();
+
+            for (Class<?> interfaceClass : interfaces) {
+                if (!classeInDiagramme(interfaceClass.getName())) {
+                    continue;
+                }
+                parent = interfaceClass.getName();
+                ajouterRelation(parent, enfant, Fleche.IMPLEMENTS, null, null, "\"\"");
+            }
         }
     }
 
     public void updateRelationAttributs(Classe c) {
         String className = c.getNomPackage() + "." + c.getNom();
         Class<?> classe = ClasseLoader.getClasses().get(className);
+        if (classe!= null) {
 
-        for (Field field : classe.getDeclaredFields()) {
-            Class<?> type = field.getType();
-            if (!typePrimitif(type)) {
-                if (classeInDiagramme(type.getName())) {
-                    ajouterRelation(type.getName(), className, Fleche.DEPENDANCE, "1", "1", field.getName());
-                } else {
-                    Type genericType = field.getGenericType();
-                    if (genericType instanceof ParameterizedType) {
-                        ParameterizedType paramT = (ParameterizedType) genericType;
-                        Type[] typeArguments = paramT.getActualTypeArguments();
-                        for (Type arg : typeArguments) {
-                            if (arg instanceof Class) {
-                                if (classeInDiagramme(arg.getTypeName())) {
-                                    ajouterRelation(arg.getTypeName(), className, Fleche.DEPENDANCE, "*", "1", field.getName());
+            for (Field field : classe.getDeclaredFields()) {
+                Class<?> type = field.getType();
+                if (!typePrimitif(type)) {
+                    if (classeInDiagramme(type.getName())) {
+                        ajouterRelation(type.getName(), className, Fleche.DEPENDANCE, "1", "1", field.getName());
+                    } else {
+                        Type genericType = field.getGenericType();
+                        if (genericType instanceof ParameterizedType) {
+                            ParameterizedType paramT = (ParameterizedType) genericType;
+                            Type[] typeArguments = paramT.getActualTypeArguments();
+                            for (Type arg : typeArguments) {
+                                if (arg instanceof Class) {
+                                    if (classeInDiagramme(arg.getTypeName())) {
+                                        ajouterRelation(arg.getTypeName(), className, Fleche.DEPENDANCE, "*", "1", field.getName());
+                                    }
                                 }
                             }
                         }
-                    }
 
+                    }
                 }
             }
         }
     }
 
     public void updateRelations(){
-        // on supprime tout et on réajoute les relations pour enlever les relations qui ne sont plus présentes
-        // (possiblement enlevé plus tard pour laisser cela à l'action d'actualisation du diagramme)
-        relations.clear();
-        Fleche.reinitialiserNbRelations();
-
         for (Classe classe : classes.values()) {
             try {
                 updateRelationHeritage(classe);
@@ -299,11 +324,37 @@ public class Modele implements Sujet, Serializable{
                 e.printStackTrace();
             }
         }
+        checkRelations();
         notifierObservateur();
     }
 
     public boolean isInDiagram(String nom){
         return classes.containsKey(nom);
+    }
+
+    public void checkRelations(){
+        Iterator<Fleche> it = relations.iterator();
+        while (it.hasNext()){
+            Fleche r = it.next();
+            String nomParent, nomEnfant;
+            if (r.getParent().getNomPackage().isEmpty()) {
+                nomParent = r.getParent().getNom();
+            } else {
+                nomParent = r.getParent().getNomPackage()+"."+r.getParent().getNom();
+            }
+            if (r.getEnfant().getNomPackage().isEmpty()) {
+                nomEnfant = r.getEnfant().getNom();
+            } else {
+                nomEnfant = r.getEnfant().getNomPackage()+"."+r.getEnfant().getNom();
+            }
+
+            if (!isInDiagram(nomEnfant) || !isInDiagram(nomParent)){
+                it.remove();
+                // on retire 1 au nombre de relations entre les 2 classes
+                String keyEnfantParent = nomParent+nomEnfant;
+                Fleche.retirer1Relation(keyEnfantParent);
+            }
+        }
     }
 
 
@@ -386,11 +437,16 @@ public class Modele implements Sujet, Serializable{
         return vue;
     }
 
-    public void saveToFile(String fileP){
+    public void saveToFile(String fileP) {
+        if (!fileP.endsWith(".sav")) {
+            fileP += ".sav";
+        }
         File file = new File(fileP);
         try(FileOutputStream fose = new FileOutputStream(file);
+            // sauvegarde des classes et des relations
             ObjectOutputStream oss = new ObjectOutputStream(fose)){
             oss.writeObject(this.getClasses());
+            oss.writeObject(this.getRelations());
             oss.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -400,6 +456,7 @@ public class Modele implements Sujet, Serializable{
     public void loadFromFile(String file){
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             HashMap<String , Classe> res = (HashMap<String, Classe>) ois.readObject();
+            List<Fleche> relations = (List<Fleche>) ois.readObject();
 
             Object[] classesKeyObject = res.keySet().toArray();
             String[] classesKey = new String[classesKeyObject.length];
@@ -408,11 +465,28 @@ public class Modele implements Sujet, Serializable{
                 classesKey[j] = classesKeyObject[j].toString();
             }
 
+            this.viderClasses();
+            Fleche.reinitialiserNbRelations();
             Classe c;
             for (int i=0; i<classesKey.length;i++){
                 c = res.get(classesKey[i]);
-                //On relie les classe qui était présente dans le fichier de sauvegarde au chemin
-                this.ajouterClasse(c.getAbsolutePath(),c.getX(),c.getY());
+                if (c.getAbsolutePath() == null){
+                    String type = "class";
+                    if (c.isInterface()){
+                        type = "interface";
+                    } else if (c.isAbstract()){
+                        type = "abstract";
+                    }
+                    this.ajouterClasseInexistante(c.getNom(), type, c.getX(), c.getY(), c.getAttributs(), c.getMethodes());
+                }
+                else {
+                    //On relie les classe qui était présente dans le fichier de sauvegarde au chemin
+                    this.ajouterClasse(c.getAbsolutePath(), c.getX(), c.getY());
+                }
+            }
+            // on ajoute les relations
+            for (Fleche r : relations){
+                this.ajouterRelation(r.getParent().getRealName(), r.getEnfant().getRealName(), r.getType(), r.getParentCardinalite(), r.getEnfantCardinalite(), r.getNom());
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -452,5 +526,46 @@ public class Modele implements Sujet, Serializable{
         });
         executor.shutdownNow();
         return true;
+    }
+
+    public void ajouterMethode(String nomClasse, String nomMethode, String typeRetour, String typeParam, int modifier){
+        Classe classe = classes.get(nomClasse);
+        if (classe != null) {
+            List<Parametre> param = new ArrayList<>();
+            for (String s : typeParam.split(",")) {
+                param.add(new Parametre(s));
+            }
+            Methode methode = new Methode(nomMethode, typeRetour, param, modifier);
+            classe.ajouterMethode(methode);
+            updateRelations();
+            UML = createUML();
+            notifierObservateur();
+        }
+    }
+    public void ajouterConstructeur(String nomClasse, String typeParam, int modifier){
+        Classe classe = classes.get(nomClasse);
+        if (classe != null) {
+            List<Parametre> param = new ArrayList<>();
+            for (String s : typeParam.split(",")) {
+                param.add(new Parametre(s));
+            }
+            String nomMethode = nomClasse.substring(nomClasse.lastIndexOf(".")+1);
+            Methode methode = new Methode(nomMethode, param, modifier);
+            classe.ajouterMethode(methode);
+            updateRelations();
+            UML = createUML();
+            notifierObservateur();
+        }
+    }
+
+    public void ajouterAttribut(String nomClasse, String nomAttribut, String typeAttribut, int modifier){
+        Classe classe = classes.get(nomClasse);
+        if (classe != null) {
+            Attribut attribut = new Attribut(nomAttribut, typeAttribut, modifier);
+            classe.getAttributs().add(attribut);
+            updateRelations();
+            UML = createUML();
+            notifierObservateur();
+        }
     }
 }
