@@ -675,16 +675,17 @@ public class Modele implements Sujet, Serializable{
     public boolean genererCodeSource() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
+            String dossier = "squelette/";
+            supprimerDossier(dossier);
             for (Classe c : classes.values()) {
                 try {
                     String nom = c.getNom();
                     String nomPackage = c.getNomPackage();
-                    String dossier = "squelette/"+nomPackage.replace(".", "/")+ "/";
-                    File dossierFichier = new File(dossier);
-                    if (!dossierFichier.exists()) {
-                        dossierFichier.mkdirs();
-                    }
-                    File fichier = new File(dossier+nom + ".java");
+                    String fullChemin = dossier+nomPackage.replace(".", "/")+ "/";
+                    File dossierFichier = new File(fullChemin);
+                    dossierFichier.mkdirs();
+
+                    File fichier = new File(fullChemin+nom + ".java");
                     FileWriter fw = new FileWriter(fichier);
                     BufferedWriter bw = new BufferedWriter(fw);
                     bw.write("package " + nomPackage + ";\n\n");
@@ -710,6 +711,21 @@ public class Modele implements Sujet, Serializable{
         });
         executor.shutdownNow();
         return true;
+    }
+
+    public void supprimerDossier(String dossier){
+        File dossierFichier = new File(dossier);
+        if (dossierFichier.exists()) {
+            File[] fichiers = dossierFichier.listFiles();
+            for (File f : fichiers) {
+                if (f.isDirectory()) {
+                    supprimerDossier(f.getAbsolutePath());
+                } else {
+                    f.delete();
+                }
+            }
+            dossierFichier.delete();
+        }
     }
 
     /**
