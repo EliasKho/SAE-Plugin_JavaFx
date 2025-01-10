@@ -36,11 +36,17 @@ public class Fleche implements Serializable {
         String nomParent = parent.getRealName();
         String nomEnfant = enfant.getRealName();
         String keyEnfantParent = nomParent+nomEnfant;
+        String keyParentEnfant = nomEnfant+nomParent;
         // utilisation d'une map pour stocker le nombre de relations entre deux classes en mémoire
         if (nbRelations.containsKey(keyEnfantParent)) {
             nbRelations.put(keyEnfantParent, nbRelations.get(keyEnfantParent)+1);
         } else {
             nbRelations.put(keyEnfantParent, 0);
+        }
+        if (nbRelations.containsKey(keyParentEnfant)) {
+            nbRelations.put(keyParentEnfant, nbRelations.get(keyParentEnfant)+1);
+        } else {
+            nbRelations.put(keyParentEnfant, 0);
         }
 
         this.indexEnfantParent = nbRelations.get(keyEnfantParent);
