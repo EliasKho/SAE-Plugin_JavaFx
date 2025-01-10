@@ -1,11 +1,12 @@
-package projet.arborescence;
+package projet.vues;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.Pane;
 import projet.Modele;
-import projet.Observateur;
 import projet.Sujet;
+import projet.arborescence.Dossier;
+import projet.arborescence.FileComposite;
 import projet.controleur.ControlerClic;
 
 public class VueArborescence extends Pane implements Observateur {
@@ -22,6 +23,11 @@ public class VueArborescence extends Pane implements Observateur {
         this.heightProperty().addListener((obs, oldHeight, newHeight) -> majTaille());
     }
 
+    /**
+     * Crée un arbre à partir d'un fichier
+     * @param file
+     * @return
+     */
     public TreeItem<FileComposite> getArbre(FileComposite file) {
         TreeItem<FileComposite> racine = new TreeItem<>(file);
         if (file instanceof Dossier) {
@@ -36,13 +42,19 @@ public class VueArborescence extends Pane implements Observateur {
         Modele m = (Modele) s;
         FileComposite file = m.getRacine();
 
+        // Création de l'arbre
         this.arbre= new TreeView<>(getArbre(file));
         this.arbre.setOnMouseClicked(controlerClic);
+        this.arbre.setOnDragDetected(controlerClic);
+
         this.getChildren().add(arbre);
 
         majTaille();
     }
 
+    /**
+     * Met à jour la taille de l'arbre
+     */
     public void majTaille() {
         this.arbre.setPrefWidth(this.getWidth());
         this.arbre.setPrefHeight(this.getHeight());

@@ -9,4 +9,5 @@ module com.example.saeplugin_javafx {
     exports projet;
     exports projet.arborescence;
     exports projet.classes;
+    exports projet.vues;
 }

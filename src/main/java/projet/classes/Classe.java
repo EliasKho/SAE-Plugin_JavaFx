@@ -22,11 +22,14 @@ public class Classe implements Serializable{
     private ArrayList<String> classesExternes;
 
     public Classe(String nom){
+        // le string recu correspond au package de la classe, on ne veut que le nom de la classe
         this.nom = nom.substring(nom.lastIndexOf(".")+1);
         if (nom.contains(".")) {
+            // on récupère le package de la classe
             this.nomPackage = nom.substring(0, nom.lastIndexOf("."));
         }
         else {
+            // si le nom ne contient pas de . alors on n'a pas de package (classe n'existant pas dans le code)
             this.nomPackage = "";
         }
         methodes = new ArrayList<>();
@@ -39,15 +42,35 @@ public class Classe implements Serializable{
         longueur = 30;
     }
 
+    /**
+     * Ajoute une méthode à la classe
+     * @param methode
+     */
     public void ajouterMethode(Methode methode){
         methodes.add(methode);
     }
 
+    /**
+     * Ajoute une classe externe à la classe
+     * @param classe
+     */
     public void ajouterClasseExterne(String classe){
         if (!classesExternes.contains(classe)) {
             classesExternes.add(classe);
         }
     }
+
+    /**
+     * Retourne le nom de la classe complet avec le package si elle en a un
+     */
+    public String getRealName(){
+        if (this.nomPackage.isEmpty()){
+            return this.nom;
+        }
+        return this.nomPackage + "." + this.nom;
+    }
+
+    // GETTERS ET SETTERS
 
     public ArrayList<String> getClassesExternes(){
         return classesExternes;
@@ -103,13 +126,6 @@ public class Classe implements Serializable{
     }
     public void setNomPackage(String nomPackage) {
         this.nomPackage = nomPackage;
-    }
-
-    public String getRealName(){
-        if (this.nomPackage.isEmpty()){
-            return this.nom;
-        }
-        return this.nomPackage + "." + this.nom;
     }
 
     public double getX() {

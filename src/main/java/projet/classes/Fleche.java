@@ -36,6 +36,7 @@ public class Fleche implements Serializable {
         String nomParent = parent.getRealName();
         String nomEnfant = enfant.getRealName();
         String keyEnfantParent = nomParent+nomEnfant;
+        // utilisation d'une map pour stocker le nombre de relations entre deux classes en mémoire
         if (nbRelations.containsKey(keyEnfantParent)) {
             nbRelations.put(keyEnfantParent, nbRelations.get(keyEnfantParent)+1);
         } else {
@@ -47,8 +48,11 @@ public class Fleche implements Serializable {
         calculerPosition();
     }
 
+    /**
+     * Methode qui calcule et met à jour la position des points de la fleche
+     */
     private void calculerPosition() {
-        // Coins et dimensions des rectangles
+        // Coins et dimensions des rectangles correspondant aux classes
         double x1Min = enfant.getX();
         double y1Min = enfant.getY();
         double x1Max = x1Min + enfant.getLargeur();
@@ -66,6 +70,7 @@ public class Fleche implements Serializable {
         boolean parentADroite = x1Min > x2Max; // Parent à droite de l'enfant
 
         // Centre des rectangles
+        // On décale le centre de 10 * indexEnfantParent pour éviter les superpositions
         double[] centre1, centre2;
         if ((parentADroite||parentAGauche) && !parentAuDessus && !parentEnDessous) {
             if (y1Max < y2Max){
@@ -88,6 +93,7 @@ public class Fleche implements Serializable {
             }
         }
 
+        // Points de la flèche
         if (parentAGauche && !parentAuDessus && !parentEnDessous) {
             // Cas : Parent à gauche
             p1 = new double[]{x1Max, centre1[1]};
@@ -105,7 +111,7 @@ public class Fleche implements Serializable {
             p1 = new double[]{centre1[0], y1Min};
             p2 = new double[]{centre2[0], y2Max};
         } else {
-            // Chevauchement : Choisir le chemin minimal (priorité verticale)
+            // lorsqu'il y a superposition des classes, on cherche le chemin minimal pour la flèche
             double deltaX = Math.abs(centre1[0] - centre2[0]);
             double deltaY = Math.abs(centre1[1] - centre2[1]);
             if (deltaX > deltaY) {
@@ -130,6 +136,37 @@ public class Fleche implements Serializable {
         }
     }
 
+    /**
+     * Methode qui permet de décrémenter le nombre de relations entre deux classes lors de la suppression d'une relation
+     * @param key
+     */
+    public static void retirer1Relation(String key){
+        if (nbRelations.containsKey(key)) {
+            nbRelations.put(key, nbRelations.get(key)-1);
+        }
+    }
+
+    /**
+     * Methode qui permet de réinitialiser le nombre de relations entre les classes
+     */
+    public static void reinitialiserNbRelations(){
+        nbRelations.clear();
+    }
+
+    /**
+     * Methode qui permet de récupérer la chaine de caractère UML de la relation
+     * @return
+     */
+    public String getUMLString() {
+        if (enfantCardinalite == null || parentCardinalite == null) {
+            return enfant.getNom() + " " + type + " " + parent.getNom() + " : " + nom;
+        }
+        return enfant.getNom() + " \""+enfantCardinalite+"\" " + type + " \""+parentCardinalite+"\" " + parent.getNom()+ " : " + nom;
+    }
+
+
+    // GETTERS ET SETTERS
+
     public double[] getPosition(){
         calculerPosition();
         return new double[]{p1[0], p1[1], p2[0], p2[1]};
@@ -145,12 +182,6 @@ public class Fleche implements Serializable {
 
     public String getType() {
         return type;
-    }
-    public String getUMLString() {
-        if (enfantCardinalite == null || parentCardinalite == null) {
-            return enfant.getNom() + " " + type + " " + parent.getNom() + " : " + nom;
-        }
-        return enfant.getNom() + " \""+enfantCardinalite+"\" " + type + " \""+parentCardinalite+"\" " + parent.getNom()+ " : " + nom;
     }
 
     public String getNom() {
@@ -172,16 +203,6 @@ public class Fleche implements Serializable {
     }
     public void setEnfantCardinalite(String enfantCardinalite) {
         this.enfantCardinalite = enfantCardinalite;
-    }
-
-    public static void retirer1Relation(String key){
-        if (nbRelations.containsKey(key)) {
-            nbRelations.put(key, nbRelations.get(key)-1);
-        }
-    }
-
-    public static void reinitialiserNbRelations(){
-        nbRelations.clear();
     }
 
     @Override

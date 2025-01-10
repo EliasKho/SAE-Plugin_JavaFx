@@ -12,11 +12,20 @@ public class Methode implements Serializable {
     private int modifier;
     private boolean constructeur;
 
+    /**
+     * Constructeur d'une méthode
+     * @param nom
+     * @param typeRetour
+     * @param parametres
+     * @param modifier
+     */
     public Methode(String nom, String typeRetour, List<Parametre> parametres, int modifier) {
+        // le string recu correspond au package de la classe du type, on ne veut que le nom de la classe
         if (typeRetour.contains(".")){
             this.typeRetour = typeRetour.substring(typeRetour.lastIndexOf(".")+1);
         }
         else {
+            // si le type n'a pas de package, c'est un type primitif ou bien c'est une méthode ajoutées par l'utilisateur
             this.typeRetour = typeRetour;
         }
         this.nom = nom;
@@ -25,12 +34,21 @@ public class Methode implements Serializable {
         this.constructeur = false;
     }
 
+    /**
+     * Constructeur d'un constructeur
+     * @param nom
+     * @param parametres
+     * @param modifier
+     */
     public Methode(String nom, List<Parametre> parametres, int modifier) {
+        // dans le cas d'un constructeur, le nom est donné par le nom de la classe et donc avec son package
         this.nom = nom.substring(nom.lastIndexOf(".")+1);
         this.parametres = parametres;
         this.modifier = modifier;
         this.constructeur = true;
     }
+
+    // GETTERS ET SETTERS
 
     public String getNom() {
         return nom;

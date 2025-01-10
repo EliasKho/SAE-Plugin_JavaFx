@@ -8,9 +8,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import projet.arborescence.Dossier;
-import projet.arborescence.VueArborescence;
-import projet.classes.VueClasse;
+import projet.vues.VueArborescence;
+import projet.vues.VueClasse;
 import projet.controleur.*;
+import projet.vues.VueUML;
 
 import java.io.File;
 

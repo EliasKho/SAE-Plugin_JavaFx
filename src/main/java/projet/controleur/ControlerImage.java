@@ -21,7 +21,11 @@ public class ControlerImage {
         this.modele = modele;
     }
 
+    /**
+     * Capture l'image de la vue de classe
+     */
     public void captureImage() {
+        // Capture de l'image
         WritableImage image = new WritableImage((int)modele.getScene().getWidth()*75/100, (int) modele.getScene().getHeight()-(int)modele.getScene().getWindow().getHeight()+(int) modele.getScene().getHeight());
         modele.getVueClasse().snapshot(new SnapshotParameters(), image);
 
@@ -33,8 +37,10 @@ public class ControlerImage {
         }
     }
 
+    // Capture l'image de la vue UML
     public void captureImageUML(){
         try {
+            // on lit le fichier Diag.puml
             File source = new File("Diag.puml");
 
             SourceFileReader reader = new SourceFileReader(source);

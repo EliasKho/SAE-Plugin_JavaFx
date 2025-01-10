@@ -17,6 +17,10 @@ public class ControlerVues {
         this.modele = modele;
     }
 
+    /**
+     * Affiche la vue UML
+     * @param gridPane
+     */
     public void afficherVueUML(GridPane gridPane){
         if (modele.getVue().equals("classique")){
             modele.setVue("UML");
@@ -39,6 +43,10 @@ public class ControlerVues {
         }
     }
 
+    /**
+     * Affiche la vue classique
+     * @param gridPane
+     */
     public void afficherVueClasse(GridPane gridPane){
         if (modele.getVue().equals("UML")){
             modele.setVue("classique");

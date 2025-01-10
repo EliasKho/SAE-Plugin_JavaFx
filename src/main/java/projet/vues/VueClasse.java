@@ -1,4 +1,4 @@
-package projet.classes;
+package projet.vues;
 
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
@@ -10,9 +10,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import projet.Modele;
-import projet.Observateur;
 import projet.Sujet;
+import projet.classes.Attribut;
+import projet.classes.Classe;
+import projet.classes.Fleche;
+import projet.classes.Methode;
 import projet.controleur.ControlerClic;
 import projet.controleur.ControlerDrag;
 
@@ -32,10 +36,14 @@ public class VueClasse extends Pane implements Observateur {
 
     @Override
     public void actualiser(Sujet s) {
+        // on efface tout
         this.getChildren().clear();
         if(!modele.getClasses().isEmpty()) {
-            HashMap<String,Classe> classes = modele.getClasses();
+            // on récupère les classes
+            HashMap<String, Classe> classes = modele.getClasses();
+            // pour chaque classe
             for (String packageName : classes.keySet()) {
+                // on récupère la classe
                 Classe classe = classes.get(packageName);
                 VBox container = new VBox();
                 // Récupérer la classe et ses attributs et méthodes
@@ -51,12 +59,12 @@ public class VueClasse extends Pane implements Observateur {
                 classNameText.setText(nom);
 
                 // 2. Créer un StackPane pour la classe
-                Pane classBoxContainer = new StackPane();
+                Pane classBoxContainer = new VBox();
                 classBoxContainer.setStyle("-fx-background-color: lightgray; -fx-padding: 5px;");
                 classBoxContainer.getChildren().add(classNameText);
 
                 // 3. Attributs
-                Pane attributesContainer = new StackPane();
+                Pane attributesContainer = new VBox();
                 attributesContainer.setStyle("-fx-background-color: lightyellow; -fx-padding: 5px;");
 
                 StringBuilder strAtr = new StringBuilder();
@@ -67,7 +75,7 @@ public class VueClasse extends Pane implements Observateur {
                 attributesContainer.getChildren().add(attributesText);
 
                 // 4. Méthodes
-                Pane methodsContainer = new StackPane();
+                Pane methodsContainer = new VBox();
                 methodsContainer.setStyle("-fx-background-color: lightgreen; -fx-padding: 5px;");
 
                 StringBuilder strMet = new StringBuilder();
@@ -112,6 +120,8 @@ public class VueClasse extends Pane implements Observateur {
                 container.setId(packageName);
 
                 container.setOnDragDetected(mouseEvent -> {
+                    // on récupère les coordonnées du clic
+                    // on fait le nécessaire pour pouvoir déplacer une classe (VBox) sur le diagramme
                     Dragboard db = container.startDragAndDrop(TransferMode.MOVE);
                     ClipboardContent content = new ClipboardContent();
                     content.putString(packageName);
@@ -125,12 +135,13 @@ public class VueClasse extends Pane implements Observateur {
                 this.getChildren().add(container);
             }
         }
+        // on actualise les relations
         actualiserRelations(s);
     }
 
     public void actualiserRelations(Sujet s) {
         Modele m = (Modele) s;
-
+        // on récupère les relations
         for (Fleche r : m.getRelations()) {
             createArrow(r);
         }
@@ -139,6 +150,7 @@ public class VueClasse extends Pane implements Observateur {
 
 
     private void createArrow(Fleche r) {
+        // si on ne veut pas voir les flèches on ne les affiche pas
         if(!modele.isVoirFleches()){
             return;
         }

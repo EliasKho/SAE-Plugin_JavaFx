@@ -1,10 +1,13 @@
-package projet;
+package projet.vues;
+
+import projet.Modele;
+import projet.Sujet;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class VueUML implements Observateur{
+public class VueUML implements Observateur {
 
     public VueUML(Modele m) {
         actualiser(m);

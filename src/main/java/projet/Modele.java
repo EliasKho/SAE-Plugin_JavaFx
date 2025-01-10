@@ -3,6 +3,8 @@ package projet;
 import javafx.scene.Scene;
 import projet.arborescence.FileComposite;
 import projet.classes.*;
+import projet.vues.Observateur;
+import projet.vues.VueClasse;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -57,19 +59,30 @@ public class Modele implements Sujet, Serializable{
         observateurs.remove(observateur);
     }
 
+    /**
+     * Ajoute une classe au diagramme
+     * @param className
+     * @param x
+     * @param y
+     * @return
+     */
     public Classe ajouterClasse(String className, double x, double y){
+        // si la classe n'est pas déjà dans le diagramme
         Classe classe = null;
         if (!classes.containsKey(className)) {
             try {
+                // on charge la classe
                 String packageName = ClasseLoader.loadClass(className, racine);
                 Class<?> classeJava = ClasseLoader.getClasses().get(packageName);
 
+                // si la classe n'est pas dans le projet chargé (classe externe)
                 if(classeJava == null){
+                    // on charge la classe depuis la JVM
                     classeJava = Class.forName(className);
                     packageName = classeJava.getName();
                 }
                 if (packageName != null) {
-
+                    // on créer la nouvelle classe
                     classe = new Classe(packageName);
                     classe.setNomPackage(getPackage(classeJava));
                     classe.setAbsolutePath(className);
@@ -82,9 +95,11 @@ public class Modele implements Sujet, Serializable{
                         }
                     }
 
+                    // on récupère les attributs et les méthodes de la classe
                     ArrayList<Methode> methodes = getMethode(classeJava);
                     ArrayList<ArrayList<Attribut>> listAttributs = getAttributs(classeJava);
 
+                    // on ajoute les attributs et les méthodes à la classe
                     classe.setHeritesAttributs(listAttributs.get(0));
                     classe.setNonHeritesAttributs(listAttributs.get(1));
                     classe.setMethodes(methodes);
@@ -92,6 +107,7 @@ public class Modele implements Sujet, Serializable{
                     classe.setX(x);
                     classe.setY(y);
 
+                    // on ajoute la classe au diagramme
                     classes.put(packageName, classe);
 
                     updateRelations();
@@ -109,6 +125,15 @@ public class Modele implements Sujet, Serializable{
         return classe;
     }
 
+    /**
+     * Ajoute une classe qui n'est pas dans le projet au diagramme
+     * @param className
+     * @param type
+     * @param x
+     * @param y
+     * @param attributs
+     * @param methodes
+     */
     public void ajouterClasseInexistante(String className, String type, double x, double y, List<Attribut> attributs, List<Methode> methodes){
         if (!classes.containsKey(className)) {
             Classe classe = new Classe(className);
@@ -126,7 +151,7 @@ public class Modele implements Sujet, Serializable{
                     break;
             }
             classe.setNonHeritesAttributs(attributs);
-            classe.setHeritesAttributs(attributs);
+            classe.setHeritesAttributs(new ArrayList<>());
             classe.setMethodes(methodes);
 
             classes.put(className, classe);
@@ -136,6 +161,10 @@ public class Modele implements Sujet, Serializable{
         }
     }
 
+    /**
+     * Ajoute une liste de classes au diagramme
+     * @param liste
+     */
     public void ajouterListClasses(List<String> liste){
         double x=10;
         double y=10;
@@ -173,6 +202,7 @@ public class Modele implements Sujet, Serializable{
         return (!nom.startsWith("java.util") && !nom.startsWith("java.lang"));
     }
 
+    // retourne true si la classe est dans le diagramme
     public boolean classeInDiagramme(String nom){
         return classes.containsKey(nom);
     }
@@ -181,6 +211,11 @@ public class Modele implements Sujet, Serializable{
         return classe.getPackage().getName();
     }
 
+    /**
+     * retourne une liste d'attributs de la classe, les attributs hérités et les attributs non hérités
+     * @param classe
+     * @return
+     */
     public ArrayList<ArrayList<Attribut>> getAttributs(Class<?> classe){
         ArrayList<Attribut> attributsHerites = new ArrayList<>();
         ArrayList<Attribut> attributsNonHerites = new ArrayList<>();
@@ -235,8 +270,16 @@ public class Modele implements Sujet, Serializable{
         return listAttributs;
     }
 
+    /**
+     * retourne un attribut de la classe (attribut avec type paramétré)
+     * @param field
+     * @param paramT
+     * @return
+     */
     private static Attribut getAttribut(Field field, ParameterizedType paramT) {
+        // on récupère le nom du type
         StringBuilder typeName = new StringBuilder(paramT.getTypeName());
+        // on enlève les types génériques
         String[] split = typeName.toString().split("<");
         typeName = new StringBuilder(split[0].substring(split[0].lastIndexOf(".") + 1));
         String[] split2 = split[1].split(",");
@@ -251,6 +294,15 @@ public class Modele implements Sujet, Serializable{
         return attribut;
     }
 
+    /**
+     * Ajoute une relation entre 2 classes
+     * @param parent
+     * @param enfant
+     * @param type
+     * @param parentCardinalite
+     * @param enfantCardinalite
+     * @param nom
+     */
     public void ajouterRelation(String parent, String enfant, String type, String parentCardinalite, String enfantCardinalite, String nom){
         // récupération de la classe dans la map
         Classe parentClasse = classes.get(parent);
@@ -266,6 +318,11 @@ public class Modele implements Sujet, Serializable{
         notifierObservateur();
     }
 
+    /**
+     * retourne une liste de méthodes de la classe
+     * @param classe
+     * @return
+     */
     public ArrayList<Methode> getMethode(Class<?> classe){
         ArrayList<Methode> methodes = new ArrayList<>();
         for (Constructor<?> constructor : classe.getDeclaredConstructors()){
@@ -295,6 +352,11 @@ public class Modele implements Sujet, Serializable{
         return methodes;
     }
 
+    /**
+     * creer un objet methode à partir d'une méthode et de la liste de paramètres
+     * @param method
+     * @return
+     */
     private static Methode getMethode(Class<?> classe, Method method, List<Parametre> parametres) {
         Methode methode;
         methode = new Methode(method.getName(), method.getReturnType().getTypeName(), parametres, method.getModifiers());
@@ -310,37 +372,52 @@ public class Modele implements Sujet, Serializable{
         return methode;
     }
 
+    /**
+     * met à jour les relations d'héritage entre les classes
+     * @param classe
+     */
     public void updateRelationHeritage(Classe classe) {
         String enfant;
         String parent;
+        // on récupère la classe
         Class<?> className = ClasseLoader.getClasses().get(classe.getRealName());
 
         if (className != null) {
+            // on récupère la classe parent
             Class<?> superClass = className.getSuperclass();
 
             enfant = className.getName();
 
+            // si la classe parent n'est pas dans le diagramme
             if (superClass != null && superClass != Object.class) {
                 parent = superClass.getName();
                 if (!classeInDiagramme(parent)) {
+                    // si la classe parent n'est pas dans le même package que la classe enfant
                     if(!parent.substring(0, parent.indexOf(".")).equals(enfant.substring(0, enfant.indexOf(".")))) {
+                        // on ajoute la classe parent au diagramme
                         classe.ajouterClasseExterne(parent);
                     }
                 }
                 else {
+                    // on ajoute la relation d'héritage
                     ajouterRelation(parent, enfant, Fleche.EXTENDS, null, null, "\"\"");
                 }
             }
 
+            // on récupère les interfaces implémentées par la classe
             Class<?>[] interfaces = className.getInterfaces();
 
             for (Class<?> interfaceClass : interfaces) {
+                // si l'interface n'est pas dans le diagramme
                 if (!classeInDiagramme(interfaceClass.getName())) {
+                    // si l'interface n'est pas dans le même package que la classe enfant
                     if (!interfaceClass.getName().substring(0, interfaceClass.getName().indexOf(".")).equals(enfant.substring(0, enfant.indexOf(".")))) {
+                        // on ajoute l'interface aux classes externes
                         classe.ajouterClasseExterne(interfaceClass.getName());
                     }
                 }
                 else {
+                    // on ajoute la relation d'implémentation
                     parent = interfaceClass.getName();
                     ajouterRelation(parent, enfant, Fleche.IMPLEMENTS, null, null, "\"\"");
                 }
@@ -348,17 +425,27 @@ public class Modele implements Sujet, Serializable{
         }
     }
 
+    /**
+     * met à jour les relations d'attributs entre les classes
+     * @param c
+     */
     public void updateRelationAttributs(Classe c) {
         String className = c.getRealName();
+        // on récupère la classe
         Class<?> classe = ClasseLoader.getClasses().get(className);
         if (classe!= null) {
-
+            // on récupère les attributs de la classe
             for (Field field : classe.getDeclaredFields()) {
+                // si l'attribut n'est pas un type primitif
                 Class<?> type = field.getType();
                 if (!typePrimitif(type)) {
+                    // si la classe de l'attribut est dans le diagramme
                     if (classeInDiagramme(type.getName())) {
+                        // on ajoute la relation de dépendance
                         ajouterRelation(type.getName(), className, Fleche.DEPENDANCE, "1", "1", field.getName());
                     } else {
+                        // si la classe de l'attribut n'est pas dans le diagramme
+                        // on traite les types paramétrés
                         Type genericType = field.getGenericType();
                         if (genericType instanceof ParameterizedType) {
                             ParameterizedType paramT = (ParameterizedType) genericType;
@@ -378,31 +465,48 @@ public class Modele implements Sujet, Serializable{
         }
     }
 
+    /**
+     * met à jour les relations entre les classes
+     */
     public void updateRelations(){
+        // pour toutes les classes du diagramme
         for (Classe classe : classes.values()) {
             try {
+                // on met à jour les relations d'héritage et d'attributs
                 updateRelationHeritage(classe);
                 updateRelationAttributs(classe);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        // on vérifie les relations pour supprimer les relations entre les classes qui ne sont plus dans le diagramme
         checkRelations();
         notifierObservateur();
     }
 
+    /**
+     * retourne true si la classe est dans le diagramme
+     * @param nom
+     * @return
+     */
     public boolean isInDiagram(String nom){
         return classes.containsKey(nom);
     }
 
+    /**
+     * vérifie les relations entre les classes
+     */
     public void checkRelations(){
+        // on parcourt les flèches
         Iterator<Fleche> it = relations.iterator();
         while (it.hasNext()){
             Fleche r = it.next();
             String nomParent = r.getParent().getRealName();
             String nomEnfant = r.getEnfant().getRealName();
 
+            // si l'une des classes n'est plus dans le diagramme
             if (!isInDiagram(nomEnfant) || !isInDiagram(nomParent)){
+                // on retire la relation
                 it.remove();
                 // on retire 1 au nombre de relations entre les 2 classes
                 String keyEnfantParent = nomParent+nomEnfant;
@@ -411,8 +515,10 @@ public class Modele implements Sujet, Serializable{
         }
     }
 
-
-
+    /**
+     * retourne le diagramme UML en format String
+     * @return
+     */
     public String createUML(){
         StringBuilder res = new StringBuilder("@startuml\n");
         for (Classe c : classes.values()){
@@ -441,6 +547,10 @@ public class Modele implements Sujet, Serializable{
         return res.toString();
     }
 
+    /**
+     * supprime une classe du diagramme
+     * @param nom
+     */
     public void supprimerClasse(String nom){
         classes.remove(nom);
         updateRelations();
@@ -448,6 +558,9 @@ public class Modele implements Sujet, Serializable{
         notifierObservateur();
     }
 
+    /**
+     * supprime toutes les classes du diagramme
+     */
     public void viderClasses(){
         classes.clear();
         Fleche.reinitialiserNbRelations();
@@ -492,6 +605,10 @@ public class Modele implements Sujet, Serializable{
         return vue;
     }
 
+    /**
+     * sauvegarde le diagramme dans un fichier
+     * @param fileP
+     */
     public void saveToFile(String fileP) {
         if (!fileP.endsWith(".sav")) {
             fileP += ".sav";
@@ -508,6 +625,10 @@ public class Modele implements Sujet, Serializable{
         }
     }
 
+    /**
+     * charge un diagramme depuis un fichier
+     * @param file
+     */
     public void loadFromFile(String file){
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             HashMap<String , Classe> res = (HashMap<String, Classe>) ois.readObject();
@@ -547,6 +668,10 @@ public class Modele implements Sujet, Serializable{
         }
     }
 
+    /**
+     * génère le code source des classes du diagramme
+     * @return
+     */
     public boolean genererCodeSource() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
@@ -554,7 +679,12 @@ public class Modele implements Sujet, Serializable{
                 try {
                     String nom = c.getNom();
                     String nomPackage = c.getNomPackage();
-                    File fichier = new File(nom + ".java");
+                    String dossier = "squelette/"+nomPackage.replace(".", "/")+ "/";
+                    File dossierFichier = new File(dossier);
+                    if (!dossierFichier.exists()) {
+                        dossierFichier.mkdirs();
+                    }
+                    File fichier = new File(dossier+nom + ".java");
                     FileWriter fw = new FileWriter(fichier);
                     BufferedWriter bw = new BufferedWriter(fw);
                     bw.write("package " + nomPackage + ";\n\n");
@@ -582,13 +712,24 @@ public class Modele implements Sujet, Serializable{
         return true;
     }
 
+    /**
+     * ajoute une méthode à une classe donnée
+     * @param nomClasse
+     * @param nomMethode
+     * @param typeRetour
+     * @param typeParam
+     * @param modifier
+     */
     public void ajouterMethode(String nomClasse, String nomMethode, String typeRetour, String typeParam, int modifier){
+        // on récupère la classe
         Classe classe = classes.get(nomClasse);
         if (classe != null) {
+            // on récupère les paramètres de la méthode
             List<Parametre> param = new ArrayList<>();
             for (String s : typeParam.split(",")) {
                 param.add(new Parametre(s));
             }
+            // on ajoute la méthode à la classe
             Methode methode = new Methode(nomMethode, typeRetour, param, modifier);
             classe.ajouterMethode(methode);
             updateRelations();
@@ -596,14 +737,24 @@ public class Modele implements Sujet, Serializable{
             notifierObservateur();
         }
     }
+
+    /**
+     * ajoute un constructeur à une classe donnée
+     * @param nomClasse
+     * @param typeParam
+     * @param modifier
+     */
     public void ajouterConstructeur(String nomClasse, String typeParam, int modifier){
+        // on récupère la classe
         Classe classe = classes.get(nomClasse);
         if (classe != null) {
+            // on récupère les paramètres du constructeur
             List<Parametre> param = new ArrayList<>();
             for (String s : typeParam.split(",")) {
                 param.add(new Parametre(s));
             }
             String nomMethode = nomClasse.substring(nomClasse.lastIndexOf(".")+1);
+            // on ajoute le constructeur à la classe
             Methode methode = new Methode(nomMethode, param, modifier);
             classe.ajouterMethode(methode);
             updateRelations();
@@ -612,9 +763,18 @@ public class Modele implements Sujet, Serializable{
         }
     }
 
+    /**
+     * ajoute un attribut à une classe donnée
+     * @param nomClasse
+     * @param nomAttribut
+     * @param typeAttribut
+     * @param modifier
+     */
     public void ajouterAttribut(String nomClasse, String nomAttribut, String typeAttribut, int modifier){
+        // on récupère la classe
         Classe classe = classes.get(nomClasse);
         if (classe != null) {
+            // on ajoute l'attribut à la classe
             Attribut attribut = new Attribut(nomAttribut, typeAttribut, modifier);
             classe.getAttributs().add(attribut);
             updateRelations();

@@ -5,9 +5,9 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import projet.Modele;
-import projet.arborescence.VueArborescence;
+import projet.vues.VueArborescence;
 import projet.classes.Classe;
-import projet.classes.VueClasse;
+import projet.vues.VueClasse;
 
 public class ControlerDrag implements EventHandler<DragEvent> {
     private Modele modele;
@@ -38,11 +38,12 @@ public class ControlerDrag implements EventHandler<DragEvent> {
                 // on récupère la classe
                 String nomClasse = dragEvent.getDragboard().getString();
 
+                // si la classe est déjà dans le diagramme on la déplace
                 if (modele.isInDiagram(nomClasse)) {
 
                     Classe classe = modele.getClasses().get(nomClasse);
 
-                    // on modifie les coordonnées de la classe (on la déplace tel que la position de la souris soit le centre)
+                    // on modifie les coordonnées de la classe (on la déplace tel que la position de la souris sur la classe reste la même)
                     double x,y;
                     if (dragEvent.getGestureTarget() instanceof VueArborescence) {
                         x = 0;
@@ -57,6 +58,7 @@ public class ControlerDrag implements EventHandler<DragEvent> {
                     classe.setY(y);
                     setXY(dragEvent.getSceneX(), dragEvent.getSceneY());
                 } else {
+                    // si elle n'est pas dans le diagramme on la place
                     if (!modele.isInDiagram(nomClasse) && dragEvent.getGestureTarget() instanceof VueClasse) {
                         double x = dragEvent.getX();
                         double y = dragEvent.getY();
@@ -72,10 +74,11 @@ public class ControlerDrag implements EventHandler<DragEvent> {
             }
         }
 
+        // quand on lache la souris
         if (dragEvent.getEventType() == DragEvent.DRAG_DROPPED) {
             if (dragEvent.getGestureSource() != dragEvent.getTarget() && dragEvent.getDragboard().hasString()) {
                 boolean success = false;
-                // on verifie si l'evenement est un setOnDragDropped et on vérifie si l'élément placer est sur l'arborescence
+                // on vérifie si l'élément placer est sur l'arborescence
                 String nomClasse = dragEvent.getDragboard().getString();
                 if (dragEvent.getX() < 0 || dragEvent.getY() < 0) {
                     //Petite vérification pour être sûr si la classe est bien présente dans la fenêtre
@@ -87,7 +90,6 @@ public class ControlerDrag implements EventHandler<DragEvent> {
                 //Si ce n'est pas sur l'arborescence cela déplace ou place la classe dans la fenêtre
                 else {
                     // on récupère la classe
-
                     if (modele.isInDiagram(nomClasse)) {
 
                         Classe classe = modele.getClasses().get(nomClasse);
@@ -101,6 +103,7 @@ public class ControlerDrag implements EventHandler<DragEvent> {
                         classe.setY(y);
 
                     } else {
+                        // si elle n'est pas dans le diagramme on la place
                         double x = dragEvent.getX();
                         double y = dragEvent.getY();
                         modele.ajouterClasse(nomClasse, x, y);
