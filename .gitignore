@@ -52,6 +52,8 @@ out/*
 
 src/main/java/logo/
 src/main/java/logo/*
+src/main/java/pkg/
+src/main/java/pkg/*
 img/
 img/*
 
