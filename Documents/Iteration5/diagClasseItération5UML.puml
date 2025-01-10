@@ -53,7 +53,9 @@ class Classe <<update>>{
     -y: double
     -longeur: double
     -largeur: double
-    -absolutePath: String
+    +ajouterMethode(Methode):void
+    +getRealName():String
+    +absolutePath: String
     +Classe(String)
     +equals(Object):boolean
     +hashCode():int
@@ -88,7 +90,7 @@ class Parametre <<new>>{
     +getType():String
 }
 
-class Fleche {
+class Fleche <<update>>{
     +{static} IMPLEMENTS: String
     +{static} EXTENDS: String
     +{static} DEPENDANCE: String
@@ -101,10 +103,13 @@ class Fleche {
     -p1: double[]
     -p2: double[]
     +Fleche(Classe,Classe,String)
-    +calculerPosition()
+    -calculerPosition()
+    +{static} retirer1Relation(String):void
+    +{static} reinitialiserNbRelations():void
     +getUMLString():String
     +equals(Object):boolean
     +hashCode():int
+    +toString():String
     +getter/setter(): void
 }
 
@@ -120,7 +125,12 @@ class ControlerClic <<update>>{
     -contexteMenu : ContexteMenu
     +ControlerClic(Modele)
     +handle(MouseEvent):void
-    -getItem5():MenuItem
+    -getItemSource():MenuItem
+    -itemAjouterClasse():MenuItem
+    -itemAjouterMethode(String):MenuItem
+    -itemAjouterAttribut(String):MenuItem
+    +getModifier(String,boolean,boolean):int
+    -itemAjouterRelation():MenuItem
     +getNomClasse():String
 }
 
@@ -154,10 +164,10 @@ class Modele <<update>> implements Sujet{
     +typePrimitif(Class<?>):boolean
     +classeExiste(String):boolean
     +classeInDiagrarm(String):boolean
-    +getAttribute(Class<?>):ArrayList<Attribut>
+    +getAttributs(Class<?>):ArrayList<ArrayList<Attribut>>
     +getmETHODE(Class<?>):ArrayList<Methode>
     +ajouterRelation(String, String, String, String, String, String):void
-    +updateRelationHeritage(Classe):void
+    -{static}getMethode(Class<?>,Method,List<Parametre>):Methode
     +updateRelationAttributs(Classe):void
     +updateRelations():void
     +createUML():String
@@ -168,6 +178,18 @@ class Modele <<update>> implements Sujet{
     +saveToFile(String):void
     +loadFromFile(String):void
     +genererCodeSource():boolean
+    +ajouterClasseInexistante(String,String,double,double,List<Attribut>,List<Methode>):void
+    +checkRelations():void
+    +ajouterMethode(String,String,String,String,int):void
+    +ajouterConstructeur(String,String,int):void
+    +ajouterAttribut(String,String,String,int):void
+    -{static}getAttribut(Field,ParameterizedType):Attribut
+    +{static}isVoirGetSet():boolean
+    +setVoirGetSet(boolean):void
+    +{static}isVoirFleches():boolean
+    +setVoirFleches(boolean):void
+    +{static}isVoirAttributsHerites():boolean
+    +setVoirAttributsHerites(boolean):void
     +getters/setters()
 }
 
