@@ -1,7 +1,6 @@
 package projet;
 
 import javafx.scene.Scene;
-import projet.arborescence.Dossier;
 import projet.arborescence.FileComposite;
 import projet.classes.*;
 
@@ -63,6 +62,7 @@ public class Modele implements Sujet, Serializable{
                     classeJava = Class.forName(className);
                     packageName = classeJava.getName();
                 }
+                if (packageName != null) {
 
                     classe = new Classe(packageName);
                     classe.setNomPackage(getPackage(classeJava));
@@ -90,7 +90,7 @@ public class Modele implements Sujet, Serializable{
                     updateRelations();
                     // génération du diagramme UML
                     UML = createUML();
-
+                }
             } catch (StringIndexOutOfBoundsException e) {
 
             }
@@ -190,18 +190,7 @@ public class Modele implements Sujet, Serializable{
                     for (Type arg : typeArguments) {
                         if (arg instanceof Class) {
                             if (!classeExiste(arg.getTypeName())) {
-                                String typeName = paramT.getTypeName();
-                                String[] split = typeName.split("<");
-                                typeName = split[0].substring(split[0].lastIndexOf(".")+1);
-                                String[] split2 = split[1].split(",");
-                                typeName+= "<";
-                                for (int i = 0; i < split2.length; i++) {
-                                    typeName += split2[i].substring(split2[i].lastIndexOf(".")+1);
-                                    if (i != split2.length-1) {
-                                        typeName += ",";
-                                    }
-                                }
-                                Attribut attribut = new Attribut(field.getName(), typeName, field.getModifiers());
+                                Attribut attribut = getAttribut(field, paramT);
                                 attributs.add(attribut);
                             }
                         }
@@ -210,6 +199,22 @@ public class Modele implements Sujet, Serializable{
             }
         }
         return attributs;
+    }
+
+    private static Attribut getAttribut(Field field, ParameterizedType paramT) {
+        StringBuilder typeName = new StringBuilder(paramT.getTypeName());
+        String[] split = typeName.toString().split("<");
+        typeName = new StringBuilder(split[0].substring(split[0].lastIndexOf(".") + 1));
+        String[] split2 = split[1].split(",");
+        typeName.append("<");
+        for (int i = 0; i < split2.length; i++) {
+            typeName.append(split2[i].substring(split2[i].lastIndexOf(".") + 1));
+            if (i != split2.length-1) {
+                typeName.append(",");
+            }
+        }
+        Attribut attribut = new Attribut(field.getName(), typeName.toString(), field.getModifiers());
+        return attribut;
     }
 
     public void ajouterRelation(String parent, String enfant, String type, String parentCardinalite, String enfantCardinalite, String nom){
@@ -248,17 +253,7 @@ public class Modele implements Sujet, Serializable{
             }
 
             if (!method.isSynthetic()) {
-                Methode methode;
-                methode = new Methode(method.getName(), method.getReturnType().getTypeName(), parametres, method.getModifiers());
-                if (classe.isInterface()) {
-                    if (Modifier.isPublic(method.getModifiers())) {
-                        methode = new Methode(method.getName(), method.getReturnType().getTypeName(), parametres, 1);
-                    } else if (Modifier.isProtected(method.getModifiers())) {
-                        methode = new Methode(method.getName(), method.getReturnType().getTypeName(), parametres, 2);
-                    } else {
-                        methode = new Methode(method.getName(), method.getReturnType().getTypeName(), parametres, 4);
-                    }
-                }
+                Methode methode = getMethode(classe, method, parametres);
 
                 methodes.add(methode);
             }
@@ -266,7 +261,22 @@ public class Modele implements Sujet, Serializable{
         return methodes;
     }
 
-    public void updateRelationHeritage(Classe classe) throws ClassNotFoundException {
+    private static Methode getMethode(Class<?> classe, Method method, List<Parametre> parametres) {
+        Methode methode;
+        methode = new Methode(method.getName(), method.getReturnType().getTypeName(), parametres, method.getModifiers());
+        if (classe.isInterface()) {
+            if (Modifier.isPublic(method.getModifiers())) {
+                methode = new Methode(method.getName(), method.getReturnType().getTypeName(), parametres, 1);
+            } else if (Modifier.isProtected(method.getModifiers())) {
+                methode = new Methode(method.getName(), method.getReturnType().getTypeName(), parametres, 2);
+            } else {
+                methode = new Methode(method.getName(), method.getReturnType().getTypeName(), parametres, 4);
+            }
+        }
+        return methode;
+    }
+
+    public void updateRelationHeritage(Classe classe) {
         String enfant;
         String parent;
         Class<?> className = ClasseLoader.getClasses().get(classe.getRealName());
@@ -335,9 +345,7 @@ public class Modele implements Sujet, Serializable{
     }
 
     public void updateRelations(){
-        Iterator<Classe> it = classes.values().iterator();
-        while (it.hasNext()){
-            Classe classe = it.next();
+        for (Classe classe : classes.values()) {
             try {
                 updateRelationHeritage(classe);
                 updateRelationAttributs(classe);
@@ -481,18 +489,17 @@ public class Modele implements Sujet, Serializable{
             this.viderClasses();
             Fleche.reinitialiserNbRelations();
             Classe c;
-            for (int i=0; i<classesKey.length;i++){
-                c = res.get(classesKey[i]);
-                if (c.getAbsolutePath() == null){
+            for (String s : classesKey) {
+                c = res.get(s);
+                if (c.getAbsolutePath() == null) {
                     String type = "class";
-                    if (c.isInterface()){
+                    if (c.isInterface()) {
                         type = "interface";
-                    } else if (c.isAbstract()){
+                    } else if (c.isAbstract()) {
                         type = "abstract";
                     }
                     this.ajouterClasseInexistante(c.getNom(), type, c.getX(), c.getY(), c.getAttributs(), c.getMethodes());
-                }
-                else {
+                } else {
                     //On relie les classe qui était présente dans le fichier de sauvegarde au chemin
                     this.ajouterClasse(c.getAbsolutePath(), c.getX(), c.getY());
                 }

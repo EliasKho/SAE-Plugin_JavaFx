@@ -2,7 +2,6 @@ package projet.classes;
 
 import java.io.Serializable;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
 import java.util.Objects;
 
 public class Attribut implements Serializable {
@@ -32,9 +31,6 @@ public class Attribut implements Serializable {
 
     public int getModifier() {
         return modifier;
-    }
-    public void setModifier(int modifier) {
-        this.modifier = modifier;
     }
 
     public String getUMLString() {

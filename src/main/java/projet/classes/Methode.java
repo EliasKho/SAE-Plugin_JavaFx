@@ -2,8 +2,6 @@ package projet.classes;
 
 import java.io.Serializable;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,29 +42,17 @@ public class Methode implements Serializable {
     public String getTypeRetour() {
         return typeRetour;
     }
-    public void setTypeRetour(String typeRetour) {
-        this.typeRetour = typeRetour;
-    }
 
     public List<Parametre> getParametres() {
         return parametres;
-    }
-    public void setParametres(List<Parametre> parametres) {
-        this.parametres = parametres;
     }
 
     public int getModifier() {
         return modifier;
     }
-    public void setModifier(int modifier) {
-        this.modifier = modifier;
-    }
 
     public boolean isConstructeur() {
         return constructeur;
-    }
-    public void setConstructeur(boolean constructeur) {
-        this.constructeur = constructeur;
     }
 
     public String getUMLString() {
@@ -88,33 +74,32 @@ public class Methode implements Serializable {
     }
 
     public String getStringCode(){
-        String affichage=getModifierString();
+        StringBuilder affichage= new StringBuilder(getModifierString());
         if(!constructeur){
-            affichage+=getTypeRetourString()+" ";
+            affichage.append(getTypeRetourString()).append(" ");
         }
-        affichage+=nom+"(";
+        affichage.append(nom).append("(");
         if (parametres != null) {
             int i=1;
             String initialeType="";
             for (Parametre parametre : parametres) {
                 if (initialeType.equals(String.valueOf(parametre.getType().charAt(0)))){
-                    affichage+= parametre.getType()+" "+initialeType.toLowerCase()+i+",";
+                    affichage.append(parametre.getType()).append(" ").append(initialeType.toLowerCase()).append(i).append(",");
                     i++;
                 }
                 else {
-                    affichage += parametre.getType()+" "+String.valueOf(parametre.getType().charAt(0)).toLowerCase()+
-                            ",";
+                    affichage.append(parametre.getType()).append(" ").append(String.valueOf(parametre.getType().charAt(0)).toLowerCase()).append(",");
                     i = 1;
                 }
                 initialeType = String.valueOf(parametre.getType().charAt(0));
             }
             //supprimer la derniere virgule
-            if(parametres.size()>0){
-                affichage=affichage.substring(0, affichage.length()-1);
+            if(!parametres.isEmpty()){
+                affichage = new StringBuilder(affichage.substring(0, affichage.length() - 1));
             }
         }
-        affichage+= ")";
-        return affichage;
+        affichage.append(")");
+        return affichage.toString();
     }
 
     public String getModifierUMLString(){
@@ -158,17 +143,17 @@ public class Methode implements Serializable {
     }
 
     private String getParametersString() {
-        String affichage=nom+"(";
+        StringBuilder affichage= new StringBuilder(nom + "(");
         if (parametres != null) {
             for (Parametre parametre : parametres) {
-                affichage+= parametre.getType()+",";
+                affichage.append(parametre.getType()).append(",");
             }
-            if(parametres.size()>0){
-                affichage=affichage.substring(0, affichage.length()-1);
+            if(!parametres.isEmpty()){
+                affichage = new StringBuilder(affichage.substring(0, affichage.length() - 1));
             }
         }
-        affichage+= ")";
-        return affichage;
+        affichage.append(")");
+        return affichage.toString();
     }
 
     public String getTypeRetourString(){

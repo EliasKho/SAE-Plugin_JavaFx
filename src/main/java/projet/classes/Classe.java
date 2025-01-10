@@ -97,7 +97,7 @@ public class Classe implements Serializable{
     }
 
     public String getRealName(){
-        if (this.nomPackage.equals("")){
+        if (this.nomPackage.isEmpty()){
             return this.nom;
         }
         return this.nomPackage + "." + this.nom;

@@ -76,8 +76,8 @@ public class ControlerDrag implements EventHandler<DragEvent> {
             if (dragEvent.getGestureSource() != dragEvent.getTarget() && dragEvent.getDragboard().hasString()) {
                 boolean success = false;
                 // on verifie si l'evenement est un setOnDragDropped et on vérifie si l'élément placer est sur l'arborescence
+                String nomClasse = dragEvent.getDragboard().getString();
                 if (dragEvent.getX() < 0 || dragEvent.getY() < 0) {
-                    String nomClasse = dragEvent.getDragboard().getString();
                     //Petite vérification pour être sûr si la classe est bien présente dans la fenêtre
                     if (modele.isInDiagram(nomClasse)) {
                         modele.supprimerClasse(nomClasse);
@@ -87,7 +87,6 @@ public class ControlerDrag implements EventHandler<DragEvent> {
                 //Si ce n'est pas sur l'arborescence cela déplace ou place la classe dans la fenêtre
                 else {
                     // on récupère la classe
-                    String nomClasse = dragEvent.getDragboard().getString();
 
                     if (modele.isInDiagram(nomClasse)) {
 
@@ -101,13 +100,12 @@ public class ControlerDrag implements EventHandler<DragEvent> {
                         classe.setX(x);
                         classe.setY(y);
 
-                        success = true;
                     } else {
                         double x = dragEvent.getX();
                         double y = dragEvent.getY();
                         modele.ajouterClasse(nomClasse, x, y);
-                        success = true;
                     }
+                    success = true;
 
                 }
 

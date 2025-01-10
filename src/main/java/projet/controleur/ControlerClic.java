@@ -1,7 +1,6 @@
 package projet.controleur;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -114,9 +113,7 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                 classesExternes = new Menu("Classes externes");
                 for (String classe : modele.getClasses().get(nom).getClassesExternes()) {
                     MenuItem itemClasse = new MenuItem(classe);
-                    itemClasse.setOnAction(e -> {
-                        modele.ajouterClasse(classe, 10, 10);
-                    });
+                    itemClasse.setOnAction(e -> modele.ajouterClasse(classe, 10, 10));
                     classesExternes.getItems().add(itemClasse);
                 }
                 if (classesExternes.getItems().isEmpty()){
@@ -232,7 +229,7 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                     alert.showAndWait();
                     return;
                 }
-                modele.ajouterClasseInexistante(classe, type,0, 0, new ArrayList<Attribut>(), new ArrayList<Methode>());
+                modele.ajouterClasseInexistante(classe, type,0, 0, new ArrayList<>(), new ArrayList<>());
                 popupStage.hide();
             });
 
@@ -382,12 +379,16 @@ public class ControlerClic implements EventHandler<MouseEvent> {
 
     public int getModifier(String visibilite, boolean isStatic, boolean isAbstract) {
         int modifier = 0;
-        if (visibilite.equals("public")) {
-            modifier = modifier | 1;
-        } else if (visibilite.equals("protected")) {
-            modifier = modifier | 4;
-        } else if (visibilite.equals("private")) {
-            modifier = modifier | 2;
+        switch (visibilite) {
+            case "public":
+                modifier = 1;
+                break;
+            case "protected":
+                modifier = 4;
+                break;
+            case "private":
+                modifier = 2;
+                break;
         }
         if (isStatic) {
             modifier = modifier | 8;
@@ -429,12 +430,10 @@ public class ControlerClic implements EventHandler<MouseEvent> {
             // choisir la classe source
             ComboBox<String> classeCible = new ComboBox<>();
             classeCible.getItems().addAll(nomsClasses.keySet());
-            classeCible.setValue(nomsClasses.get(0));
 
             // choisir la classe cible
             ComboBox<String> classeSource = new ComboBox<>();
             classeSource.getItems().addAll(nomsClasses.keySet());
-            classeSource.setValue(nomsClasses.get(0));
 
             Button addButton = new Button("Ajouter");
 

@@ -1,12 +1,14 @@
 package projet.controleur;
 
 import javafx.geometry.HPos;
-import javafx.geometry.Rectangle2D;
 import javafx.geometry.VPos;
+import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import projet.Modele;
+
+import java.util.Iterator;
 
 public class ControlerVues {
     private Modele modele;
@@ -40,9 +42,10 @@ public class ControlerVues {
     public void afficherVueClasse(GridPane gridPane){
         if (modele.getVue().equals("UML")){
             modele.setVue("classique");
-            for (int i = 0; i < gridPane.getChildren().size(); i++) {
-                if (gridPane.getChildren().get(i) instanceof ImageView){
-                    gridPane.getChildren().remove(i);
+            Iterator<Node> it = gridPane.getChildren().iterator();
+            while (it.hasNext()){
+                if (it.next() instanceof ImageView){
+                    it.remove();
                 }
             }
             gridPane.add(modele.getVueClasse(), 1, 1);

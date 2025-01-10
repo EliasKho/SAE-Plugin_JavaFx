@@ -1,6 +1,7 @@
 package projet.classes;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -205,8 +206,8 @@ public class Fleche implements Serializable {
                 ", parentCardinalite='" + parentCardinalite + '\'' +
                 ", enfantCardinalite='" + enfantCardinalite + '\'' +
                 ", indexEnfantParent=" + indexEnfantParent +
-                ", p1=" + p1 +
-                ", p2=" + p2 +
+                ", p1=" + Arrays.toString(p1) +
+                ", p2=" + Arrays.toString(p2) +
                 '}';
     }
 }

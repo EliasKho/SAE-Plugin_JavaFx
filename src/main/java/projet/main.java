@@ -1,10 +1,6 @@
 package projet;
 
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -16,7 +12,6 @@ import projet.classes.VueClasse;
 import projet.controleur.*;
 
 import java.io.File;
-import java.io.IOException;
 
 public class main extends Application {
 
@@ -40,7 +35,6 @@ public class main extends Application {
         ControlerClic controlerClic = new ControlerClic(modele);
         ControlerDrag controlerDrag = new ControlerDrag(modele);
         ControlerVues controlerVues = new ControlerVues(modele);
-        ControlerImage controlerImage = new ControlerImage(modele);
 
         HBox hbox = new HBox();
         VueArborescence arborescence = new VueArborescence(modele, controlerClic);

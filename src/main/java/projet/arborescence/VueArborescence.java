@@ -11,11 +11,9 @@ import projet.controleur.ControlerClic;
 public class VueArborescence extends Pane implements Observateur {
 
     private TreeView<FileComposite> arbre;
-    private Modele modele;
     private ControlerClic controlerClic;
 
     public VueArborescence(Modele m, ControlerClic c) {
-        this.modele = m;
         this.controlerClic = c;
         actualiser(m);
 

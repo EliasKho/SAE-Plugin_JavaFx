@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Dossier extends FileComposite {
-    protected ArrayList<FileComposite> ss_dossier = new ArrayList<FileComposite>();
+    protected ArrayList<FileComposite> ss_dossier = new ArrayList<>();
     public Dossier(File file) {
         super(file);
         File[] list = this.listFiles();

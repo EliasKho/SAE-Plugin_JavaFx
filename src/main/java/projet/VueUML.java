@@ -5,10 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class VueUML implements Observateur{
-    private Modele modele;
 
     public VueUML(Modele m) {
-        this.modele = m;
         actualiser(m);
     }
 

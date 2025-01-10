@@ -1,9 +1,7 @@
 package projet.classes;
 
-import javafx.event.EventHandler;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -105,16 +103,13 @@ public class VueClasse extends Pane implements Observateur {
 
                 container.setId(packageName);
 
-                container.setOnDragDetected(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent mouseEvent) {
-                        Dragboard db = container.startDragAndDrop(TransferMode.MOVE);
-                        ClipboardContent content = new ClipboardContent();
-                        content.putString(packageName);
-                        db.setContent(content);
-                        mouseEvent.consume();
-                        ControlerDrag.setXY(mouseEvent.getSceneX(), mouseEvent.getSceneY());
-                    }
+                container.setOnDragDetected(mouseEvent -> {
+                    Dragboard db = container.startDragAndDrop(TransferMode.MOVE);
+                    ClipboardContent content = new ClipboardContent();
+                    content.putString(packageName);
+                    db.setContent(content);
+                    mouseEvent.consume();
+                    ControlerDrag.setXY(mouseEvent.getSceneX(), mouseEvent.getSceneY());
                 });
 
                 container.setOnMouseClicked(controlerClic);
