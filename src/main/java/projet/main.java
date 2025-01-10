@@ -135,39 +135,35 @@ public class main extends Application {
                 // Nettoyer les options précédentes affichées dans le GridPane
                 gp.getChildren().removeIf(node -> GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node) >= 2);
 
-                // Créer un nouveau GridPane pour organiser les options sélectionnées
-                GridPane optionsGrid = new GridPane();
-                optionsGrid.setPadding(new Insets(10));
-                optionsGrid.setHgap(10);
-                optionsGrid.setVgap(10);
+                // Créer une HBox pour organiser les options sélectionnées
+                HBox optionsHBox = new HBox(10); // 10 est l'espacement entre les éléments
+                optionsHBox.setPadding(new Insets(10));
 
-                // Ajouter les options sur la même ligne, avec différentes colonnes
-                int col = 0; // Initialiser la première colonne
-
+                // Ajouter les options dans la HBox
                 if (option1.isSelected()) {
-                    optionsGrid.add(new Label("Affichage des getters/setters"), col++, 0);
+                    optionsHBox.getChildren().add(new Label("Affichage des getters/setters"));
                     modele.setVoirGetSet(true);
                 } else {
-                    optionsGrid.add(new Label("Masquage des getters/setters"), col++, 0);
+                    optionsHBox.getChildren().add(new Label("Masquage des getters/setters"));
                     modele.setVoirGetSet(false);
                 }
                 if (option2.isSelected()) {
-                    optionsGrid.add(new Label("Affichage des attributs hérités"), col++, 0);
+                    optionsHBox.getChildren().add(new Label("Affichage des attributs hérités"));
                     modele.setVoirAttributsHerites(true);
                 } else {
-                    optionsGrid.add(new Label("Masquage des attributs hérités"), col++, 0);
+                    optionsHBox.getChildren().add(new Label("Masquage des attributs hérités"));
                     modele.setVoirAttributsHerites(false);
                 }
                 if (option3.isSelected()) {
-                    optionsGrid.add(new Label("Affichage des flèches"), col++, 0);
+                    optionsHBox.getChildren().add(new Label("Affichage des flèches"));
                     modele.setVoirFleches(true);
                 } else {
-                    optionsGrid.add(new Label("Masquage des flèches"), col++, 0);
+                    optionsHBox.getChildren().add(new Label("Masquage des flèches"));
                     modele.setVoirFleches(false);
                 }
 
-                // Ajouter les nouvelles options au GridPane principal
-                gp.add(optionsGrid, 0, 2, 2, 1);
+                // Ajouter les nouvelles options à l'HBox principale
+                gp.add(optionsHBox, 0, 2, 2, 1);  // La HBox est ajoutée à la même position
 
                 // Fermer la fenêtre popup
                 popupStage.close();
@@ -176,6 +172,7 @@ public class main extends Application {
             // Afficher la fenêtre popup
             popupStage.showAndWait();
         });
+
 
 
 
