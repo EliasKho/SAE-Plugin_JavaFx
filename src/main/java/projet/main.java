@@ -116,7 +116,7 @@ public class main extends Application {
             layout.setPadding(new Insets(20));
 
             // Créer les CheckBox
-            CheckBox option1 = new CheckBox("Afficher les getters/setters");
+            CheckBox option1 = new CheckBox("Afficher les getters/setters/constructeurs");
             CheckBox option2 = new CheckBox("Afficher les attributs hérités");
             CheckBox option3 = new CheckBox("Afficher les flèches");
 
