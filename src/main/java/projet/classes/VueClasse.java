@@ -75,7 +75,8 @@ public class VueClasse extends Pane implements Observateur {
                     if(modele.isVoirGetSet()){
                         strMet.append(methode.getString()).append("\n");
                     } else {
-                        if(!methode.getString().contains("get")&&!methode.getString().contains("set")&&!methode.getString().contains("is")){
+                        if(!methode.getString().contains("get")&&!methode.getString().contains("set")
+                                &&!methode.getString().contains("is")&&!methode.getString().contains(classe.getNom())){
                             strMet.append(methode.getString()).append("\n");
                         }
                     }
