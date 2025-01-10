@@ -560,8 +560,8 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                     cardinaliteCibleField.setDisable(true);
                     cardinaliteSourceField.setDisable(true);
                     nomRelationField.setDisable(true);
-                    cardinaliteCibleField.clear();
-                    cardinaliteSourceField.clear();
+                    cardinaliteCibleField.setText(null);
+                    cardinaliteSourceField.setText(null);
                     nomRelationField.setText("\"\"");
                 } else if (type.equals(Fleche.EXTENDS)) {
                     labelCibleClasse.setText("Classe mère:");
@@ -569,8 +569,8 @@ public class ControlerClic implements EventHandler<MouseEvent> {
                     cardinaliteCibleField.setDisable(true);
                     cardinaliteSourceField.setDisable(true);
                     nomRelationField.setDisable(true);
-                    cardinaliteCibleField.clear();
-                    cardinaliteSourceField.clear();
+                    cardinaliteCibleField.setText(null);
+                    cardinaliteSourceField.setText(null);
                     nomRelationField.setText("\"\"");
                 } else {
                     labelCibleClasse.setText("Classe cible:");
